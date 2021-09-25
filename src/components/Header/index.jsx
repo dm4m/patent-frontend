@@ -15,7 +15,7 @@ export default function Header() {
     <>
       <EuiHeader>
       <EuiHeaderSectionItem border="right">
-        <EuiHeaderLogo>专利智能检索系统</EuiHeaderLogo>
+        <EuiHeaderLogo iconType='\images\bit_logo.png'>专利智能检索系统</EuiHeaderLogo>
       </EuiHeaderSectionItem>
 
       <EuiHeaderSectionItem>
