@@ -4,13 +4,21 @@ import './index.css'
 
 export default class SearchBox extends Component {
 
+	showData = ()=>{
+        alert(123);
+        console.log(this.value)
+	}
+
     render() {
         return (
             <div className='search-box'>
                 <EuiFieldSearch 
                     placeholder='Search this'
-                    append={<EuiButton fill={true} children='搜索'/>}
+                    append={
+                    <EuiButton  onClick={this.showData} fill={true} children='搜索'/>
+                    }
                 />
+
             </div>
         )
     }
