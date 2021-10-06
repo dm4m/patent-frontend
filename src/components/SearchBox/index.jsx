@@ -4,18 +4,24 @@ import './index.css'
 
 export default class SearchBox extends Component {
 
-	showData = ()=>{
-        alert(123);
-        console.log(this.value)
-	}
-
+    inputRef = React.createRef()
+    
     render() {
         return (
             <div className='search-box'>
                 <EuiFieldSearch 
+                    ref= {this.inputRef} 
                     placeholder='Search this'
                     append={
-                    <EuiButton  onClick={this.showData} fill={true} children='搜索'/>
+                        <EuiButton  
+                            onClick={
+                                ()=>{
+                                    console.log(this.inputRef.current.state.value)
+                                }
+                            } 
+                            fill={true} 
+                            children='搜索'
+                        />
                     }
                 />
 
