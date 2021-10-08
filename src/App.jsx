@@ -17,7 +17,7 @@ export default class App extends Component {
                 <Switch>
                     <Route path='/homepage' component={Homepage}/>
                     <Route path='/searchResults' component={SearchResults}/>
-                    <Redirect to='/searchResults'/>
+                    <Redirect to='/homepage'/>
                 </Switch>
             </div>
         )

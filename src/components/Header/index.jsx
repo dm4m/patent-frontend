@@ -16,19 +16,22 @@ export default function Header() {
     <>
       <EuiHeader>
       <EuiHeaderSectionItem border="right">
-        <EuiHeaderLogo iconType='\images\bit_logo.png'>专利智能检索系统</EuiHeaderLogo>
+        <Link to="/homepage">
+          <EuiHeaderLogo iconType='\images\bit_logo.png' >专利智能检索系统</EuiHeaderLogo>
+        </Link>
       </EuiHeaderSectionItem>
 
       <EuiHeaderSectionItem>
         <EuiHeaderLinks aria-label="App navigation links example">
-          <EuiHeaderLink>
-            <Link to="/homepage">首页</Link>
-          </EuiHeaderLink>
-
-          <EuiHeaderLink>
-            <Link to="/searchResults">结果页</Link>
-          </EuiHeaderLink>
-
+          
+            <Link to="/homepage">
+              <EuiHeaderLink>首页</EuiHeaderLink>
+            </Link>
+        
+            <Link to="/searchResults">
+              <EuiHeaderLink>结果页</EuiHeaderLink>
+            </Link>
+          
           <EuiHeaderLink>历史记录</EuiHeaderLink>
         </EuiHeaderLinks>
       </EuiHeaderSectionItem>

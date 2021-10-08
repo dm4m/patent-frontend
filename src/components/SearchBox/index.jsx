@@ -1,8 +1,11 @@
 import { EuiFieldSearch, EuiButton} from '@elastic/eui'
 import React, { Component } from 'react'
+import { Link, withRouter } from 'react-router-dom'
+import axios from 'axios'
 import './index.css'
 
-export default class SearchBox extends Component {
+
+class SearchBox extends Component {
 
     inputRef = React.createRef()
     
@@ -13,15 +16,26 @@ export default class SearchBox extends Component {
                     ref= {this.inputRef} 
                     placeholder='Search this'
                     append={
-                        <EuiButton  
-                            onClick={
-                                ()=>{
-                                    console.log(this.inputRef.current.state.value)
-                                }
-                            } 
-                            fill={true} 
-                            children='搜索'
-                        />
+                        // <Link to='/searchResults' >
+                            <EuiButton  
+                                onClick={
+                                    ()=>{
+                                        axios.get(`http://localhost:8080/test`).then(
+                                            response => {
+                                                console.log(response.data)
+                                            },
+                                            error => {
+                                                
+                                            }
+                                        )
+                                        console.log(this.inputRef.current.state.value)
+                                        this.props.history.push(`/searchResults?input=${this.inputRef.current.state.value}`)
+                                    }
+                                } 
+                                fill={true} 
+                                children='搜索'
+                            />
+                        // </Link>
                     }
                 />
 
@@ -29,3 +43,5 @@ export default class SearchBox extends Component {
         )
     }
 }
+
+export default withRouter(SearchBox)

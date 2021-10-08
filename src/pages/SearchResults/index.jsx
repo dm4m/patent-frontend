@@ -32,7 +32,7 @@ export default class SearchResults extends Component {
                         <h2>Content title</h2>
                         </EuiTitle>
                         <EuiSpacer />
-                        <EuiPageContentBody>Content body</EuiPageContentBody>
+                        <EuiPageContentBody>{this.props.location.search}</EuiPageContentBody>
                     </EuiPageContent>
                     </EuiPageBody>
                 </EuiPage>
