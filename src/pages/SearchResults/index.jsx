@@ -11,8 +11,17 @@ import {
     EuiSpacer,
   } from '@elastic/eui';
 import SearchArea from './SearchArea';
+import ResultsList from './ResultsList';
 
 export default class SearchResults extends Component {
+
+    data = {
+        title : 'title',
+        abstract : 'this is the abstract',
+        author : 'author',
+        publish_time : 'publish_time'
+    }
+
     render() {
         return (
             <div>
@@ -20,20 +29,20 @@ export default class SearchResults extends Component {
                 <EuiPage>
                     <EuiPageSideBar>SideBar nav</EuiPageSideBar>
                     <EuiPageBody>
-                    <EuiPageHeader
+                    {/* <EuiPageHeader
                         iconType="logoElastic"
                         pageTitle="Page title"
                         rightSideItems={[
                         <EuiButton fill>Add something</EuiButton>,
                         <EuiButton>Do something</EuiButton>,
                         ]}
-                    />
+                    /> */}
                     <EuiPageContent>
-                        <EuiTitle>
-                        <h2>Content title</h2>
-                        </EuiTitle>
-                        <EuiSpacer />
-                        <EuiPageContentBody>{this.props.location.search}</EuiPageContentBody>
+                        {/* <EuiTitle></EuiTitle> */}
+                        <EuiPageContentBody>
+                            {this.props.location.search}
+                            <ResultsList/>
+                        </EuiPageContentBody>
                     </EuiPageContent>
                     </EuiPageBody>
                 </EuiPage>

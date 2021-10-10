@@ -14,7 +14,6 @@ export default class SearchArea extends Component {
                         placeholder='Search this'
                         isClearable={true}
                         fullWidth={true}
-                        prepend="专利检索"
                         append={
                                 <EuiButton  
                                     // onClick={this.searchAndJump} 
