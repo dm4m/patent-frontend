@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { EuiPageTemplate } from '@elastic/eui';
 import {
     EuiPage,
     EuiPageBody,
@@ -11,11 +10,13 @@ import {
     EuiButton,
     EuiSpacer,
   } from '@elastic/eui';
+import SearchArea from './SearchArea';
 
 export default class SearchResults extends Component {
     render() {
         return (
             <div>
+                <SearchArea/>
                 <EuiPage>
                     <EuiPageSideBar>SideBar nav</EuiPageSideBar>
                     <EuiPageBody>

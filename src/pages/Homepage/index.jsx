@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import SearchBox from '../../components/SearchBox'
-import Title from '../../components/Title'
+import SearchBox from './SearchBox'
+import Title from './Title'
 import './index.css'
 
 export default class Homepage extends Component {
@@ -8,7 +8,7 @@ export default class Homepage extends Component {
         return (
             <div className='homepage'>
                 <Title/>
-                <SearchBox/>    
+                <SearchBox/>     
             </div>
         )
     }
