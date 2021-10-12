@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { EuiFlexGrid, EuiFlexItem, EuiCard, EuiFlexGroup, EuiTitle, EuiText } from '@elastic/eui'
-
+import ListElement from './ListElement'
 
 export default class ResultsList extends Component {
 
@@ -46,7 +46,8 @@ export default class ResultsList extends Component {
     render() {
         return (
             <div>
-                {
+                <ListElement/>
+                {/* {
                   this.data_list.map((data)=>{
                       return (
                           <div>
@@ -54,7 +55,7 @@ export default class ResultsList extends Component {
                           </div>
                       )
                   })  
-                }        
+                }         */}
             </div>
         )
     }
