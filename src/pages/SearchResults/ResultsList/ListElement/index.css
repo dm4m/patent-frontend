@@ -1,4 +1,26 @@
 .list-element{
     min-height: 50px;
-    background-color: aqua;
+    /* background-color: aqua; */
+    /* border: 1px solid #ccc; */
+}
+
+.author-area{
+    line-height: 30px;
+}
+
+.abstract-area{
+    line-height: 24px;
+    max-height: 45px;
+}
+
+.abstract-text{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.not-first{
+    margin-left: 20px;
 }
