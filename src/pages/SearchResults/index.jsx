@@ -41,7 +41,7 @@ export default class SearchResults extends Component {
                         {/* <EuiTitle></EuiTitle> */}
                         <EuiPageContentBody>
                             {this.props.location.search}
-                            <ResultsList/>
+                            {/* <ResultsList/> */}
                         </EuiPageContentBody>
                     </EuiPageContent>
                     </EuiPageBody>
