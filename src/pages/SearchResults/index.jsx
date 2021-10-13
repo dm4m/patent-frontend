@@ -10,7 +10,7 @@ import {
     EuiButton,
     EuiSpacer,
   } from '@elastic/eui';
-import SearchArea from './SearchArea';
+import SearchArea from '../../components/SearchArea';
 import ResultsList from './ResultsList';
 
 export default class SearchResults extends Component {
@@ -27,7 +27,7 @@ export default class SearchResults extends Component {
             <div>
                 <SearchArea/>
                 <EuiPage>
-                    <EuiPageSideBar>SideBar nav</EuiPageSideBar>
+                    <EuiPageSideBar style={{backgroundColor:'green'}}>侧边检索栏</EuiPageSideBar>
                     <EuiPageBody>
                     {/* <EuiPageHeader
                         iconType="logoElastic"

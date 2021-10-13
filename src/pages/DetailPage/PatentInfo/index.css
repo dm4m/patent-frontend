@@ -1,0 +1,14 @@
+.container{
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    background-color: aqua;
+    /* min-width: 750px;
+    margin: 0 auto 30px;  */
+}
+
+.content{
+    min-height: 300px;
+    min-width: 79%;
+    background-color: beige;
+}

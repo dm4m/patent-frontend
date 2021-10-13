@@ -4,6 +4,7 @@ import Header from  './components/Header'
 import './App.css'
 import Homepage from './pages/Homepage'
 import SearchResults from './pages/SearchResults'
+import DetailPage from './pages/DetailPage'
 
 export default class App extends Component {
     render() {
@@ -15,6 +16,7 @@ export default class App extends Component {
                 <Switch>
                     <Route path='/homepage' component={Homepage}/>
                     <Route path='/searchResults' component={SearchResults}/>
+                    <Route path='/detailPage' component={DetailPage}/>
                     <Redirect to='/homepage'/>
                 </Switch>
             </div>

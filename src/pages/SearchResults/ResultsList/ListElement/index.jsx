@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import './index.css'
 
 export default class ListElement extends Component {
@@ -7,7 +8,7 @@ export default class ListElement extends Component {
             <div className='list-element'>
                 <div className="title-area">
                     <span className='index'>1.</span>
-                    <span className='title'>一种基于深度语义的代码函数味道检测方法</span>
+                    <Link to='detailPage'><span className='title'>一种基于深度语义的代码函数味道检测方法</span></Link>
                 </div>
                 <div className="author-area">
                     <span>CN201910705359.1</span>

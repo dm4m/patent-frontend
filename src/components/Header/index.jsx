@@ -31,7 +31,11 @@ export default function Header() {
             <Link to="/searchResults">
               <EuiHeaderLink>结果页</EuiHeaderLink>
             </Link>
-          
+
+            <Link to="/detailPage">
+              <EuiHeaderLink>详情页</EuiHeaderLink>
+            </Link>
+
           <EuiHeaderLink>历史记录</EuiHeaderLink>
         </EuiHeaderLinks>
       </EuiHeaderSectionItem>
