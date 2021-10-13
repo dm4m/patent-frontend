@@ -44,18 +44,14 @@ export default class ResultsList extends Component {
     ]
 
     render() {
+        var list = []
+        for (let index = 0; index < 20; index++) {
+            list.push(<ListElement/>);
+        }
         return (
             <div>
-                <ListElement/>
-                {/* {
-                  this.data_list.map((data)=>{
-                      return (
-                          <div>
-                              <h1>{data.title}</h1>
-                          </div>
-                      )
-                  })  
-                }         */}
+                {list}            
+                {/* <ListElement/> */}
             </div>
         )
     }

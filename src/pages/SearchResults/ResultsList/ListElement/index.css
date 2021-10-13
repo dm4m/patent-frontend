@@ -1,5 +1,6 @@
 .list-element{
     min-height: 50px;
+    padding: 20px 10px;
     /* background-color: aqua; */
     /* border: 1px solid #ccc; */
 }
