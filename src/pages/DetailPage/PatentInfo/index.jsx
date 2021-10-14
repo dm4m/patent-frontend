@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { EuiPageTemplate, EuiEmptyPrompt } from '@elastic/eui';
 
-// import './index.css'
+import './index.css'
 
 export default class PatentInfo extends Component {
     patent_data = {
@@ -22,15 +22,18 @@ export default class PatentInfo extends Component {
     }
     render() {
         return (
-            <div className='container'>
-                <EuiPageTemplate style={{backgroundColor: 'green'}}
-                    template="centeredBody"
-                    pageContentProps={{ paddingSize: 'none' }}
-                    >
-                    <div className='content'>
-                        
+            <div className='wrapper'>
+                <div className='main'>
+                    <div className='container'>
+                        <div className='doc'>
+                            <div>
+                                <div className="wx-tit">
+                                    <h1>一种基于变异的FPGA逻辑综合工具模糊测试方法</h1>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </EuiPageTemplate>              
+                </div>
             </div>
         )
     }
