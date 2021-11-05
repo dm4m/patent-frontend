@@ -27,7 +27,7 @@ export default class SearchResults extends Component {
             <div>
                 <SearchArea/>
                 <EuiPage>
-                    <EuiPageSideBar style={{backgroundColor:'green'}}>侧边检索栏</EuiPageSideBar>
+                    {/* <EuiPageSideBar style={{backgroundColor:'green'}}>侧边检索栏</EuiPageSideBar> */}
                     <EuiPageBody>
                     {/* <EuiPageHeader
                         iconType="logoElastic"

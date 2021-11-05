@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   EuiHeader,
-  EuiHeaderSection,
   EuiHeaderSectionItem,
   EuiHeaderLogo,
   EuiHeaderLink,
@@ -17,7 +16,7 @@ export default function Header() {
       <EuiHeader>
       <EuiHeaderSectionItem border="right">
         <Link to="/homepage">
-          <EuiHeaderLogo iconType='\images\bit_logo.png' >专利智能检索系统</EuiHeaderLogo>
+          <EuiHeaderLogo iconType='\images\bit_logo.png' >专利预评估系统</EuiHeaderLogo>
         </Link>
       </EuiHeaderSectionItem>
 
@@ -36,7 +35,7 @@ export default function Header() {
               <EuiHeaderLink>详情页</EuiHeaderLink>
             </Link>
 
-          <EuiHeaderLink>历史记录</EuiHeaderLink>
+          {/* <EuiHeaderLink>历史记录</EuiHeaderLink> */}
         </EuiHeaderLinks>
       </EuiHeaderSectionItem>
     </EuiHeader>
