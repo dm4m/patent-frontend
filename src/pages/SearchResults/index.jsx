@@ -4,11 +4,11 @@ import {
     EuiPageBody,
     EuiPageContent,
     EuiPageContentBody,
-    EuiPageHeader,
-    EuiPageSideBar,
-    EuiTitle,
-    EuiButton,
-    EuiSpacer,
+  } from '@elastic/eui';
+  import {
+    EuiFlexGroup,
+    EuiFlexItem,
+    EuiPagination,
   } from '@elastic/eui';
 import SearchArea from '../../components/SearchArea';
 import ResultsList from './ResultsList';
@@ -40,8 +40,16 @@ export default class SearchResults extends Component {
                     <EuiPageContent>
                         {/* <EuiTitle></EuiTitle> */}
                         <EuiPageContentBody>
-                            {this.props.location.search}
-                            <ResultsList/>
+                            <ResultsList response={this.props.location.state}/>
+                            <EuiFlexGroup justifyContent="spaceAround">
+                                <EuiFlexItem grow={false}>
+                                    <EuiPagination
+                                        aria-label="Centered pagination example"
+                                        pageCount={10}
+                                        activePage={0}
+                                    />
+                                </EuiFlexItem>
+                            </EuiFlexGroup>                            
                         </EuiPageContentBody>
                     </EuiPageContent>
                     </EuiPageBody>

@@ -23,17 +23,17 @@ export default function Header() {
       <EuiHeaderSectionItem>
         <EuiHeaderLinks aria-label="App navigation links example">
           
-            <Link to="/homepage">
+            {/* <Link to="/homepage">
               <EuiHeaderLink>首页</EuiHeaderLink>
-            </Link>
+            </Link> */}
         
-            <Link to="/searchResults">
+            {/* <Link to="/searchResults">
               <EuiHeaderLink>结果页</EuiHeaderLink>
             </Link>
 
             <Link to="/detailPage">
               <EuiHeaderLink>详情页</EuiHeaderLink>
-            </Link>
+            </Link> */}
 
           {/* <EuiHeaderLink>历史记录</EuiHeaderLink> */}
         </EuiHeaderLinks>

@@ -9,16 +9,27 @@ class SearchBox extends Component {
 
     inputRef = React.createRef()
 
+    
     searchAndJump = () =>{
-        axios.get(`http://localhost:8080/test`).then(
+        console.log(this.inputRef.current.state.value)
+        const query = this.inputRef.current.state.value 
+        console.log(query)
+        axios.get(`http://10.1.0.88:8080/patent`, {
+            params: {'query': query}
+        })
+        .then(
             response => {
                 console.log(response.data)
+                console.log(typeof(response.data))
+                console.log(this.inputRef.current.state.value)
+                // this.props.history.push(`/searchResults?query=${this.inputRef.current.state.value}
+                //                                             response=${response.data}`)
+                this.props.history.push({pathname:'/searchResults',state:{detail: response.data}})
             },
             error => { 
             }
         )
-        console.log(this.inputRef.current.state.value)
-        this.props.history.push(`/searchResults?input=${this.inputRef.current.state.value}`)
+        
     }
 
     render() {
