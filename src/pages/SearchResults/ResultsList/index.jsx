@@ -5,11 +5,10 @@ import ListElement from './ListElement'
 export default class ResultsList extends Component {
 
     render() {
-        const {response} = this.props
-        var patentList = response.detail
+        const {results} = this.props
         return (
             <div>
-                {patentList.map((patentObj)=>{
+                {results.map((patentObj)=>{
                     return (
                         <ListElement patent={patentObj}/>
                     )

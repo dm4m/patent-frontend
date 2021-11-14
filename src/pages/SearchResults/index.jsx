@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import axios from 'axios'
 import {
     EuiPage,
     EuiPageBody,
@@ -15,14 +16,33 @@ import ResultsList from './ResultsList';
 
 export default class SearchResults extends Component {
 
-    data = {
-        title : 'title',
-        abstract : 'this is the abstract',
-        author : 'author',
-        publish_time : 'publish_time'
+    searchAndJump = (query, cur_page, per_page) =>{
+        console.log(query)
+        console.log(cur_page)
+        console.log(per_page)
+        axios.get(`http://10.1.0.88:8080/patent`, {
+            params: {
+                        'query': query,
+                        'cur_page': cur_page,
+                        'per_page': per_page
+                    }
+        })
+        .then(
+            response => {
+                console.log(response.data)
+                console.log(typeof(response.data))
+                // this.props.history.push(`/searchResults?query=${this.inputRef.current.state.value}
+                //                                             response=${response.data}`)
+                this.props.history.push({pathname:'/searchResults',state:{response: response.data}})
+            },
+            error => { 
+            }
+        )
     }
 
     render() {
+        const {response} = this.props.location.state
+        const {curPage, totalHits, pageNum, perPage, results, query} = response
         return (
             <div>
                 <SearchArea/>
@@ -40,13 +60,16 @@ export default class SearchResults extends Component {
                     <EuiPageContent>
                         {/* <EuiTitle></EuiTitle> */}
                         <EuiPageContentBody>
-                            <ResultsList response={this.props.location.state}/>
+                            <ResultsList results={results}/>
                             <EuiFlexGroup justifyContent="spaceAround">
                                 <EuiFlexItem grow={false}>
                                     <EuiPagination
                                         aria-label="Centered pagination example"
-                                        pageCount={10}
-                                        activePage={0}
+                                        pageCount={pageNum}
+                                        activePage={curPage}
+                                        onPageClick={(activePage) => {
+                                            this.searchAndJump(query, activePage, perPage)
+                                        }}
                                     />
                                 </EuiFlexItem>
                             </EuiFlexGroup>                            
