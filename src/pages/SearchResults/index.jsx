@@ -1,10 +1,17 @@
 import React, { Component } from 'react'
 import axios from 'axios'
+import { Collapse } from 'antd';
 import {
+    EuiText,
+    EuiCode,
     EuiPage,
     EuiPageBody,
     EuiPageContent,
     EuiPageContentBody,
+    EuiPageSideBar,
+    EuiFacetGroup,
+    EuiFacetButton,
+    EuiCollapsibleNavGroup
   } from '@elastic/eui';
   import {
     EuiFlexGroup,
@@ -13,6 +20,12 @@ import {
   } from '@elastic/eui';
 import SearchArea from '../../components/SearchArea';
 import ResultsList from './ResultsList';
+
+const { Panel } = Collapse;
+
+function callback(key) {
+    console.log(key);
+  }
 
 export default class SearchResults extends Component {
 
@@ -47,7 +60,34 @@ export default class SearchResults extends Component {
             <div>
                 <SearchArea/>
                 <EuiPage>
-                    {/* <EuiPageSideBar style={{backgroundColor:'green'}}>侧边检索栏</EuiPageSideBar> */}
+                    <EuiPageSideBar>
+                    <EuiCollapsibleNavGroup
+                        background="light"
+                        title="专利分类"
+                        isCollapsible={true}
+                        iconType="logoElastic"
+                        initialIsOpen={true}
+                        >
+                        <EuiFacetGroup style={{ maxWidth: 200 }}>
+                            <EuiFacetButton quantity={6}>物理</EuiFacetButton>
+                            <EuiFacetButton quantity={6}>化学</EuiFacetButton>
+                        </EuiFacetGroup>
+                    </EuiCollapsibleNavGroup>
+                    <EuiCollapsibleNavGroup
+                        background="light"
+                        title="发明人"
+                        isCollapsible={true}
+                        iconType="logoElastic"
+                        initialIsOpen={true}
+                        >
+                        <EuiFacetGroup style={{ maxWidth: 200 }}>
+                            <EuiFacetButton quantity={6}>张三</EuiFacetButton>
+                            <EuiFacetButton quantity={6}>李四</EuiFacetButton>
+                            <EuiFacetButton quantity={6}>王五</EuiFacetButton>
+                        </EuiFacetGroup>
+                    </EuiCollapsibleNavGroup>
+                        
+                    </EuiPageSideBar>
                     <EuiPageBody>
                     {/* <EuiPageHeader
                         iconType="logoElastic"
