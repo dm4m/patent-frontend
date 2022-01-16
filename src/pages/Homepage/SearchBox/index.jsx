@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
 import axios from 'axios'
 import './index.css'
-
+import { ipList } from '../../../configs/ipConfig'
 
 class SearchBox extends Component {
 
@@ -12,7 +12,7 @@ class SearchBox extends Component {
     searchAndJump = () =>{
         const query = this.inputRef.current.state.value 
         console.log(query)
-        axios.get(`http://10.1.0.88:8080/patent`, {
+        axios.get(ipList.BACKEND_SOCKET + `/patent`, {
             params: {
                         'query': query,
                         'cur_page': 0,

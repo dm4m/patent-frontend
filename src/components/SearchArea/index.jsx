@@ -3,6 +3,7 @@ import axios from 'axios'
 import { EuiFieldSearch, EuiButton} from '@elastic/eui'
 import './index.css' 
 import { Link, withRouter } from 'react-router-dom'
+import { ipList } from '../../configs/ipConfig'
 class SearchArea extends Component {
 
     inputRef = React.createRef()
@@ -10,7 +11,7 @@ class SearchArea extends Component {
     searchAndJump = () =>{
         const query = this.inputRef.current.state.value 
         console.log(query)
-        axios.get(`http://10.1.0.88:8080/patent`, {
+        axios.get(ipList.BACKEND_SOCKET + `/patent`, {
             params: {
                         'query': query,
                         'cur_page': 0,

@@ -20,6 +20,7 @@ import {
   } from '@elastic/eui';
 import SearchArea from '../../components/SearchArea';
 import ResultsList from './ResultsList';
+import { ipList } from '../../configs/ipConfig';
 
 const { Panel } = Collapse;
 
@@ -33,7 +34,7 @@ export default class SearchResults extends Component {
         console.log(query)
         console.log(cur_page)
         console.log(per_page)
-        axios.get(`http://10.1.0.88:8080/patent`, {
+        axios.get(ipList.BACKEND_SOCKET + `/patent`, {
             params: {
                         'query': query,
                         'cur_page': cur_page,
