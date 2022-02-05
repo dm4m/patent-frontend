@@ -5,6 +5,8 @@ import './App.css'
 import Homepage from './pages/Homepage'
 import SearchResults from './pages/SearchResults'
 import DetailPage from './pages/DetailPage'
+import '@elastic/eui/dist/eui_theme_light.css';
+
 
 export default class App extends Component {
     render() {

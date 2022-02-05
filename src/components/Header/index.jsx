@@ -1,4 +1,4 @@
-import '@elastic/eui/dist/eui_theme_amsterdam_light.css';
+// import '@elastic/eui/dist/eui_theme_amsterdam_light.css';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -23,19 +23,19 @@ export default function Header() {
       <EuiHeaderSectionItem>
         <EuiHeaderLinks aria-label="App navigation links example">
           
-            {/* <Link to="/homepage">
+            <Link to="/homepage">
               <EuiHeaderLink>首页</EuiHeaderLink>
-            </Link> */}
-        
-            {/* <Link to="/searchResults">
+            </Link> 
+            
+            <Link to="/searchResults">
               <EuiHeaderLink>结果页</EuiHeaderLink>
             </Link>
 
             <Link to="/detailPage">
               <EuiHeaderLink>详情页</EuiHeaderLink>
-            </Link> */}
+            </Link>
 
-          {/* <EuiHeaderLink>历史记录</EuiHeaderLink> */}
+            <EuiHeaderLink>历史记录</EuiHeaderLink>
         </EuiHeaderLinks>
       </EuiHeaderSectionItem>
     </EuiHeader>

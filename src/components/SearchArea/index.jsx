@@ -4,6 +4,7 @@ import { EuiFieldSearch, EuiButton} from '@elastic/eui'
 import './index.css' 
 import { Link, withRouter } from 'react-router-dom'
 import { ipList } from '../../configs/ipConfig'
+
 class SearchArea extends Component {
 
     inputRef = React.createRef()

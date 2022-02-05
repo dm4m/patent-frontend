@@ -1,5 +1,12 @@
 .search-box{
+    width: 600px;
     display: flex;
     justify-content: center;
     height: auto;
+    margin: 0 auto;
 }
+
+/* .euiSelectableList__list{
+    overflow: hidden;
+    background-color: aqua;
+} */
