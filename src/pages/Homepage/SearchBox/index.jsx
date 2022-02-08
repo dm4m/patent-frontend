@@ -12,16 +12,58 @@ class SearchBox extends Component {
         options : [
             {
               value: 'title',
-              inputDisplay: '标题'
+              inputDisplay: (
+                <span className='option_list_item'>标题</span>
+                )
             },
             {
               value: 'abstract',
-              inputDisplay: '摘要'
+              inputDisplay: (
+                <span className='option_list_item'>摘要</span>
+                )
             },
             {
               value: 'signory_item',
-              inputDisplay: '权利要求'
-            }
+              inputDisplay: (
+                <span className='option_list_item'>主权项</span>
+                )
+            },
+            {
+              value: 'patentCode',
+              inputDisplay: (
+                <span className='option_list_item'>申请号/专利号</span>
+                )
+            },
+            {
+              value: 'publicationNo',
+              inputDisplay: (
+                <span className='option_list_item'>公开号/公告号</span>
+                )
+            },
+            {
+              value: 'applicant',
+              inputDisplay: (
+                <span className='option_list_item'>申请人/专利权人</span>
+                )
+            },
+            {
+              value: 'inventor',
+              inputDisplay: (
+                <span className='option_list_item'>发明人</span>
+                )
+            },
+            {
+              value: 'main_class',
+              inputDisplay: (
+                <span className='option_list_item'>主分类号</span>
+                )
+            },
+            {
+              value: 'class',
+                inputDisplay: (
+                <span className='option_list_item'>分类号</span>
+                )
+            },
           ],
         currentOption : 'title'
     }

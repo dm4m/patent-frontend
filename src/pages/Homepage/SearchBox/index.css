@@ -6,6 +6,13 @@
     margin: 0 auto;
 }
 
+.euiSuperSelect__listbox {  
+    min-width: 175px;
+}
+
+.option_list_item {
+    font-size: 14px;
+}
 /* .euiSelectableList__list{
     overflow: hidden;
     background-color: aqua;
