@@ -122,6 +122,7 @@ class SearchBox extends Component {
         return (
             <div className='search-box'>
                 <EuiFieldSearch 
+                    className='fieldSelect'
                     fullWidth={true}
                     ref={this.inputRef} 
                     placeholder='Search this'
@@ -143,7 +144,7 @@ class SearchBox extends Component {
                         // </Link>
                     }
                     prepend={
-                        <EuiSuperSelect
+                        <EuiSuperSelect className='fieldSelect'
                             options={this.state.options}
                             valueOfSelected={this.state.currentOption}
                             onChange={(value) => this.setOption(value)}
