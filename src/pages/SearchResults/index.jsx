@@ -13,6 +13,7 @@ import {
     EuiPagination,
   } from '@elastic/eui';
 import SearchArea from '../../components/SearchArea';
+import SearchBox from '../../components/SearchBox';
 import ResultsList from './ResultsList';
 import { ipList } from '../../configs/ipConfig';
 import './index.css'
@@ -55,7 +56,10 @@ export default class SearchResults extends Component {
         const {curPage, totalHits, pageNum, perPage, results, query, field} = response
         return (
             <div>
-                <SearchArea/>
+                {/* <SearchArea/> */}
+                <div className='search-area'>
+                    <SearchBox/>
+                </div>
                 <EuiPage>
                     {/* <EuiPageSideBar>
                         <EuiCollapsibleNavGroup

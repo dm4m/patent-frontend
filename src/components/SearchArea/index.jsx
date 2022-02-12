@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 import { EuiFieldSearch, EuiButton} from '@elastic/eui'
-import './index.css' 
+// import './index.css' 
 import { Link, withRouter } from 'react-router-dom'
 import { ipList } from '../../configs/ipConfig'
 

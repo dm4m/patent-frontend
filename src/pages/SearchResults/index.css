@@ -3,3 +3,10 @@
     margin:0 auto;
     /* border:1px solid red; */
 }
+
+.search-area {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    height: auto;
+}

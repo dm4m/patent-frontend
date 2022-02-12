@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
 import axios from 'axios'
 import './index.css'
-import { ipList } from '../../../configs/ipConfig'
+import { ipList } from '../../configs/ipConfig'
 
 class SearchBox extends Component {
     state = {
