@@ -4,15 +4,12 @@ import { Collapse } from 'antd';
 import {
     EuiPage,
     EuiPageBody,
-    EuiPageContent,
-    EuiPageContentBody,
-  } from '@elastic/eui';
-  import {
     EuiFlexGroup,
     EuiFlexItem,
     EuiPagination,
+    EuiPageContent,
+    EuiPageContentBody,
   } from '@elastic/eui';
-import SearchArea from '../../components/SearchArea';
 import SearchBox from '../../components/SearchBox';
 import ResultsList from './ResultsList';
 import { ipList } from '../../configs/ipConfig';
@@ -103,18 +100,20 @@ export default class SearchResults extends Component {
                         {/* <EuiTitle></EuiTitle> */}
                         <EuiPageContentBody>
                             <ResultsList results={results}/>
-                            <EuiFlexGroup justifyContent="center" alignItems="center" className='flexGroup'> 
-                                <EuiFlexItem grow={false}>
-                                    <EuiPagination
-                                        aria-label="Centered pagination example"
-                                        pageCount={pageNum}
-                                        activePage={curPage}
-                                        onPageClick={(activePage) => {
-                                            this.searchAndJump(query, field, activePage, perPage)
-                                        }}
-                                    />
-                                </EuiFlexItem>
-                            </EuiFlexGroup>                            
+                            <div className='flexGroup'>
+                                <EuiFlexGroup justifyContent="center" alignItems="center"> 
+                                    <EuiFlexItem grow={false}>
+                                        <EuiPagination
+                                            aria-label="Centered pagination example"
+                                            pageCount={pageNum}
+                                            activePage={curPage}
+                                            onPageClick={(activePage) => {
+                                                this.searchAndJump(query, field, activePage, perPage)
+                                            }}
+                                        />
+                                    </EuiFlexItem>
+                                </EuiFlexGroup> 
+                            </div>                  
                         </EuiPageContentBody>
                     </EuiPageContent>
                     </EuiPageBody>

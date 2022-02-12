@@ -1,7 +1,11 @@
-.flexGroup {
+.flexGroup{
     display:table;
     margin:0 auto;
-    /* border:1px solid red; */
+    border:1px solid red;
+}
+
+.euiFlexGroup--gutterLarge {
+    margin: 0 auto;
 }
 
 .search-area {
