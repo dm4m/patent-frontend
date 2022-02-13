@@ -1,0 +1,6 @@
+.neural-search-box{
+    display: flex;
+    justify-content: center;
+    height: 40%;
+    margin: 0 auto;
+}

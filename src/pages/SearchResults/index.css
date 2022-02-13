@@ -4,10 +4,6 @@
     border:1px solid red;
 }
 
-.euiFlexGroup--gutterLarge {
-    margin: 0 auto;
-}
-
 .search-area {
     margin-top: 16px;
     display: flex;

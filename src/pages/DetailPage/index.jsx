@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import SearchArea from '../../components/SearchArea'
+import BasicSearchBox from '../../components/BasicSearchBox'
 import PatentInfo from './PatentInfo'
 
 export default class DetailPage extends Component {
@@ -7,7 +7,9 @@ export default class DetailPage extends Component {
     render() {
         return (
             <div>
-                <SearchArea/>
+                <div className='search-area'>
+                    <BasicSearchBox/>
+                </div>
                 <PatentInfo patent={this.props.location.state.patent}/>
             </div>
         )

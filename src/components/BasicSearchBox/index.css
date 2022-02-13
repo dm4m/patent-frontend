@@ -6,11 +6,11 @@
     margin: 0 auto;
 }
 
-.euiSuperSelect__listbox {  
+.fieldSelect .euiSuperSelect__listbox {  
     min-width: 175px;
 }
 
-.euiPanel.euiPanel--plain {
+.fieldSelect.euiPanel.euiPanel--plain {
     min-width: 175px;
 }
 

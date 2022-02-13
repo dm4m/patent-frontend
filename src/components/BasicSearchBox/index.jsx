@@ -5,7 +5,7 @@ import axios from 'axios'
 import './index.css'
 import { ipList } from '../../configs/ipConfig'
 
-class SearchBox extends Component {
+class BasicSearchBox extends Component {
     state = {
         isPopoverOpen: false,
         searchField: '标题',
@@ -122,7 +122,6 @@ class SearchBox extends Component {
         return (
             <div className='search-box'>
                 <EuiFieldSearch 
-                    className='fieldSelect'
                     fullWidth={true}
                     ref={this.inputRef} 
                     placeholder='Search this'
@@ -144,10 +143,13 @@ class SearchBox extends Component {
                         // </Link>
                     }
                     prepend={
-                        <EuiSuperSelect className='fieldSelect'
+                        <EuiSuperSelect
                             options={this.state.options}
                             valueOfSelected={this.state.currentOption}
                             onChange={(value) => this.setOption(value)}
+                            popoverProps={{
+                                panelClassName: 'fieldSelect'
+                            }}
                         />
                         // <EuiPopover
                         //     button={
@@ -174,4 +176,4 @@ class SearchBox extends Component {
     }
 }
 
-export default withRouter(SearchBox)
+export default withRouter(BasicSearchBox)

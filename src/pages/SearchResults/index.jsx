@@ -10,7 +10,7 @@ import {
     EuiPageContent,
     EuiPageContentBody,
   } from '@elastic/eui';
-import SearchBox from '../../components/SearchBox';
+import BasicSearchBox from '../../components/BasicSearchBox';
 import ResultsList from './ResultsList';
 import { ipList } from '../../configs/ipConfig';
 import './index.css'
@@ -55,7 +55,7 @@ export default class SearchResults extends Component {
             <div>
                 {/* <SearchArea/> */}
                 <div className='search-area'>
-                    <SearchBox/>
+                    <BasicSearchBox/>
                 </div>
                 <EuiPage>
                     {/* <EuiPageSideBar>
