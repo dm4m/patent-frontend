@@ -4,8 +4,15 @@ import { Link, withRouter } from 'react-router-dom'
 import axios from 'axios'
 import './index.css'
 import { ipList } from '../../configs/ipConfig'
+import { basicSearch } from '../../utils/SearchUtils'
 
 class BasicSearchBox extends Component {
+
+    constructor(props){
+        super(props)
+        this.basicSearch = basicSearch.bind(this)
+    }
+
     state = {
         isPopoverOpen: false,
         searchField: '标题',
@@ -67,9 +74,9 @@ class BasicSearchBox extends Component {
           ],
         currentOption : 'title'
     }
-
+    
     inputRef = React.createRef()
-
+    
     setOption = (op) =>{
         this.setState({currentOption : op})
     }
@@ -94,9 +101,11 @@ class BasicSearchBox extends Component {
     // }
 
     searchAndJump = () =>{
+        // const query = this.inputRef.current.state.value
+        // this.basicSearch(query, this.state.currentOption, 0, 20)
         const query = this.inputRef.current.state.value 
         console.log(query)
-        axios.get(ipList.BACKEND_SOCKET + `/patent`, {
+        axios.get(ipList.BACKEND_SOCKET + `/patent/basicSearch`, {
             params: {
                         'query': query,
                         'field': this.state.currentOption,
@@ -136,7 +145,8 @@ class BasicSearchBox extends Component {
                     append={
                         // <Link to='/searchResults' >
                             <EuiButton  
-                                onClick={this.searchAndJump} 
+                                onClick={() => {this.basicSearch(this.inputRef.current.state.value, this.state.currentOption, 0, 20)}} 
+                                // onClick={this.searchAndJump}
                                 fill={true} 
                                 children='搜索'
                             />

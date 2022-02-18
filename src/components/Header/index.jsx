@@ -45,6 +45,8 @@ class Header extends Component {
       this.state.currentOption = 'advanced_search'
     }else if(pathname == '/neuralSearch'){
       this.state.currentOption = 'neural_search'
+    }else{
+      this.state.currentOption = 'basic_search'
     }
   
   }

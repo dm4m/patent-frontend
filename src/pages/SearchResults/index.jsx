@@ -12,6 +12,7 @@ import {
   } from '@elastic/eui';
 import BasicSearchBox from '../../components/BasicSearchBox';
 import ResultsList from './ResultsList';
+import { basicSearch } from '../../utils/SearchUtils';
 import { ipList } from '../../configs/ipConfig';
 import './index.css'
 
@@ -23,30 +24,35 @@ function callback(key) {
 
 export default class SearchResults extends Component {
 
-    searchAndJump = (query, field, cur_page, per_page) =>{
-        console.log(query)
-        console.log(cur_page)
-        console.log(per_page)
-        axios.get(ipList.BACKEND_SOCKET + `/patent`, {
-            params: {
-                        'query': query,
-                        'field': field,
-                        'cur_page': cur_page,
-                        'per_page': per_page
-                    }
-        })
-        .then(
-            response => {
-                console.log(response.data)
-                console.log(typeof(response.data))
-                // this.props.history.push(`/searchResults?query=${this.inputRef.current.state.value}
-                //                                             response=${response.data}`)
-                this.props.history.push({pathname:'/searchResults',state:{response: response.data}})
-            },
-            error => { 
-            }
-        )
+    constructor(props){
+        super(props)
+        this.basicSearch = basicSearch.bind(this)
     }
+
+    // searchAndJump = (query, field, cur_page, per_page) =>{
+    //     console.log(query)
+    //     console.log(cur_page)
+    //     console.log(per_page)
+    //     axios.get(ipList.BACKEND_SOCKET + `/patent/basicSearch`, {
+    //         params: {
+    //                     'query': query,
+    //                     'field': field,
+    //                     'cur_page': cur_page,
+    //                     'per_page': per_page
+    //                 }
+    //     })
+    //     .then(
+    //         response => {
+    //             console.log(response.data)
+    //             console.log(typeof(response.data))
+    //             // this.props.history.push(`/searchResults?query=${this.inputRef.current.state.value}
+    //             //                                             response=${response.data}`)
+    //             this.props.history.push({pathname:'/searchResults',state:{response: response.data}})
+    //         },
+    //         error => { 
+    //         }
+    //     )
+    // }
 
     render() {
         const {response} = this.props.location.state
@@ -108,7 +114,7 @@ export default class SearchResults extends Component {
                                             pageCount={pageNum}
                                             activePage={curPage}
                                             onPageClick={(activePage) => {
-                                                this.searchAndJump(query, field, activePage, perPage)
+                                                this.basicSearch(query, field, activePage, perPage)
                                             }}
                                         />
                                     </EuiFlexItem>
