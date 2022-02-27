@@ -12,7 +12,7 @@ import {
   } from '@elastic/eui';
 import BasicSearchBox from '../../components/BasicSearchBox';
 import ResultsList from './ResultsList';
-import { basicSearch } from '../../utils/SearchUtils';
+import { basicSearch, neuralSearch } from '../../utils/SearchUtils';
 import { ipList } from '../../configs/ipConfig';
 import './index.css'
 
@@ -56,7 +56,32 @@ export default class SearchResults extends Component {
 
     render() {
         const {response} = this.props.location.state
-        const {curPage, totalHits, pageNum, perPage, results, query, field} = response
+        const {curPage, totalHits, pageNum, perPage, results, query, field, searchType} = response
+        let pageArea;
+        if(searchType == "basic"){
+            pageArea = <div className='flexGroup'>
+            <EuiFlexGroup justifyContent="center" alignItems="center"> 
+                {
+                    <EuiFlexItem grow={false}>
+                    <EuiPagination
+                        aria-label="Centered pagination example"
+                        pageCount={pageNum}
+                        activePage={curPage}
+                        onPageClick={(activePage) => {
+                            if(searchType == "basic"){
+                                this.basicSearch(query, field, activePage, perPage)
+                            }else if(searchType == "neural"){
+                                // this.neuralSearch(query, activePage, perPage)
+                                console.log("暂时不支持neuralSearch分页")
+                            }
+                            
+                        }}
+                    />
+                </EuiFlexItem>
+                }
+            </EuiFlexGroup> 
+                        </div> 
+        }
         return (
             <div>
                 {/* <SearchArea/> */}
@@ -106,20 +131,29 @@ export default class SearchResults extends Component {
                         {/* <EuiTitle></EuiTitle> */}
                         <EuiPageContentBody>
                             <ResultsList results={results}/>
-                            <div className='flexGroup'>
+                                {pageArea}
+                            {/* <div className='flexGroup'>
                                 <EuiFlexGroup justifyContent="center" alignItems="center"> 
-                                    <EuiFlexItem grow={false}>
+                                    {
+                                        <EuiFlexItem grow={false}>
                                         <EuiPagination
                                             aria-label="Centered pagination example"
                                             pageCount={pageNum}
                                             activePage={curPage}
                                             onPageClick={(activePage) => {
-                                                this.basicSearch(query, field, activePage, perPage)
+                                                if(searchType == "basic"){
+                                                    this.basicSearch(query, field, activePage, perPage)
+                                                }else if(searchType == "neural"){
+                                                    // this.neuralSearch(query, activePage, perPage)
+                                                    console.log("暂时不支持neuralSearch分页")
+                                                }
+                                                
                                             }}
                                         />
                                     </EuiFlexItem>
+                                    }
                                 </EuiFlexGroup> 
-                            </div>                  
+                            </div>                   */}
                         </EuiPageContentBody>
                     </EuiPageContent>
                     </EuiPageBody>

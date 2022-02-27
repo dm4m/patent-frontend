@@ -23,12 +23,12 @@ class Header extends Component {
               <span>简单检索</span>
               )
           },
-          {
-            value: 'advanced_search',
-            inputDisplay: (
-              <span>高级检索</span>
-              )
-          },
+          // {
+          //   value: 'advanced_search',
+          //   inputDisplay: (
+          //     <span>高级检索</span>
+          //     )
+          // },
           {
             value: 'neural_search',
             inputDisplay: (
@@ -51,8 +51,11 @@ class Header extends Component {
   
   }
 
+  setCurrentOp = (op) => {
+    this.setState({currentOption: op})
+  }
+
   changeSearchType = (op) =>{
-    
     if(op != this.state.currentOption){
       this.setState({currentOption : op})
       if(op == 'basic_search'){
@@ -72,7 +75,7 @@ class Header extends Component {
         <EuiHeaderSection side='left'>
           <EuiHeaderSectionItem border="right">
             <EuiCustomLink to='/basicSearch'>
-              <EuiHeaderLogo iconType='\images\bit_logo.png' >专利智能检索</EuiHeaderLogo>
+              <EuiHeaderLogo onClick={()=>this.setCurrentOp('basic_search')} iconType='\images\bit_logo.png' >专利智能检索</EuiHeaderLogo>
             </EuiCustomLink>
           </EuiHeaderSectionItem>
         </EuiHeaderSection>
