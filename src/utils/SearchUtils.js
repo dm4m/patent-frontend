@@ -21,10 +21,11 @@ export function basicSearch(query, field, cur_page, per_page){
     )
 }
 
-export function neuralSearch(query, cur_page, per_page){
+export function neuralSearch(query, field, cur_page, per_page){
     axios.get(ipList.BACKEND_SOCKET + `/patent/neuralSearch`, {
         params: {
                     'query': query,
+                    'field': field,
                     'cur_page': cur_page,
                     'per_page': per_page
                 }
