@@ -5,6 +5,7 @@ import { EuiFieldSearch, EuiButton} from '@elastic/eui'
 import { Link, withRouter } from 'react-router-dom'
 import { ipList } from '../../configs/ipConfig'
 
+// 早期搜索栏组件，当前以被BasicSearchBox废弃
 class SearchArea extends Component {
 
     inputRef = React.createRef()

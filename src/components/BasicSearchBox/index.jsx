@@ -80,54 +80,9 @@ class BasicSearchBox extends Component {
     setOption = (op) =>{
         this.setState({currentOption : op})
     }
-    // setOptions = (newOptions) =>{
-    //     this.setState({options: newOptions})
-    // }
-
-    // setIsPopoverOpen = (flag) =>{
-    //     this.setState({isPopoverOpen: flag})
-    // }
-
-    // onPopoverButtonClick = () =>{
-    //     this.setIsPopoverOpen(!this.state.isPopoverOpen)
-    // }
-    
-    // setSearchField = (field) =>{
-    //     this.setState({searchField: field})
-    // }
-
-    // closePopover = () => {
-    //     this.setIsPopoverOpen(false);
-    // }
-
-    searchAndJump = () =>{
-        // const query = this.inputRef.current.state.value
-        // this.basicSearch(query, this.state.currentOption, 0, 20)
-        const query = this.inputRef.current.state.value 
-        console.log(query)
-        axios.get(ipList.BACKEND_SOCKET + `/patent/basicSearch`, {
-            params: {
-                        'query': query,
-                        'field': this.state.currentOption,
-                        'cur_page': 0,
-                        'per_page': 20
-                    }
-        })
-        .then(
-            response => {
-                console.log(response.data)
-                console.log(typeof(response.data))
-                console.log(this.inputRef.current.state.value)
-                // this.props.history.push(`/searchResults?query=${this.inputRef.current.state.value}
-                //                                             response=${response.data}`)
-                this.props.history.push({pathname:'/searchResults',state:{response: response.data}})
-            },
-            error => { 
-            }
-        )
-    }
 
     render() {
+
         return (
             <div className='search-box'>
                 <EuiFieldSearch 
@@ -137,7 +92,7 @@ class BasicSearchBox extends Component {
                     onKeyDown={
                         (e)=>{
                             if(e.key == 'Enter'){
-                                this.searchAndJump()
+                                this.basicSearch(this.inputRef.current.state.value, this.state.currentOption, 0, 20)
                             }
                         }
                     }
@@ -146,7 +101,6 @@ class BasicSearchBox extends Component {
                         // <Link to='/searchResults' >
                             <EuiButton  
                                 onClick={() => {this.basicSearch(this.inputRef.current.state.value, this.state.currentOption, 0, 20)}} 
-                                // onClick={this.searchAndJump}
                                 fill={true} 
                                 children='搜索'
                             />
@@ -161,24 +115,6 @@ class BasicSearchBox extends Component {
                                 panelClassName: 'fieldSelect'
                             }}
                         />
-                        // <EuiPopover
-                        //     button={
-                        //         <EuiButton iconType="arrowDown" iconSide="right" 
-                        //             onClick={this.onPopoverButtonClick}>
-                        //             {this.state.searchField}
-                        //         </EuiButton>
-                        //     }
-                        //     isOpen = {this.state.isPopoverOpen}
-                        //     closePopover={this.closePopover}>
-                        //     <EuiSelectable
-                        //         style={{width: 200, overflow: 'hidden'}}
-                        //         singleSelection={true}
-                        //         options={this.state.options}
-                        //         onChange={(newOptions) => this.setOptions(newOptions)}
-                        //         >
-                        //             {(list) => list}
-                        //     </EuiSelectable>
-                        // </EuiPopover>
                     }
                 />
             </div>

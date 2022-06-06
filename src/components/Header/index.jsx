@@ -23,16 +23,16 @@ class Header extends Component {
               <span>简单检索</span>
               )
           },
-          // {
-          //   value: 'advanced_search',
-          //   inputDisplay: (
-          //     <span>高级检索</span>
-          //     )
-          // },
+          {
+            value: 'advanced_search',
+            inputDisplay: (
+              <span>高级检索</span>
+              )
+          },
           {
             value: 'neural_search',
             inputDisplay: (
-              <span>智能检索</span>
+              <span>语义检索</span>
               )
           }
         ],
@@ -81,30 +81,17 @@ class Header extends Component {
         </EuiHeaderSection>
         <EuiHeaderSection side='right'>
           <EuiHeaderSectionItem border="right">
-            <EuiSuperSelect
-              options={this.state.options}
-              valueOfSelected={this.state.currentOption}
-              onChange={(value) => this.changeSearchType(value)}
-            />
+            <div style={{
+              width: "8em"
+            }}>
+              <EuiSuperSelect
+                options={this.state.options}
+                valueOfSelected={this.state.currentOption}
+                onChange={(value) => this.changeSearchType(value)}
+              />
+            </div>
           </EuiHeaderSectionItem>
         </EuiHeaderSection>
-        {/* <EuiHeaderSectionItem>
-          <EuiHeaderLinks aria-label="App navigation links example"> */}
-              {/* <Link to="/homepage">
-                <EuiHeaderLink>首页</EuiHeaderLink>
-              </Link> */}
-          
-              {/* <Link to="/searchResults">
-                <EuiHeaderLink>结果页</EuiHeaderLink>
-              </Link>
-  
-              <Link to="/detailPage">
-                <EuiHeaderLink>详情页</EuiHeaderLink>
-              </Link> */}
-  
-            {/* <EuiHeaderLink>历史记录</EuiHeaderLink> */}
-          {/* </EuiHeaderLinks>
-        </EuiHeaderSectionItem> */}
       </EuiHeader>
       </>
     );

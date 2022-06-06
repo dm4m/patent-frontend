@@ -1,0 +1,9 @@
+.advanced-search-box{
+    width: 60%;
+    height: auto;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    /* background-color: aqua; */
+}
