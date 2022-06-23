@@ -1,6 +1,7 @@
 import { 
   EuiFieldText,
-  EuiSuperSelect
+  EuiSuperSelect,
+  EuiButton
 }
 from '@elastic/eui'
 import React, { Component } from 'react'
@@ -89,7 +90,7 @@ class AdvancedSearchRow extends Component {
           )
       }
     ]
-}
+  }
 
 setFieldOption = (op) =>{
     this.setState({currentFieldOption : op})
@@ -98,6 +99,10 @@ setFieldOption = (op) =>{
 setLogicOption = (op) =>{
   this.setState({currentLogicOption : op})
 }
+
+  deleteSelf = () => {
+    this.props.deleteCondition(this.props.id)
+  }
 
     render() {
         return (
@@ -135,6 +140,14 @@ setLogicOption = (op) =>{
                 margin: '0 5px'
               }}>
                 <EuiFieldText fullWidth={true}/>
+              </div>
+              <div style={{
+                flex: '0 0 5em',
+                margin: '0 5px'
+              }}>
+                <EuiButton onClick={() => this.deleteSelf()}>
+                  删除条件
+                </EuiButton>
               </div>
             </div>
         )

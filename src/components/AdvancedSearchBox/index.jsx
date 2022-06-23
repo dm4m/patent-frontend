@@ -29,10 +29,19 @@ class AdvancedSearchBox extends Component {
       })
     }
 
+    deleteCondition = (id) => {
+      var tmpIds = this.state.ids;
+      // s.splice(s.indexOf('dd'), 1)、
+      console.log("删除" + id)
+      tmpIds.splice(tmpIds.indexOf(id), 1)
+      this.setState({
+        ids: tmpIds
+      })
+    }
 
     render() {
       let searchRowList = this.state.ids.map((id) => 
-        <AdvancedSearchRow/>
+        <AdvancedSearchRow key={id} id={id} deleteCondition={this.deleteCondition}/>
       )
         return (
             <div className='advanced-search-box'>
