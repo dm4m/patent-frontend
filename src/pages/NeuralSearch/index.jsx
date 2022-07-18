@@ -53,7 +53,7 @@ export default class NeuralSearch extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <Title/>
+                <Title title='语义检索'/>
                 {/* 高度由子元素撑开 */}
                 <div style={{ height: 'auto',  margin: '0 auto'}}>
                     {/* 元素定位 */}

@@ -7,7 +7,7 @@ export default class BasicSearch extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <Title/>
+                <Title title='简单检索'/>
                 <BasicSearchBox/>     
             </div>
         )

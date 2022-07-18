@@ -8,7 +8,7 @@ export default class AdvancedSearch extends Component {
     render() {
         return (
             <div className='advanced_search'>
-                <Title/>
+                <Title title='高级检索'/>
                 <AdvancedSearchBox/>     
             </div>
         )

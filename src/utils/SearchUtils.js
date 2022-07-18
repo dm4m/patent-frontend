@@ -38,3 +38,41 @@ export function neuralSearch(query, field, cur_page, per_page){
         }
     )
 }
+
+export function advancedSearch(conditions, cur_page, per_page){
+    conditions = Object.fromEntries(conditions)
+    axios.post(ipList.BACKEND_SOCKET + '/patent/advancedSearch', 
+    {
+        conditions,
+        cur_page,
+        per_page
+    },
+    {
+        headers: {'Context-Type': 'application/json'}
+    }
+    )
+    .then(
+        response => {
+            this.props.history.push({pathname:'/searchResults',state:{response: response.data}})
+        },
+        error => { 
+        }
+    )      
+}
+
+export function proSearch(expression, cur_page, per_page){
+    axios.get(ipList.BACKEND_SOCKET + `/patent/proSearch`, {
+        params: {
+                    'expression': expression,
+                    'cur_page': cur_page,
+                    'per_page': per_page
+                }
+    })
+    .then(
+        response => {
+            this.props.history.push({pathname:'/searchResults',state:{response: response.data}})
+        },
+        error => { 
+        }
+    )
+}
