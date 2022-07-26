@@ -6,7 +6,7 @@ import {
     EuiFlexItem,
     EuiSuperSelect
  } from '@elastic/eui';
-import BasicSearchBox from '../../components/BasicSearchBox'
+ 
 import Title from '../../components/Title';
 import './index.css'
 import { neuralSearch } from '../../utils/SearchUtils';
@@ -35,7 +35,7 @@ export default class NeuralSearch extends Component {
                 )
             },
             {
-              value: 'signory_item',
+              value: 'signoryItem',
               inputDisplay: (
                 <span className='option_list_item'>主权项</span>
                 )

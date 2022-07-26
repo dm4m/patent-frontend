@@ -17,60 +17,72 @@ class AdvancedSearchRow extends Component {
     currentFieldOption : 'title',
     currentMatchOption : 'exact',
     fieldOptions : [
-        {
-          value: 'title',
-          inputDisplay: (
-            <span className='option_list_item'>标题</span>
-            )
-        },
-        {
-          value: 'abstract',
-          inputDisplay: (
-            <span className='option_list_item'>摘要</span>
-            )
-        },
-        {
-          value: 'signory_item',
-          inputDisplay: (
-            <span className='option_list_item'>主权项</span>
-            )
-        },
-        {
-          value: 'patentCode',
-          inputDisplay: (
-            <span className='option_list_item'>申请号/专利号</span>
-            )
-        },
-        {
-          value: 'publicationNo',
-          inputDisplay: (
-            <span className='option_list_item'>公开号/公告号</span>
-            )
-        },
-        {
-          value: 'applicant',
-          inputDisplay: (
-            <span className='option_list_item'>申请人/专利权人</span>
-            )
-        },
-        {
+      {
+        value: 'title',
+        inputDisplay: (
+          <span className='option_list_item'>标题</span>
+          )
+      },
+      {
+        value: 'abstractText',
+        inputDisplay: (
+          <span className='option_list_item'>摘要</span>
+          )
+      },
+      {
+        value: 'signoryItem',
+        inputDisplay: (
+          <span className='option_list_item'>主权项</span>
+          )
+      },
+      {
+        value: 'patentCode',
+        inputDisplay: (
+          <span className='option_list_item'>申请号/专利号</span>
+          )
+      },
+      {
+        value: 'publicationNo',
+        inputDisplay: (
+          <span className='option_list_item'>公开号/公告号</span>
+          )
+      },
+      {
+        value: 'applicant',
+        inputDisplay: (
+          <span className='option_list_item'>申请人/专利权人</span>
+          )
+      },
+      {
           value: 'inventor',
           inputDisplay: (
-            <span className='option_list_item'>发明人</span>
-            )
-        },
-        {
-          value: 'main_class',
+          <span className='option_list_item'>发明人</span>
+          )
+      },
+      {
+          value: 'agent',
           inputDisplay: (
-            <span className='option_list_item'>主分类号</span>
+            <span className='option_list_item'>代理人</span>
             )
-        },
-        {
-          value: 'class',
-            inputDisplay: (
-            <span className='option_list_item'>分类号</span>
+      },
+      {
+          value: 'agency',
+          inputDisplay: (
+            <span className='option_list_item'>代理机构</span>
             )
-        },
+      },  
+      {
+        value: 'mainClassNo',
+        inputDisplay: (
+          <span className='option_list_item'>主分类号</span>
+          )
+      },
+      {
+        value: 'classNo',
+          inputDisplay: (
+          <span className='option_list_item'>分类号</span>
+          )
+      },
     ],
     logicOptions : [
       {

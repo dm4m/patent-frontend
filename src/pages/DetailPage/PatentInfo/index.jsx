@@ -4,25 +4,8 @@ import { EuiButton, EuiPageTemplate, EuiEmptyPrompt } from '@elastic/eui';
 import './index.css'
 
 export default class PatentInfo extends Component {
-    patent_data = {
-        title: '一种基于变异的FPGA逻辑综合工具模糊测试方法',
-        abstract: '',
-        type: '',
-        applicationDate: '',
-        publicationNo: '',
-        publicationDate: '',
-        mainClassCode: '',
-        applicant: '',
-        inventor: '',
-        applicantAddress: '',
-        agency: '',
-        agent: '',
-        applicantArea: '',
-        signory: ''
-    }
     render() {
         const {patent} = this.props
-        
         return (
             <div className='wrapper'>
                 <div className='main'>
