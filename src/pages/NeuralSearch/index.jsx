@@ -7,7 +7,7 @@ import {
     EuiSuperSelect
  } from '@elastic/eui';
 import BasicSearchBox from '../../components/BasicSearchBox'
-import Title from '../../components/Title';
+import SearchTitle from '../../components/SearchTitle';
 import './index.css'
 import { neuralSearch } from '../../utils/SearchUtils';
 
@@ -53,7 +53,7 @@ export default class NeuralSearch extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <Title/>
+                <SearchTitle/>
                 {/* 高度由子元素撑开 */}
                 <div style={{ height: 'auto',  margin: '0 auto'}}>
                     {/* 元素定位 */}

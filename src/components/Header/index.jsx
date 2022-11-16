@@ -6,7 +6,17 @@ import {
   EuiHeaderSectionItem,
   EuiHeaderLogo,
   EuiSuperSelect,
-  EuiHeaderSectionItemButton
+  EuiHeaderLinks,
+  EuiHeaderLink,
+  EuiHeaderSectionItemButton,
+  EuiPopover,
+  EuiContextMenuPanel,
+  EuiButton,
+  EuiButtonEmpty,
+  EuiCollapsibleNavGroup,
+  EuiPinnableListGroup,
+  EuiListGroupItem,
+  EuiListGroup
 } from '@elastic/eui';
 import EuiCustomLink from '../../router/EuiCustomLink';
 import { Component } from 'react';
@@ -36,7 +46,9 @@ class Header extends Component {
               )
           }
         ],
-
+      isPopoverOpen : false,
+      isOnButton: false,
+      isOnPopover: false
     }
     const {pathname} = this.props.location
     if(pathname == '/basicSearch'){
@@ -55,41 +67,102 @@ class Header extends Component {
     this.setState({currentOption: op})
   }
 
-  changeSearchType = (op) =>{
-    if(op != this.state.currentOption){
-      this.setState({currentOption : op})
-      if(op == 'basic_search'){
-        this.props.history.push({pathname:'/basicSearch'})
-      }else if(op == 'advanced_search'){
-        this.props.history.push({pathname:'/advancedSearch'})
-      }else if(op == 'neural_search'){
-        this.props.history.push({pathname:'/neuralSearch'})
-      }
-    }
-  }
+  buttonOnMouseOver = () => {
+    this.setState({
+      isPopoverOpen: true,
+      isOnButton: true,
+    }, ()=>{
+      // console.log("isPopOpen" + this.state.isPopoverOpen)
+    });
+  };
+
+  popOnMouseOver = () => {
+    this.setState({
+      isPopoverOpen: true,
+      isOnPopover: true,
+    }, ()=>{
+      // console.log("isPopOpen" + this.state.isPopoverOpen)
+    });
+  };
+
+  buttonOnMouseOut = () => {
+    this.setState({
+      isOnButton : false
+    }, ()=>{
+      setTimeout(() => {
+        if(!this.state.isOnButton && !this.state.isOnPopover){
+          this.setState({
+            isPopoverOpen : false
+          },()=>{
+            // console.log("isPopOpen" + this.state.isPopoverOpen)
+          });
+        }
+      },500)
+    }); 
+  };
+
+  popOnMouseOut = () => {
+    this.setState({
+      isOnPopover : false
+    }, ()=>{
+      setTimeout(() => {
+        if(!this.state.isOnButton && !this.state.isOnPopover){
+          this.setState({
+            isPopoverOpen : false
+          },()=>{
+            // console.log("isPopOpen" + this.state.isPopoverOpen)
+          });
+        }
+      },500)
+    }); 
+  };
 
   render(){
+
+    const button = (
+      <EuiButtonEmpty
+        color='text'
+        onClick={() => {this.props.history.push({pathname:'/basicSearch'})}}
+        onMouseOver={() => this.buttonOnMouseOver()}
+        onMouseOut={() => this.buttonOnMouseOut()}
+      >
+        专利检索
+      </EuiButtonEmpty>
+    );
+
     return (
       <>
         <EuiHeader>
         <EuiHeaderSection side='left'>
           <EuiHeaderSectionItem border="right">
-            <EuiCustomLink to='/basicSearch'>
-              <EuiHeaderLogo onClick={()=>this.setCurrentOp('basic_search')} iconType='\images\bit_logo.png' >专利智能检索</EuiHeaderLogo>
+            <EuiCustomLink to='/homePage'>
+              <EuiHeaderLogo iconType='searchProfilerApp' >
+                专利预评估系统
+              </EuiHeaderLogo>
             </EuiCustomLink>
           </EuiHeaderSectionItem>
-        </EuiHeaderSection>
-        <EuiHeaderSection side='right'>
           <EuiHeaderSectionItem border="right">
-            <div style={{
-              width: "8em"
-            }}>
-              <EuiSuperSelect
-                options={this.state.options}
-                valueOfSelected={this.state.currentOption}
-                onChange={(value) => this.changeSearchType(value)}
-              />
-            </div>
+            <EuiPopover
+                button={button}
+                panelPaddingSize="s"
+                anchorPosition="downLeft"
+                isOpen={this.state.isPopoverOpen}
+              >
+              <EuiListGroup 
+                onMouseOver={() => this.popOnMouseOver()}
+                onMouseOut={() => this.popOnMouseOut()}>
+                <EuiListGroupItem onClick={() => {this.props.history.push({pathname:'/basicSearch'})}} label="简单检索" />
+                <EuiListGroupItem onClick={() => {this.props.history.push({pathname:'/advancedSearch'})}} label="高级检索" />
+                <EuiListGroupItem onClick={() => {this.props.history.push({pathname:'/neuralSearch'})}} label="语义检索"/>
+              </EuiListGroup>
+            </EuiPopover>
+          </EuiHeaderSectionItem>
+          <EuiHeaderSectionItem border="right">
+            <EuiHeaderLinks aria-label="App navigation dark theme example">
+                <EuiHeaderLink>新颖性分析</EuiHeaderLink>
+                <EuiHeaderLink>统计分析</EuiHeaderLink>
+                <EuiHeaderLink>报告生成</EuiHeaderLink>
+            </EuiHeaderLinks>
           </EuiHeaderSectionItem>
         </EuiHeaderSection>
       </EuiHeader>

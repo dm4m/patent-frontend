@@ -9,6 +9,7 @@ import DetailPage from './pages/DetailPage'
 import AdvancedSearch from './pages/AdvancedSearch';
 import '@elastic/eui/dist/eui_theme_light.css';
 import './App.css'
+import HomePage from './pages/HomePage';
 
 export default class App extends Component {
     render() {
@@ -21,8 +22,9 @@ export default class App extends Component {
                         <Route path='/searchResults' component={SearchResults}/>
                         <Route path='/detailPage' component={DetailPage}/>
                         <Route path='/advancedSearch' component={AdvancedSearch}/>      
-                        <Route path='/neuralSearch' component={NeuralSearch}/>                    
-                        <Redirect to='/basicSearch'/>
+                        <Route path='/neuralSearch' component={NeuralSearch}/>
+                        <Route path='/homePage' component={HomePage}/>                    
+                        <Redirect to='/homePage'/>
                     </Switch>
                 </div>
             </EuiProvider>

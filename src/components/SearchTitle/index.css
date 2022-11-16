@@ -1,0 +1,21 @@
+/* title */
+.title-image{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40%;
+    /* background-color: brown; */
+}
+
+.title-image h1{
+    font-size: xx-large;
+}
+
+/* .title-image img{
+    margin: 0 auto; 
+    background-color: blueviolet;
+} */
+
+
+
+
