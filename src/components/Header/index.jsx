@@ -160,6 +160,7 @@ class Header extends Component {
                 onMouseOver={() => this.popOnMouseOver()}
                 onMouseOut={() => this.popOnMouseOut()}>
                 <EuiListGroupItem onClick={() => {this.props.history.push({pathname:'/basicSearch'})}} label="简单检索" />
+                <EuiListGroupItem onClick={() => {this.props.history.push({pathname:'/proSearch'})}} label="专业检索"/>
                 <EuiListGroupItem onClick={() => {this.props.history.push({pathname:'/advancedSearch'})}} label="高级检索" />
                 <EuiListGroupItem onClick={() => {this.props.history.push({pathname:'/neuralSearch'})}} label="语义检索"/>
               </EuiListGroup>

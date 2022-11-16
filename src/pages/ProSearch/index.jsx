@@ -8,6 +8,7 @@ import BasicSearchBox from '../../components/BasicSearchBox'
 import Title from '../../components/Title';
 import './index.css'
 import { proSearch } from '../../utils/SearchUtils';
+import SearchTitle from '../../components/SearchTitle';
 
 export default class ProSearch extends Component {
 
@@ -21,7 +22,7 @@ export default class ProSearch extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <Title title='专业检索'/>
+                <SearchTitle title='专业检索'/>
                 <div className='neural-search-box'>
                     <EuiTextArea maxLength={500}
                         inputRef={this.inputRef}

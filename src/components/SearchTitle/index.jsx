@@ -5,7 +5,7 @@ export default class SearchTitle extends Component {
         return (
             <div className="title-image">
                 {/* <img src='/images/title.png'></img> */}
-                <h1>专利智能检索</h1>
+                <h1>{this.props.title}</h1>
             </div>
         )
     }
