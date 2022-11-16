@@ -1,9 +1,7 @@
 import { EuiFieldSearch, EuiButton, EuiSuperSelect, EuiHealth} from '@elastic/eui'
 import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
-import axios from 'axios'
 import './index.css'
-import { ipList } from '../../configs/ipConfig'
 import { basicSearch } from '../../utils/SearchUtils'
 
 class BasicSearchBox extends Component {
@@ -24,13 +22,13 @@ class BasicSearchBox extends Component {
                 )
             },
             {
-              value: 'abstract',
+              value: 'abstractText',
               inputDisplay: (
                 <span className='option_list_item'>摘要</span>
                 )
             },
             {
-              value: 'signory_item',
+              value: 'signoryItem',
               inputDisplay: (
                 <span className='option_list_item'>主权项</span>
                 )
@@ -54,19 +52,31 @@ class BasicSearchBox extends Component {
                 )
             },
             {
-              value: 'inventor',
-              inputDisplay: (
+                value: 'inventor',
+                inputDisplay: (
                 <span className='option_list_item'>发明人</span>
                 )
             },
             {
-              value: 'main_class',
+                value: 'agent',
+                inputDisplay: (
+                  <span className='option_list_item'>代理人</span>
+                  )
+            },
+            {
+                value: 'agency',
+                inputDisplay: (
+                  <span className='option_list_item'>代理机构</span>
+                  )
+            },  
+            {
+              value: 'mainClassNo',
               inputDisplay: (
                 <span className='option_list_item'>主分类号</span>
                 )
             },
             {
-              value: 'class',
+              value: 'classNo',
                 inputDisplay: (
                 <span className='option_list_item'>分类号</span>
                 )

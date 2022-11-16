@@ -40,6 +40,12 @@ class Header extends Component {
               )
           },
           {
+            value: 'pro_search',
+            inputDisplay: (
+              <span>专业检索</span>
+              )
+          },
+          {
             value: 'neural_search',
             inputDisplay: (
               <span>语义检索</span>
@@ -55,6 +61,8 @@ class Header extends Component {
       this.state.currentOption = 'basic_search'
     }else if(pathname == '/advancedSearch'){
       this.state.currentOption = 'advanced_search'
+    }else if(pathname == '/proSearch'){
+      this.state.currentOption = '/pro_search'
     }else if(pathname == '/neuralSearch'){
       this.state.currentOption = 'neural_search'
     }else{

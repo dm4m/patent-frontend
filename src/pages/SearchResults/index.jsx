@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { Collapse } from 'antd';
 import {
     EuiPage,
     EuiPageBody,
@@ -12,11 +11,9 @@ import {
   } from '@elastic/eui';
 import BasicSearchBox from '../../components/BasicSearchBox';
 import ResultsList from './ResultsList';
-import { basicSearch, neuralSearch } from '../../utils/SearchUtils';
-import { ipList } from '../../configs/ipConfig';
+import { basicSearch, neuralSearch, proSearch } from '../../utils/SearchUtils';
 import './index.css'
 
-const { Panel } = Collapse;
 
 function callback(key) {
     console.log(key);
@@ -27,13 +24,14 @@ export default class SearchResults extends Component {
     constructor(props){
         super(props)
         this.basicSearch = basicSearch.bind(this)
+        this.proSearch = proSearch.bind(this)
     }
 
     render() {
         const {response} = this.props.location.state
         const {curPage, totalHits, pageNum, perPage, results, query, field, searchType} = response
         let pageArea;
-        if(searchType == "basic"){
+        if(searchType == "basic" || searchType == 'pro' || searchType == 'advanced'){
             pageArea = <div className='flexGroup'>
             <EuiFlexGroup justifyContent="center" alignItems="center"> 
                 {
@@ -48,6 +46,8 @@ export default class SearchResults extends Component {
                             }else if(searchType == "neural"){
                                 // this.neuralSearch(query, activePage, perPage)
                                 console.log("暂时不支持neuralSearch分页")
+                            }else if(searchType == "pro"){
+                                this.proSearch(query, activePage, perPage);
                             }
                         }}
                     />
