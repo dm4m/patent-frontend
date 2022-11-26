@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link, withRouter, useLocation} from 'react-router-dom';
-import Title from '../../components/Title'
+import Title from '../../components/Title';
 import './index.css'
 import Menu from '../../components/Menu';
 
@@ -8,7 +8,7 @@ class HomePage extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <Title/>
+                <Title title='专利预评估系统'/>
                 <Menu/>
             </div>
         )

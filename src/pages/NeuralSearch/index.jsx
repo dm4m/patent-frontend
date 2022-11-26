@@ -2,15 +2,11 @@ import React, { Component } from 'react'
 import { 
     EuiButton,
     EuiTextArea,
-    EuiFlexGroup,
-    EuiFlexItem,
     EuiSuperSelect
  } from '@elastic/eui';
-import BasicSearchBox from '../../components/BasicSearchBox'
-import SearchTitle from '../../components/SearchTitle';
 import Title from '../../components/Title';
-import './index.css'
 import { neuralSearch } from '../../utils/SearchUtils';
+import './index.css'
 
 export default class NeuralSearch extends Component {
 
@@ -54,7 +50,7 @@ export default class NeuralSearch extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <SearchTitle title='语义检索'/>
+                <Title title='语义检索'/>
                 {/* 高度由子元素撑开 */}
                 <div style={{ height: 'auto',  margin: '0 auto'}}>
                     {/* 元素定位 */}

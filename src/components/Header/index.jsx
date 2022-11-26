@@ -27,29 +27,31 @@ class Header extends Component {
 
     const menuList = [
       {
-          title : '专利检索',
-          titlePath : '/basicSearch',
-          items : [
-              {name : '简单检索', path : '/basicSearch'},
-              {name : '高级检索', path : '/advancedSearch'},
-              {name : '专业检索', path : '/proSearch'},
-              {name : '语义检索', path : '/neuralSearch'}
-          ]
+        title : '专利检索',
+        titlePath : '/basicSearch',
+        items : [
+          {name : '简单检索', path : '/basicSearch'},
+          {name : '高级检索', path : '/advancedSearch'},
+          {name : '专业检索', path : '/proSearch'},
+          {name : '语义检索', path : '/neuralSearch'}
+        ]
       },
       {
-          title : '新颖性分析',
-          titlePath : '/basicSearch',
-          items : []
+        title : '新颖性分析',
+        titlePath : '/noveltyHome',
+        items : [
+          
+        ]
       },
       {
-          title : '统计分析',
-          titlePath : '/basicSearch',
-          items : []
+        title : '统计分析',
+        titlePath : '/basicSearch',
+        items : []
       },
       {
-          title : '报告生成',
-          titlePath : '/basicSearch',
-          items : []
+        title : '报告生成',
+        titlePath : '/basicSearch',
+        items : []
       },
   ]
 

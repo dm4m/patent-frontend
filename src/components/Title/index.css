@@ -1,13 +1,14 @@
 /* title */
-.title-image{
+.title{
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 40%;
     /* background-color: brown; */
 }
 
-.title-image h1{
+.title h1{
     font-size: xx-large;
 }
 

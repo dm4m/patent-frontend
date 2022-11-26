@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
-import BasicSearchBox from '../../components/BasicSearchBox'
-import SearchTitle from '../../components/SearchTitle'
 import AdvancedSearchBox from '../../components/AdvancedSearchBox'
+import Title from '../../components/Title'
 import './index.css'
 
 export default class AdvancedSearch extends Component {
     render() {
         return (
             <div className='advanced_search'>
-                <SearchTitle title='高级检索'/>
+                <Title title='高级检索'/>
                 <AdvancedSearchBox/>     
             </div>
         )
