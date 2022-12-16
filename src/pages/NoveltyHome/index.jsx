@@ -33,7 +33,6 @@ export default class NoveltyHome extends Component {
             }else{
                 return;
             }
-            
         }else{
             this.setState(
                 {
@@ -62,8 +61,10 @@ export default class NoveltyHome extends Component {
                 }
             )
                 .then(res => {
-                console.log(res.data);
-            })
+                    console.log(res.data);
+                    this.props.history.push({pathname:'/noveltyResults',state:{response: res.data}})
+                }
+            )
         };
     }
 

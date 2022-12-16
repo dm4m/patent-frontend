@@ -12,7 +12,7 @@ import ProSearch from './pages/ProSearch';
 import AdvancedSearch from './pages/AdvancedSearch';
 import HomePage from './pages/HomePage';
 import NoveltyHome from './pages/NoveltyHome';
-
+import NoveltyResults from './pages/NoveltyResults';
 
 export default class App extends Component {
     render() {
@@ -28,7 +28,8 @@ export default class App extends Component {
                         <Route path='/neuralSearch' component={NeuralSearch}/>
                         <Route path='/searchResults' component={SearchResults}/>
                         <Route path='/detailPage' component={DetailPage}/>
-                        <Route path='/noveltyHome' component={NoveltyHome}/>                    
+                        <Route path='/noveltyHome' component={NoveltyHome}/>            
+                        <Route path='/noveltyResults' component={NoveltyResults}/>           
                         <Redirect to='/homePage'/>
                     </Switch>
                 </div>

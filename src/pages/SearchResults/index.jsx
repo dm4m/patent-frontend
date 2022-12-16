@@ -6,8 +6,8 @@ import {
     EuiFlexGroup,
     EuiFlexItem,
     EuiPagination,
-    EuiPageContent,
-    EuiPageContentBody,
+    EuiPageContent_Deprecated,
+    EuiPageContentBody_Deprecated,
   } from '@elastic/eui';
 import BasicSearchBox from '../../components/BasicSearchBox';
 import ResultsList from './ResultsList';
@@ -63,14 +63,14 @@ export default class SearchResults extends Component {
                 </div>
                 <EuiPage>
                     <EuiPageBody>
-                    <EuiPageContent verticalPosition="center"
+                    <EuiPageContent_Deprecated verticalPosition="center"
                                     horizontalPosition="center"
                                     paddingSize="none">
-                        <EuiPageContentBody>
+                        <EuiPageContentBody_Deprecated>
                             <ResultsList results={results}/>
                             {pageArea}
-                        </EuiPageContentBody>
-                    </EuiPageContent>
+                        </EuiPageContentBody_Deprecated>
+                    </EuiPageContent_Deprecated>
                     </EuiPageBody>
                 </EuiPage>
             </div>

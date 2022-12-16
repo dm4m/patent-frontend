@@ -12,8 +12,6 @@ export function basicSearch(query, field, cur_page, per_page){
     })
     .then(
         response => {
-            // this.props.history.push(`/searchResults?query=${this.inputRef.current.state.value}
-            //                                             response=${response.data}`)
             this.props.history.push({pathname:'/searchResults',state:{response: response.data}})
         },
         error => { 
