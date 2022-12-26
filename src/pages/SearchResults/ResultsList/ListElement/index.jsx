@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import {ReadOutlined, DownloadOutlined} from '@ant-design/icons'
+import {EuiIcon} from '@elastic/eui'
 import './index.css'
 
 export default class ListElement extends Component {
@@ -8,7 +8,6 @@ export default class ListElement extends Component {
     render() {
         const {patent} = this.props
         return (
-            // <div className="body">
                 <div className="normal-list">
                 <div  className="title-area">
                     {/* <div  title="" className="wf-checkbox checkbox">
@@ -22,10 +21,12 @@ export default class ListElement extends Component {
                     </div> */}
                     <div  className="ajust">
                         <span  className="index">{patent.index}.</span>
+                        <span  className="title">{patent.title}</span>
                         <Link to={{
                                 pathname:'detailPage',
                                 state:{patent:patent}
                                 }}>
+                            
                             <span  className="title">{patent.title}</span>
                         </Link>
                     </div>
@@ -46,29 +47,15 @@ export default class ListElement extends Component {
                     <div >
                         <div className="t-DIB">
                             <div className="wf-list-button">
-                                {/* <i className="list-button-icon read-icon"></i> */}
-                                <ReadOutlined className="list-button-icon read-icon"/>
-                                <span>在线阅读</span>
+                                <EuiIcon type={`inspect`} />
+                                <span>进行新颖性分析</span>
                             </div>
                         </div>
-                        <div className="t-DIB">
-                            <div className="wf-list-button">
-                                {/* <i className="list-button-icon download-icon"></i> */}
-                                <DownloadOutlined className="list-button-icon download-icon"/>
-                                <span>下载</span>
-                            </div>
-                        </div>
-                        {/* <div className="wf-list-button">
-                            <i className="list-button-icon export-icon"></i>
-                            <span>导出</span>
-                        </div> */}
                     </div>
                 </div>
                 <div  className="quote"></div>
                 </div>
                 </div>
-            // </div>
-            
         )
     }
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './index.css'
+
 export default class Title extends Component {
     render() {
 
@@ -12,8 +12,18 @@ export default class Title extends Component {
         }
 
         return (
-            <div className="title">
-                <h1>{this.props.title}</h1>
+            <div 
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '40%'
+                }}
+            >
+                <h1 style={{fontSize: 'xx-large'}}>
+                    {this.props.title}
+                </h1>
                 {descBlock}
             </div>
         )

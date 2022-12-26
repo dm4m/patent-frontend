@@ -37,8 +37,10 @@ export function neuralSearch(query, field, cur_page, per_page){
     )
 }
 
-export function advancedSearch(conditions, cur_page, per_page){
-    conditions = Object.fromEntries(conditions)
+export function advancedSearch(conditions, cur_page, per_page){ 
+    if(conditions instanceof Map){
+        conditions = Object.fromEntries(conditions)
+    }
     axios.post(ipList.BACKEND_SOCKET + '/patent/advancedSearch', 
     {
         conditions,

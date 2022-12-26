@@ -1,23 +1,18 @@
 import React, { Component } from 'react'
-import axios from 'axios'
 import {
     EuiPage,
     EuiPageBody,
     EuiFlexGroup,
     EuiFlexItem,
     EuiPagination,
-    EuiPageContent_Deprecated,
-    EuiPageContentBody_Deprecated,
+    EuiPageSection,
+    EuiPanel,
   } from '@elastic/eui';
 import BasicSearchBox from '../../components/BasicSearchBox';
 import ResultsList from './ResultsList';
-import { basicSearch, neuralSearch, proSearch } from '../../utils/SearchUtils';
+import { basicSearch, neuralSearch, proSearch, advancedSearch } from '../../utils/SearchUtils';
 import './index.css'
 
-
-function callback(key) {
-    console.log(key);
-  }
 
 export default class SearchResults extends Component {
 
@@ -25,11 +20,13 @@ export default class SearchResults extends Component {
         super(props)
         this.basicSearch = basicSearch.bind(this)
         this.proSearch = proSearch.bind(this)
+        this.advancedSearch = advancedSearch.bind(this)
     }
 
     render() {
         const {response} = this.props.location.state
-        const {curPage, totalHits, pageNum, perPage, results, query, field, searchType} = response
+        const {curPage, pageNum, perPage, results, query, field, searchType, conditionMap} = response
+        console.log(conditionMap)
         let pageArea;
         if(searchType == "basic" || searchType == 'pro' || searchType == 'advanced'){
             pageArea = <div className='flexGroup'>
@@ -48,6 +45,8 @@ export default class SearchResults extends Component {
                                 console.log("暂时不支持neuralSearch分页")
                             }else if(searchType == "pro"){
                                 this.proSearch(query, activePage, perPage);
+                            }else if(searchType == "advanced"){
+                                this.advancedSearch(conditionMap, activePage, perPage);
                             }
                         }}
                     />
@@ -58,19 +57,17 @@ export default class SearchResults extends Component {
         }
         return (
             <div>
-                <div className='search-area'>
+                {/* <div className='search-area'>
                     <BasicSearchBox/>
-                </div>
+                </div> */}
                 <EuiPage>
                     <EuiPageBody>
-                    <EuiPageContent_Deprecated verticalPosition="center"
-                                    horizontalPosition="center"
-                                    paddingSize="none">
-                        <EuiPageContentBody_Deprecated>
+                    <EuiPageSection>
+                        <EuiPanel>
                             <ResultsList results={results}/>
                             {pageArea}
-                        </EuiPageContentBody_Deprecated>
-                    </EuiPageContent_Deprecated>
+                        </EuiPanel>
+                    </EuiPageSection>
                     </EuiPageBody>
                 </EuiPage>
             </div>

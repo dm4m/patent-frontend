@@ -27,26 +27,19 @@ class AdvancedSearchBox extends Component {
         ids: [...this.state.ids, this.state.nextId],
         nextId: this.state.nextId + 1
       })
-      console.log(this.state.ids.length)
     }
 
     deleteCondition = (id) => {
       var tmpIds = this.state.ids;
-      // s.splice(s.indexOf('dd'), 1)、
-      console.log("删除" + id)
       tmpIds.splice(tmpIds.indexOf(id), 1)
       this.setState({
         ids: tmpIds
       })
-      //在 conditionMap 中也删除
       this.state.conditionMap.delete(id)
-      console.log(this.state.conditionMap)
-      console.log(this.state.ids.length)
     }
 
     setCondition = (id, currentLogicOption, currentFieldOption, currentMatchOption, text) => {
       this.state.conditionMap.set(id, {currentFieldOption, currentLogicOption, currentMatchOption, text})
-      console.log(this.state.conditionMap)
     }
 
     render() {
@@ -71,7 +64,6 @@ class AdvancedSearchBox extends Component {
                 <EuiButton
                     fill
                     onClick={() => {this.advancedSearch(this.state.conditionMap, 0, 20)}}
-                    // style={{position:'absolute', right: '10%'}}
                 >
                     检索
                 </EuiButton>
