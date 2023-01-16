@@ -3,7 +3,7 @@ import {
 }from '@elastic/eui'
 import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
-import { advancedSearch } from '../../utils/SearchUtils'
+import { goSearch } from '../../utils/SearchUtils'
 import AdvancedSearchRow from '../AdvancedSearchRow'
 import './index.css'
 
@@ -11,7 +11,7 @@ class AdvancedSearchBox extends Component {
 
     constructor(props){
         super(props)
-        this.advancedSearch = advancedSearch.bind(this)
+        this.goSearch = goSearch.bind(this)
     }
     
     state = {
@@ -63,7 +63,12 @@ class AdvancedSearchBox extends Component {
                 </EuiButton>
                 <EuiButton
                     fill
-                    onClick={() => {this.advancedSearch(this.state.conditionMap, 0, 20)}}
+                    onClick={() => {
+                      this.goSearch({
+                        searchType : "advanced",
+                        conditionMap: this.state.conditionMap
+                      })
+                    }}
                 >
                     检索
                 </EuiButton>

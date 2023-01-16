@@ -30,6 +30,7 @@ class Menu extends Component {
                         <EuiCard title={"统计分析"}
                             icon={<EuiIcon size="xxl" type={`visBarVertical`} />}
                             description="对专利集进行地域分析、趋势分析..."
+                            onClick={()=>{this.props.history.push({pathname:'/analysisHome'})}}
                         />
                     </EuiFlexItem>
                     <EuiFlexItem>

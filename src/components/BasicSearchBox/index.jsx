@@ -2,13 +2,13 @@ import { EuiFieldSearch, EuiButton, EuiSuperSelect, EuiHealth} from '@elastic/eu
 import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
 import './index.css'
-import { basicSearch } from '../../utils/SearchUtils'
+import { goSearch } from '../../utils/SearchUtils'
 
 class BasicSearchBox extends Component {
 
     constructor(props){
         super(props)
-        this.basicSearch = basicSearch.bind(this)
+        this.goSearch = goSearch.bind(this)
     }
 
     state = {
@@ -102,7 +102,11 @@ class BasicSearchBox extends Component {
                     onKeyDown={
                         (e)=>{
                             if(e.key == 'Enter'){
-                                this.basicSearch(this.inputRef.current.state.value, this.state.currentOption, 0, 20)
+                                this.goSearch({
+                                    searchType : "basic",
+                                    query: this.inputRef.current.state.value,
+                                    field: this.state.currentOption
+                                })
                             }
                         }
                     }
@@ -110,7 +114,13 @@ class BasicSearchBox extends Component {
                     append={
                         // <Link to='/searchResults' >
                             <EuiButton  
-                                onClick={() => {this.basicSearch(this.inputRef.current.state.value, this.state.currentOption, 0, 20)}} 
+                                onClick={() => {
+                                    this.goSearch({
+                                        searchType : "basic",
+                                        query: this.inputRef.current.state.value,
+                                        field: this.state.currentOption
+                                    })
+                                }} 
                                 fill={true} 
                                 children='搜索'
                             />

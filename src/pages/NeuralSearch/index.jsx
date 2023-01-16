@@ -5,14 +5,14 @@ import {
     EuiSuperSelect
  } from '@elastic/eui';
 import Title from '../../components/Title';
-import { neuralSearch } from '../../utils/SearchUtils';
+import { goSearch } from '../../utils/SearchUtils';
 import './index.css'
 
 export default class NeuralSearch extends Component {
 
     constructor(props){
         super(props)
-        this.neuralSearch = neuralSearch.bind(this)
+        this.goSearch = goSearch.bind(this)
     }
 
     state = {
@@ -79,8 +79,12 @@ export default class NeuralSearch extends Component {
                 <EuiButton
                     fill
                     onClick={() => {
-                        console.log(this.inputRef)
-                        this.neuralSearch(this.inputRef.current.value, this.state.currentOption, 0, 20)}}
+                        this.goSearch({
+                            searchType : "neural",
+                            query: this.inputRef.current.value,
+                            field: this.state.currentOption
+                        })
+                    }}
                     style={{position:'absolute', right: '10%'}}
                 >
                     检索

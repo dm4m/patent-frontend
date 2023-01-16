@@ -5,13 +5,13 @@ import {
  } from '@elastic/eui';
 import Title from '../../components/Title';
 import './index.css'
-import { proSearch } from '../../utils/SearchUtils';
+import { goSearch} from '../../utils/SearchUtils';
 
 export default class ProSearch extends Component {
 
     constructor(props){
         super(props)
-        this.proSearch = proSearch.bind(this)
+        this.goSearch = goSearch.bind(this)
     }
 
     inputRef = React.createRef()
@@ -31,7 +31,11 @@ export default class ProSearch extends Component {
                 <EuiButton
                     fill
                     onClick={() => {
-                        this.proSearch(this.inputRef.current.value, 0, 20)}}
+                        this.goSearch({
+                            searchType : "pro",
+                            expression : this.inputRef.current.value
+                        })
+                    }}
                     style={{position:'absolute', right: '10%'}}
                 >
                     检索

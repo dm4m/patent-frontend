@@ -10,9 +10,11 @@ import SearchResults from './pages/SearchResults'
 import DetailPage from './pages/DetailPage'
 import ProSearch from './pages/ProSearch';
 import AdvancedSearch from './pages/AdvancedSearch';
+import UploadSearch from './pages/UploadSearch';
 import HomePage from './pages/HomePage';
 import NoveltyHome from './pages/NoveltyHome';
 import NoveltyResults from './pages/NoveltyResults';
+import AnalysisHome from './pages/AnalysisHome';
 
 export default class App extends Component {
     render() {
@@ -26,10 +28,12 @@ export default class App extends Component {
                         <Route path='/advancedSearch' component={AdvancedSearch}/>      
                         <Route path='/proSearch' component={ProSearch}/>      
                         <Route path='/neuralSearch' component={NeuralSearch}/>
+                        <Route path='/uploadSearch' component={UploadSearch}/>
                         <Route path='/searchResults' component={SearchResults}/>
                         <Route path='/detailPage' component={DetailPage}/>
                         <Route path='/noveltyHome' component={NoveltyHome}/>            
                         <Route path='/noveltyResults' component={NoveltyResults}/>           
+                        <Route path='/analysisHome' component={AnalysisHome}/>       
                         <Redirect to='/homePage'/>
                     </Switch>
                 </div>

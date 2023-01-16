@@ -33,9 +33,10 @@ class Header extends Component {
           {name : '简单检索', path : '/basicSearch'},
           {name : '高级检索', path : '/advancedSearch'},
           {name : '专业检索', path : '/proSearch'},
-          {name : '语义检索', path : '/neuralSearch'}
+          {name : '语义检索', path : '/neuralSearch'},
+          {name : '整篇检索', path : '/uploadSearch'}
         ]
-      },
+      }, 
       {
         title : '新颖性分析',
         titlePath : '/noveltyHome',
@@ -45,7 +46,7 @@ class Header extends Component {
       },
       {
         title : '统计分析',
-        titlePath : '/basicSearch',
+        titlePath : '/analysisHome',
         items : []
       },
       {
