@@ -4,8 +4,15 @@ import { EuiFilePicker, EuiButton } from '@elastic/eui'
 import Title from '../../components/Title'
 import './index.css'
 import { ipList } from '../../configs/ipConfig'
+import { goSearch } from '../../utils/SearchUtils'
+
 
 export default class UploadSearch extends Component {
+
+    constructor(props){
+        super(props)
+        this.goSearch = goSearch.bind(this)
+    }
 
     state = {
         files : [],
@@ -61,7 +68,10 @@ export default class UploadSearch extends Component {
                 }
             )
                 .then(res => {
-                    this.props.history.push({pathname:'/searchResults',state:{response: res.data}})
+                    this.goSearch({
+                        searchType : "upload",
+                        uploadres: res.data
+                    })
                 }
             )
         };

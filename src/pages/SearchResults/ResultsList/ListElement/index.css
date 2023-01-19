@@ -1,0 +1,139 @@
+.body {
+    font-family: Microsoft YaHei,SimSun!important;
+    margin: 0;
+    font-size: 14px;
+    overflow-x: visible!important;
+    min-width: 1300px;
+}
+
+.normal-list {
+    padding: 20px 10px;
+    border-bottom: 1px dotted #ccc;
+}
+
+.normal-list .title-area {
+    line-height: 30px;
+    position: relative;
+}
+
+.normal-list .title-area .checkbox {
+    line-height: 20px;
+    vertical-align: text-bottom;
+    position: absolute;
+    top: 4px;
+}
+
+.normal-list .title-area .checkbox {
+    line-height: 20px;
+    vertical-align: text-bottom;
+    position: absolute;
+    top: 4px;
+}
+
+.normal-list .title-area {
+    line-height: 30px;
+    position: relative;
+}
+
+.normal-list .title-area .ajust {
+    display: inline-block;
+    margin-left: 18px;
+}
+
+.normal-list .title-area .ajust .index {
+    font-size: 16px;
+    color: #444;
+    font-weight: 700;
+}
+
+.normal-list .title-area .ajust .title {
+    font-size: 16px;
+    color: #215da9;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.normal-list .author-area {
+    color: #666;
+    margin-left: 19px;
+    line-height: 30px;
+}
+
+.t-ML6 {
+    margin-left: 6px;
+}
+
+.normal-list .author-area .authors {
+    margin: 0 6px;
+    text-decoration: none;
+    /* color: #417dc9; */
+    /* cursor: pointer; */
+}
+
+.normal-list .abstract-area {
+    position: relative;
+    color: #666;
+    margin-left: 19px;
+    line-height: 24px;
+    max-height: 45px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.normal-list .button-area {
+    margin-left: 19px;
+    margin-top: 10px;
+}
+
+.normal-list .button-area .button-list {
+    float: left;
+}
+
+.t-DIB {
+    display: inline-block;
+}
+
+.wf-list-button {
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0 7px;
+    margin-right: 15px;
+    border: 1px solid #417dc9;
+    border-radius: 3px;
+    background: #fff;
+    color: #1b5db1;
+    cursor: pointer;
+    line-height: 25px;
+}
+
+.wf-list-button .list-button-icon, .wf-list-button .list-button-icon2 {
+    margin-right: 5px;
+    margin-bottom: 1px;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    background: "url(/images/open-book-1.png)";
+}
+
+.wf-list-button .list-button-icon {
+    background: "url(/images/open-book-1.png)";
+}
+
+.normal-list .button-area .quote {
+    float: right;
+    line-height: 27px;
+    color: #666;
+}
+
+.t-CLF:after {
+    content: ".";
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}

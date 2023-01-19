@@ -4,12 +4,27 @@ import {
     EuiPageBody,
     EuiPageSection,
     EuiPanel,
-    EuiBasicTable
-  } from '@elastic/eui';
+    EuiBasicTable,
+    EuiTitle,
+    EuiSpacer,
+    EuiFlexGroup,
+    EuiFlexItem,
+    EuiButton,
+    EuiModal,
+    EuiModalHeader,
+    EuiModalBody,
+    EuiModalFooter,
+    EuiModalHeaderTitle,
+    EuiButtonEmpty,
+    EuiFormRow,
+    EuiSuperSelect
+} from '@elastic/eui';
 import BasicSearchBox from '../../components/BasicSearchBox';
 import { Link } from 'react-router-dom'
-import { basicSearch, neuralSearch, proSearch, advancedSearch} from '../../utils/SearchUtils';
+import { basicSearch, neuralSearch, proSearch, advancedSearch, uploadSearch} from '../../utils/SearchUtils';
+import { getAnalysisCollection, insertCollectionItems } from '../../utils/DataSource';
 import './index.css'
+import { Button } from 'antd';
 
 
 export default class SearchResults extends Component {
@@ -25,7 +40,10 @@ export default class SearchResults extends Component {
         results : [],
         conditionMap : null,
         expression : "",
-        selectedItems : []
+        selectedItems : [],
+        isModalVisible : false,
+        selectedAnaCollection : null,
+        collectionList : []
     }
 
     constructor(props){
@@ -34,11 +52,12 @@ export default class SearchResults extends Component {
         this.proSearch = proSearch.bind(this)
         this.advancedSearch = advancedSearch.bind(this)
         this.neuralSearch = neuralSearch.bind(this)
+        this.uploadSearch = uploadSearch.bind(this)
     }
 
     componentDidMount(){
         const {searchArgs} = this.props.location.state
-        const {searchType, query, field, conditionMap, expression} = searchArgs
+        const {searchType, query, field, conditionMap, expression, formdata, uploadres} = searchArgs
         if(searchType == 'basic'){
             this.basicSearch(query, field, this.state.pageIndex, this.state.pageSize).then(
                 (res) => {
@@ -79,16 +98,23 @@ export default class SearchResults extends Component {
         }else if(searchType == "neural"){
             this.neuralSearch(query, field, this.state.pageIndex, this.state.pageSize).then(
                 (res) => {
-                    const {curPage, pageNum, perPage, results, query, field, searchType, conditionMap} = res
+                    const {curPage, pageNum, perPage, results, query, field, conditionMap} = res
                     this.setState({
                         searchType: searchType,
                         query: query,
-                        field: field,
+                        field: field,   
                         results : results,
                         resultsCount : pageNum * perPage,
                     })
                 }
             )
+        }else if(searchType == "upload"){
+            const {curPage, pageNum, perPage, results,} = uploadres
+            this.setState({
+                searchType : searchType,
+                results : results,
+                resultsCount : pageNum * perPage,
+            })
         }
     }
 
@@ -143,9 +169,41 @@ export default class SearchResults extends Component {
         }, () => {console.log(this.state.selectedItems)})
     }
 
+    closeModal(){
+        this.setState({
+            isModalVisible : false
+        })
+    }
+
+    openModal(){
+        this.setState({
+            isModalVisible : true
+        })
+        this.initCollectionList()
+    }
+
+    setSelectedAnaCollection = (value) => {
+        this.setState({
+            selectedAnaCollection : value
+        })
+    };
+
+    initCollectionList(){
+        getAnalysisCollection().then(
+            res => { 
+                this.setState(
+                    {
+                        collectionList : res
+                    }
+                )
+            }
+        )
+    }
+
+
     render() {
 
-        const columns = [
+        let columns = [
             {
                 field: 'index',
                 name: '序号',
@@ -195,7 +253,24 @@ export default class SearchResults extends Component {
             }
         ]
 
-        const pagination = this.state.searchType === "neural" ? null : {
+        if(this.state.searchType == "upload"){
+            columns.push(
+                {
+                    name: 'Actions',
+                    actions: [
+                        {
+                        name: 'NoveltyCompare',
+                        description: '进行新颖性对比',
+                        type: 'icon',
+                        icon: 'inspect',
+                        onClick: () => '',
+                        },
+                    ]
+                }
+            )
+        }
+
+        const pagination = (this.state.searchType === "neural" || this.state.searchType === "upload") ? null : {
             pageIndex : this.state.pageIndex,
             pageSize : this.state.pageSize,
             totalItemCount : this.state.resultsCount,
@@ -214,6 +289,86 @@ export default class SearchResults extends Component {
             initialSelected: []
         };
 
+        const renderButtons = () => {
+            if (this.state.selectedItems.length === 0) {
+                return;
+            }
+            return (
+                <div>
+                    <EuiFlexGroup>
+                        <EuiFlexItem grow={false}>
+                            <EuiButton fill onClick={() => {this.openModal()}}>
+                                加入分析集合
+                            </EuiButton>
+                        </EuiFlexItem>
+                        <EuiFlexItem grow={false}>
+                            <EuiButton fill>
+                                加入报告集合
+                            </EuiButton>
+                        </EuiFlexItem>
+                    </EuiFlexGroup>
+                    <EuiSpacer/>
+                </div>
+            );
+        };
+
+        const buttons = renderButtons()
+
+        let modal;
+
+        let  anaCollections = this.state.collectionList.map(
+            (collection) => {
+                let option = 
+                {
+                    value : collection.collection_id,
+                    inputDisplay : collection.name
+                }
+                return option
+            }
+        )
+
+        if (this.state.isModalVisible) {
+            modal = (
+                <EuiModal onClose={() => {this.closeModal()}}>
+                <EuiModalHeader>
+                    <EuiModalHeaderTitle>
+                        <h1>添加至待分析集</h1>
+                    </EuiModalHeaderTitle>
+                </EuiModalHeader>
+        
+                <EuiModalBody>
+                    <EuiFormRow label="请选择要添加至的分析集">
+                        <EuiSuperSelect
+                            options={anaCollections}
+                            valueOfSelected={this.state.selectedAnaCollection}
+                            onChange={(value) => this.setSelectedAnaCollection(value)}
+                            itemLayoutAlign="top"
+                            hasDividers
+                        />
+                    </EuiFormRow>
+                </EuiModalBody>
+        
+                <EuiModalFooter>
+                    <EuiButtonEmpty onClick={() => {this.closeModal()}}>Cancel</EuiButtonEmpty>
+        
+                    <EuiButton 
+                        type="submit" 
+                        onClick={
+                            () => {
+                                let patentIds = this.state.selectedItems.map((patent) => {
+                                    return patent.id
+                                })
+                                insertCollectionItems(patentIds ,this.state.selectedAnaCollection)
+                                this.closeModal()
+                            }
+                        } 
+                        fill>
+                     Save
+                    </EuiButton>
+                </EuiModalFooter>
+                </EuiModal>
+            );
+        }
         return (
             <div>
                 {/* <div className='search-area'>
@@ -223,6 +378,11 @@ export default class SearchResults extends Component {
                     <EuiPageBody>
                         <EuiPageSection>
                             <EuiPanel>
+                                <EuiTitle size="s">
+                                    <p>检索结果</p>
+                                </EuiTitle>
+                                <EuiSpacer />
+                                {buttons}
                                 <EuiBasicTable
                                     tableCaption="Demo of EuiBasicTable"
                                     items={this.state.results}
@@ -233,11 +393,13 @@ export default class SearchResults extends Component {
                                     onChange={this.onTableChange}
                                     isSelectable={true}
                                     selection={selection}
+                                    hasActions={true}
                                 />
                             </EuiPanel>
                         </EuiPageSection>
                     </EuiPageBody>
                 </EuiPage>
+                {modal}
             </div>
         )
     }

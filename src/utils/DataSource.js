@@ -16,6 +16,12 @@ export async function deleteCollectionById(collectionId){
                                         })
 }
 
+export async function insertAnalysisCollection(collectionName){
+    let response =  await axios.post(ipList.BACKEND_SOCKET + `/patent/analysisCollection`, {
+        'collectionName' : collectionName
+    })
+}
+
 export async function getACItemByCollectionId(collectionId, pageIndex, pageSize){
     let response =  await axios.get(ipList.BACKEND_SOCKET + `/patent/analysisCollectionItem`, {
         params: {
@@ -27,9 +33,19 @@ export async function getACItemByCollectionId(collectionId, pageIndex, pageSize)
     return response.data
 }
 
+export async function insertCollectionItems(patentIds, collectionId){
+    let response =  await axios.post(ipList.BACKEND_SOCKET + `/patent/analysisCollectionItem`, 
+                                        { 
+                                            'patentIds': patentIds,
+                                            'collectionId': collectionId
+                                        }
+                                    )
+}
+
 export async function deleteCollectionItemsByIds(itemIds){
     let response =  await axios.delete(ipList.BACKEND_SOCKET + `/patent/analysisCollectionItem`, 
-                                        {data :{itemIds}})
+                                        {data :{itemIds}}
+                                        )
 }
 
 

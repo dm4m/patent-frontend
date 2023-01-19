@@ -10,16 +10,23 @@ import {
     EuiSpacer,
     EuiText,
     EuiBasicTable,
-    EuiButton
+    EuiButton,
+    EuiModal,
+    EuiModalHeader,
+    EuiModalBody,
+    EuiModalFooter,
+    EuiModalHeaderTitle,
+    EuiButtonEmpty,
+    EuiFormRow,
+    EuiFieldText
 } from '@elastic/eui';
-import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById} from '../../utils/DataSource';
+import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection} from '../../utils/DataSource';
 
 class AnalysisCollectionBox extends Component {
 
     constructor(props){
         super()
         this.initCollectionList()
-        
     }
 
     state = {
@@ -37,7 +44,9 @@ class AnalysisCollectionBox extends Component {
         currentCollectionItemCount : 0,
         pageIndex : 0,
         pageSize : 10,
-        selectedItems : []
+        selectedItems : [],
+        isModalVisible : false,
+        newCollectionName : "",
     }
 
     setCurrentCollection(collectionId, collectionName){
@@ -106,7 +115,6 @@ class AnalysisCollectionBox extends Component {
                 )
             }
         )
-        
     }
 
     deleteCollection(collectionId){
@@ -129,6 +137,17 @@ class AnalysisCollectionBox extends Component {
         
     }
 
+    closeModal(){
+        this.setState({
+            isModalVisible : false
+        })
+    }
+
+    openModal(){
+        this.setState({
+            isModalVisible : true
+        })
+    }
     render() {
 
         const collections = this.state.collectionList.map((collection, index) => (
@@ -184,7 +203,6 @@ class AnalysisCollectionBox extends Component {
             if (this.state.selectedItems.length === 0) {
                 return;
             }
-        
             return (
                 <div>
                     <EuiButton color="danger" iconType="trash" onClick={() => {this.deleteSelectedItems()}}  >
@@ -198,6 +216,57 @@ class AnalysisCollectionBox extends Component {
         };
 
         const deleteButton = renderDeleteButton();
+
+        let modal;
+
+        if (this.state.isModalVisible) {
+            modal = (
+                <EuiModal onClose={() => {this.closeModal()}}>
+                <EuiModalHeader>
+                    <EuiModalHeaderTitle>
+                        <h1>新建待分析集</h1>
+                    </EuiModalHeaderTitle>
+                </EuiModalHeader>
+        
+                <EuiModalBody>
+                    <EuiFormRow label="请输入新建待分析集合名">
+                        <EuiFieldText
+                            placeholder="Placeholder text"
+                            value={this.state.newCollectionName}
+                            onChange={(e) => {
+                                    this.setState({
+                                        newCollectionName : e.target.value
+                                    }, () => {})
+                            }}
+                            aria-label="Use aria labels when no actual label is in use"
+                        />
+                    </EuiFormRow>
+                </EuiModalBody>
+        
+                <EuiModalFooter>
+                    <EuiButtonEmpty onClick={() => {this.closeModal()}}>Cancel</EuiButtonEmpty>
+        
+                    <EuiButton 
+                        type="submit" 
+                        onClick={
+                            () => {
+                                insertAnalysisCollection(this.state.newCollectionName).then(
+                                    (res) => {
+                                        this.initCollectionList()
+                                        this.closeModal()
+                                        
+                                    }
+                                )
+                               
+                            }
+                        } 
+                        fill>
+                     Save
+                    </EuiButton>
+                </EuiModalFooter>
+                </EuiModal>
+            );
+        }
 
         return (
             <div style={{display: 'flex', flexDirection: 'column', width : '90%', height : '55%', margin: '0 auto'}}>
@@ -216,6 +285,10 @@ class AnalysisCollectionBox extends Component {
                                         </EuiTitle>
                                         <EuiSpacer/>
                                         <EuiListGroup flush> {collections}</EuiListGroup>
+                                        <EuiSpacer/>
+                                        <EuiButton onClick={() => {this.openModal()}}>
+                                            + 新建待分析集合
+                                        </EuiButton>
                                     </EuiPanel>
                                 </EuiResizablePanel>
                                 <EuiResizableButton />
@@ -243,6 +316,7 @@ class AnalysisCollectionBox extends Component {
                             )}
                         </EuiResizableContainer>
                 </EuiPanel>
+                {modal}
             </div>
         )
     }

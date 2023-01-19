@@ -64,5 +64,17 @@ export async function neuralSearch(query, field, cur_page, per_page){
     return response.data
 }
 
+export async function uploadSearch(formData){
+    let response = axios.post(ipList.BACKEND_SOCKET + `/patent/uploadSearch`, 
+        formData, 
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }
+    )
+    return response.data
+}
+
 
 
