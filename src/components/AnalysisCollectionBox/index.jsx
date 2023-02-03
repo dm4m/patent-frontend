@@ -18,9 +18,20 @@ import {
     EuiModalHeaderTitle,
     EuiButtonEmpty,
     EuiFormRow,
-    EuiFieldText
+    EuiFieldText,
+    EuiIcon,
+    EuiFlexGroup,
+    EuiFlexItem,
+    EuiButtonIcon,
+    EuiFlyout,
+    EuiFlyoutBody,
+    EuiFlyoutHeader,
+    EuiHorizontalRule,
+    EuiImage,
+    EuiSelect
 } from '@elastic/eui';
 import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection} from '../../utils/DataSource';
+import { doAnalysis } from '../../utils/AnalysisUtils';
 
 class AnalysisCollectionBox extends Component {
 
@@ -33,20 +44,42 @@ class AnalysisCollectionBox extends Component {
         collectionList : [],
         currentCollectionName: 'First item',
         currentcollectionId: 1,
-        currentCollectionItemList : 
-            [
-                {itemId: 1, patentName : "专利 1", inventor : "李明"},
-                {itemId: 2, patentName : "专利 2", inventor : "王刚"},
-                {itemId: 3, patentName : "专利 2", inventor : "王刚"},
-                {itemId: 4, patentName : "专利 2", inventor : "王刚"},
-                {itemId: 5, patentName : "专利 2", inventor : "王刚"},
-            ],
+        currentCollectionItemList : [],
         currentCollectionItemCount : 0,
         pageIndex : 0,
         pageSize : 10,
         selectedItems : [],
-        isModalVisible : false,
+        isCreateModalVisible : false,
+        isAnalysisModalVisible : true,
+        isFlyoutVisible : false,
         newCollectionName : "",
+        selectedAnaType : "",
+        selectedFigType : '',
+        analysisResult : null,
+    }
+
+    anaTypeOption = [
+        { value: 'area', text: '地域分析' },
+        { value: 'trend', text: '趋势分析' },
+        { value: 'author', text: '发明人分析' },
+    ];
+
+    figTypeOption =[
+        { value: 'pie', text: '饼状图' },
+        { value: 'bar', text: '柱状图' },
+        { value: 'line', text: '折线图' },
+    ];
+
+    setSelectedAnaType(anaType){
+        this.setState({
+            selectedAnaType : anaType
+        })
+    }
+
+    setSelectedFigType(figType){
+        this.setState({
+            selectedFigType : figType
+        })
     }
 
     setCurrentCollection(collectionId, collectionName){
@@ -76,6 +109,10 @@ class AnalysisCollectionBox extends Component {
         })
     }
 
+    setIsFlyoutVisible = (isVisible) =>{
+      this.setState({isFlyoutVisible : isVisible})
+    }
+    
     onTableChange = ({ page = {} }) => {
         const { index: pageIndex, size: pageSize } = page;
         this.setPageIndex(pageIndex);
@@ -137,17 +174,30 @@ class AnalysisCollectionBox extends Component {
         
     }
 
-    closeModal(){
+    closeCreateModal(){
         this.setState({
-            isModalVisible : false
+            isCreateModalVisible : false
         })
     }
 
-    openModal(){
+    openCreateModal(){
         this.setState({
-            isModalVisible : true
+            isCreateModalVisible : true
         })
     }
+
+    closeAnalysisModal(){
+        this.setState({
+            isAnalysisModalVisible : false
+        })
+    }
+
+    openAnalysisModal(){
+        this.setState({
+            isAnalysisModalVisible : true
+        })
+    }
+
     render() {
 
         const collections = this.state.collectionList.map((collection, index) => (
@@ -198,30 +248,50 @@ class AnalysisCollectionBox extends Component {
             initialSelected: []
         };
 
-
-        const renderDeleteButton = () => {
-            if (this.state.selectedItems.length === 0) {
-                return;
-            }
+        const renderControllArea = () => {
             return (
                 <div>
-                    <EuiButton color="danger" iconType="trash" onClick={() => {this.deleteSelectedItems()}}  >
-                        Delete {this.state.selectedItems.length} Users
-                    </EuiButton>
+                    <EuiFlexGroup responsive={false} gutterSize="s" alignItems="center">
+                        <EuiFlexItem grow={false}>
+                            <EuiButton
+                                 iconType='visLine'
+                            >
+                                分析集合
+                            </EuiButton>
+                        </EuiFlexItem>
+                        {/* {this.state.selectedItems.length === 0 ? null :
+                            <EuiFlexItem grow={false}>
+                                <EuiButton
+                                    iconType='visLine'
+                                >
+                                    分析选中专利
+                                </EuiButton>
+                            </EuiFlexItem>
+                        }      */}
+                        {this.state.selectedItems.length === 0 ? null :
+                            <EuiFlexItem grow={false}>
+                                <EuiButton
+                                    color='danger'
+                                    iconType="trash"
+                                    onClick={() => {this.deleteSelectedItems()}}
+                                >
+                                    删除选中专利
+                                </EuiButton>
+                            </EuiFlexItem>
+                        }
+                    </EuiFlexGroup>
                     <EuiSpacer/>
                 </div>
-                
-                
             );
         };
 
-        const deleteButton = renderDeleteButton();
+        const controlArea = renderControllArea();
 
-        let modal;
+        let createModal
 
-        if (this.state.isModalVisible) {
-            modal = (
-                <EuiModal onClose={() => {this.closeModal()}}>
+        if (this.state.isCreateModalVisible) {
+            createModal = (
+                <EuiModal onClose={() => {this.closeCreateModal()}}>
                 <EuiModalHeader>
                     <EuiModalHeaderTitle>
                         <h1>新建待分析集</h1>
@@ -242,10 +312,9 @@ class AnalysisCollectionBox extends Component {
                         />
                     </EuiFormRow>
                 </EuiModalBody>
-        
+
                 <EuiModalFooter>
-                    <EuiButtonEmpty onClick={() => {this.closeModal()}}>Cancel</EuiButtonEmpty>
-        
+                    <EuiButtonEmpty onClick={() => {this.closeCreateModal()}}>Cancel</EuiButtonEmpty>
                     <EuiButton 
                         type="submit" 
                         onClick={
@@ -253,11 +322,9 @@ class AnalysisCollectionBox extends Component {
                                 insertAnalysisCollection(this.state.newCollectionName).then(
                                     (res) => {
                                         this.initCollectionList()
-                                        this.closeModal()
-                                        
+                                        this.closeCreateModal()
                                     }
                                 )
-                               
                             }
                         } 
                         fill>
@@ -267,6 +334,102 @@ class AnalysisCollectionBox extends Component {
                 </EuiModal>
             );
         }
+
+        let analysisModal
+
+        if (this.state.isAnalysisModalVisible) {
+            analysisModal = (
+                <EuiModal onClose={() => {this.closeAnalysisModal()}}>
+                <EuiModalHeader>
+                    <EuiModalHeaderTitle>
+                        <h1>请选择分析类型</h1>
+                    </EuiModalHeaderTitle>
+                </EuiModalHeader>
+        
+                <EuiModalBody>
+                    <EuiFormRow label="选择分析类型">
+                        <EuiSelect
+                            options={this.anaTypeOption}
+                            value={this.state.selectedAnaType}
+                            onChange={(e) => {this.setSelectedAnaType(e.target.value)}}
+                            aria-label="Use aria labels when no actual label is in use"
+                        />
+                    </EuiFormRow>
+                    <EuiFormRow label="选择展现形式">
+                        <EuiSelect
+                            options={this.figTypeOption}
+                            value={this.state.selectedFigType}
+                            onChange={(e) => {this.setSelectedFigType(e.target.value)}}
+                            aria-label="Use aria labels when no actual label is in use"
+                        />
+                    </EuiFormRow>
+                </EuiModalBody> 
+
+                <EuiModalFooter>
+                    <EuiButtonEmpty onClick={() => {this.closeAnalysisModal()}}>Cancel</EuiButtonEmpty>
+                    <EuiButton 
+                        type="submit" 
+                        onClick={
+                            () => {
+                                let ids = this.state.currentCollectionItemList.map(
+                                    (item, index) => {return item.itemId}
+                                )
+                                doAnalysis(this.state.selectedAnaType, this.state.selectedFigType, ids).then(
+                                    (res) => {
+                                        this.setState({
+                                            analysisResult : res,
+                                            isAnalysisModalVisible : false,
+                                            isFlyoutVisible : true
+                                        })
+
+                                    }
+                                )
+                            }
+                        } 
+                        fill>
+                     进行分析
+                    </EuiButton>
+                </EuiModalFooter>
+                </EuiModal>
+            );
+        }
+
+        let flyout
+
+        if (this.state.isFlyoutVisible) {
+            flyout = (
+              <EuiFlyout
+                type="push"
+                onClose={() => this.setIsFlyoutVisible(false)}
+              >
+                <EuiFlyoutHeader hasBorder>
+                  <EuiTitle size="m">
+                    <h2>分析结果</h2>
+                  </EuiTitle>
+                </EuiFlyoutHeader>
+                <EuiFlyoutBody>
+                    {
+                        this.state.analysisResult ? 
+                        <EuiImage
+                            size="l"
+                            hasShadow
+                            allowFullScreen
+                            caption={
+                            <p>
+                                <em>统计分析结果</em>
+                            </p>
+                            }
+                            alt="统计分析结果"
+                            src= {"data:image/png;base64," + this.state.analysisResult}
+                        />
+                        : "图片"
+                    }
+                    
+                </EuiFlyoutBody>
+              </EuiFlyout>
+            );
+        }
+      
 
         return (
             <div style={{display: 'flex', flexDirection: 'column', width : '90%', height : '55%', margin: '0 auto'}}>
@@ -286,7 +449,7 @@ class AnalysisCollectionBox extends Component {
                                         <EuiSpacer/>
                                         <EuiListGroup flush> {collections}</EuiListGroup>
                                         <EuiSpacer/>
-                                        <EuiButton onClick={() => {this.openModal()}}>
+                                        <EuiButton onClick={() => {this.openCreateModal()}}>
                                             + 新建待分析集合
                                         </EuiButton>
                                     </EuiPanel>
@@ -298,7 +461,7 @@ class AnalysisCollectionBox extends Component {
                                             <p>{this.state.currentCollectionName}</p>
                                         </EuiTitle>
                                         <EuiSpacer />
-                                        {deleteButton}
+                                        {controlArea}
                                         <EuiBasicTable
                                             tableCaption="Demo of EuiBasicTable"
                                             items={this.state.currentCollectionItemList}
@@ -316,10 +479,13 @@ class AnalysisCollectionBox extends Component {
                             )}
                         </EuiResizableContainer>
                 </EuiPanel>
-                {modal}
+                {createModal}
+                {analysisModal}
+                {flyout}
             </div>
         )
     }
+
 }
 
 export default withRouter(AnalysisCollectionBox)
