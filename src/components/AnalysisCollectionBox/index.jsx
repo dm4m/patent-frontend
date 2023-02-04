@@ -50,25 +50,42 @@ class AnalysisCollectionBox extends Component {
         pageSize : 10,
         selectedItems : [],
         isCreateModalVisible : false,
-        isAnalysisModalVisible : true,
+        isAnalysisModalVisible : false,
         isFlyoutVisible : false,
         newCollectionName : "",
-        selectedAnaType : "",
+        selectedAnaType : '',
         selectedFigType : '',
-        analysisResult : null,
+        analysisResult : [],
     }
 
     anaTypeOption = [
         { value: 'area', text: '地域分析' },
         { value: 'trend', text: '趋势分析' },
-        { value: 'author', text: '发明人分析' },
+        { value: 'author', text: '发明人分析' }
     ];
 
-    figTypeOption =[
+    figTypeOption = [
         { value: 'pie', text: '饼状图' },
         { value: 'bar', text: '柱状图' },
-        { value: 'line', text: '折线图' },
+        { value: 'line', text: '折线图' }
     ];
+
+    figTypeOptionMap = {
+        'trend' : [
+            { value: 'bar', text: '柱状图' },
+            { value: 'line', text: '折线图' },
+            { value: 'pie', text: '饼状图' }
+        ],
+        'author' : [
+            { value: 'bar', text: '柱状图' },
+            { value: 'pie', text: '饼状图' }
+        ],
+        'area' : [
+            { value: 'pie', text: '饼状图' },
+            { value: 'bar', text: '柱状图' },
+        ],
+    }
+
 
     setSelectedAnaType(anaType){
         this.setState({
@@ -79,7 +96,7 @@ class AnalysisCollectionBox extends Component {
     setSelectedFigType(figType){
         this.setState({
             selectedFigType : figType
-        })
+        }, () => {console.log(this.state.selectedFigType)})
     }
 
     setCurrentCollection(collectionId, collectionName){
@@ -194,6 +211,8 @@ class AnalysisCollectionBox extends Component {
 
     openAnalysisModal(){
         this.setState({
+            selectedAnaType : '',
+            selectedFigType : '',
             isAnalysisModalVisible : true
         })
     }
@@ -255,6 +274,9 @@ class AnalysisCollectionBox extends Component {
                         <EuiFlexItem grow={false}>
                             <EuiButton
                                  iconType='visLine'
+                                 onClick={() => {
+                                    this.openAnalysisModal()
+                                }}
                             >
                                 分析集合
                             </EuiButton>
@@ -351,13 +373,15 @@ class AnalysisCollectionBox extends Component {
                         <EuiSelect
                             options={this.anaTypeOption}
                             value={this.state.selectedAnaType}
+                            hasNoInitialSelection = {true}
                             onChange={(e) => {this.setSelectedAnaType(e.target.value)}}
                             aria-label="Use aria labels when no actual label is in use"
                         />
                     </EuiFormRow>
                     <EuiFormRow label="选择展现形式">
                         <EuiSelect
-                            options={this.figTypeOption}
+                            options={this.figTypeOptionMap[this.state.selectedAnaType]}
+                            hasNoInitialSelection = {true}
                             value={this.state.selectedFigType}
                             onChange={(e) => {this.setSelectedFigType(e.target.value)}}
                             aria-label="Use aria labels when no actual label is in use"
@@ -381,7 +405,6 @@ class AnalysisCollectionBox extends Component {
                                             isAnalysisModalVisible : false,
                                             isFlyoutVisible : true
                                         })
-
                                     }
                                 )
                             }
@@ -409,22 +432,18 @@ class AnalysisCollectionBox extends Component {
                 </EuiFlyoutHeader>
                 <EuiFlyoutBody>
                     {
-                        this.state.analysisResult ? 
-                        <EuiImage
-                            size="l"
-                            hasShadow
-                            allowFullScreen
-                            caption={
-                            <p>
-                                <em>统计分析结果</em>
-                            </p>
-                            }
-                            alt="统计分析结果"
-                            src= {"data:image/png;base64," + this.state.analysisResult}
-                        />
-                        : "图片"
+                        this.state.analysisResult.map((fig)=>{
+                            return (
+                                <EuiImage
+                                    size="l"
+                                    hasShadow
+                                    allowFullScreen
+                                    alt="统计分析结果"
+                                    src= {"data:image/png;base64," + fig}
+                                />
+                            )
+                        })
                     }
-                    
                 </EuiFlyoutBody>
               </EuiFlyout>
             );
