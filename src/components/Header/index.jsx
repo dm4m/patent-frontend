@@ -40,9 +40,7 @@ class Header extends Component {
       {
         title : '新颖性分析',
         titlePath : '/noveltyHome',
-        items : [
-          
-        ]
+        items : []
       },
       {
         title : '统计分析',
@@ -51,7 +49,7 @@ class Header extends Component {
       },
       {
         title : '报告生成',
-        titlePath : '/basicSearch',
+        titlePath : '/reportHome',
         items : []
       },
   ]

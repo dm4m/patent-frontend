@@ -13,7 +13,7 @@ export function goSearch(searchArgs){
 }
 
 export async function basicSearch(query, field, cur_page, per_page){
-    let response = await axios.get(ipList.BACKEND_SOCKET + `/patent/basicSearch`, {
+    let response = await axios.get(ipList.BACKEND_SOCKET + `/search/basicSearch`, {
         params: {
                     'query': query,
                     'field': field,
@@ -28,7 +28,7 @@ export async function advancedSearch(conditions, cur_page, per_page){
     if(conditions instanceof Map){
         conditions = Object.fromEntries(conditions)
     }
-    let response = await axios.post(ipList.BACKEND_SOCKET + '/patent/advancedSearch', 
+    let response = await axios.post(ipList.BACKEND_SOCKET + '/search/advancedSearch', 
         {
             conditions,
             cur_page,
@@ -42,7 +42,7 @@ export async function advancedSearch(conditions, cur_page, per_page){
 }
 
 export async function proSearch(expression, cur_page, per_page){
-    let response = await axios.get(ipList.BACKEND_SOCKET + `/patent/proSearch`, {
+    let response = await axios.get(ipList.BACKEND_SOCKET + `/search/proSearch`, {
         params: {
                     'expression': expression,
                     'cur_page': cur_page,
@@ -53,7 +53,7 @@ export async function proSearch(expression, cur_page, per_page){
 }
 
 export async function neuralSearch(query, field, cur_page, per_page){
-    let response = await axios.get(ipList.BACKEND_SOCKET + `/patent/neuralSearch`, {
+    let response = await axios.get(ipList.BACKEND_SOCKET + `/search/neuralSearch`, {
         params: {
                     'query': query,
                     'field': field,
@@ -65,7 +65,7 @@ export async function neuralSearch(query, field, cur_page, per_page){
 }
 
 export async function uploadSearch(formData){
-    let response = axios.post(ipList.BACKEND_SOCKET + `/patent/uploadSearch`, 
+    let response = axios.post(ipList.BACKEND_SOCKET + `/search/uploadSearch`, 
         formData, 
         {
             headers: {

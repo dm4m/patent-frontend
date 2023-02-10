@@ -37,6 +37,7 @@ class Menu extends Component {
                         <EuiCard title={"报告生成"}
                             icon={<EuiIcon size="xxl" type={`document`} />}
                             description="自动生成专利新颖性分析报告"
+                            onClick={()=>{this.props.history.push({pathname:'/reportHome'})}}
                         />
                     </EuiFlexItem>
                 </EuiFlexGroup>

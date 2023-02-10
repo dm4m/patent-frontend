@@ -32,20 +32,21 @@ import {
 } from '@elastic/eui';
 import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection} from '../../utils/DataSource';
 import { doAnalysis } from '../../utils/AnalysisUtils';
+import { getReport2gen, deleteReport2genById, getRCItemsByReportId } from '../../utils/DataSource'; 
 
-class AnalysisCollectionBox extends Component {
+class ReportCollectionBox extends Component {
 
     constructor(props){
         super()
-        this.initCollectionList()
+        this.initReport2genList()
     }
 
     state = {
-        collectionList : [],
-        currentCollectionName: 'First item',
-        currentcollectionId: 1,
-        currentCollectionItemList : [],
-        currentCollectionItemCount : 0,
+        report2genList : [],
+        currentReportId: 1,
+        currentReportName: 'First Report',
+        currentReportContentItemList : [],
+        currentReportContentItemCount : 0,
         pageIndex : 0,
         pageSize : 10,
         selectedItems : [],
@@ -86,6 +87,7 @@ class AnalysisCollectionBox extends Component {
         ],
     }
 
+
     setSelectedAnaType(anaType){
         this.setState({
             selectedAnaType : anaType
@@ -98,14 +100,14 @@ class AnalysisCollectionBox extends Component {
         }, () => {console.log(this.state.selectedFigType)})
     }
 
-    setCurrentCollection(collectionId, collectionName){
-        getACItemByCollectionId(collectionId, this.state.pageIndex, this.state.pageSize).then(
+    setCurrentReport(reportId, reportName){
+        getRCItemsByReportId(reportId, this.state.pageIndex, this.state.pageSize).then(
             res => {
                 this.setState(
                     {   
-                        currentCollectionName : collectionName,
-                        currentCollectionItemList : res.itemList,
-                        currentCollectionItemCount : res.totalItemCount
+                        currentReportName : reportName,
+                        currentReportContentItemList : res.itemList,
+                        currentReportContentItemCount : res.totalItemCount
                     },
                     () => {}
                 )
@@ -129,22 +131,16 @@ class AnalysisCollectionBox extends Component {
       this.setState({isFlyoutVisible : isVisible})
     }
     
-    setSelectedItems(items){
-        this.setState({
-            selectedItems : items
-        }, () => {})
-    }
-
     onTableChange = ({ page = {} }) => {
         const { index: pageIndex, size: pageSize } = page;
         this.setPageIndex(pageIndex);
         this.setPageSize(pageSize);
-        getACItemByCollectionId(this.state.currentcollectionId, pageIndex, pageSize).then(
+        getRCItemsByReportId(this.state.currentReportId, pageIndex, pageSize).then(
             res => {
                 this.setState(
                     { 
-                        currentCollectionItemList : res.itemList,
-                        currentCollectionItemCount : res.totalItemCount,
+                        currentReportContentItemList : res.itemList,
+                        currentReportContentItemCount : res.totalItemCount,
                         pageIndex : pageIndex,
                         pageSize : pageSize
                     },
@@ -155,22 +151,28 @@ class AnalysisCollectionBox extends Component {
         
     };
 
-    initCollectionList(){
-        getAnalysisCollection().then(
+    setSelectedItems(items){
+        this.setState({
+            selectedItems : items
+        }, () => {})
+    }
+
+    initReport2genList(){
+        getReport2gen().then(
             res => {
                 this.setState(
                     {
-                        collectionList : res
+                        report2genList : res
                     },
                     () => {
-                        this.setCurrentCollection(this.state.collectionList[0].collection_id, this.state.collectionList[0].name)
+                        this.setCurrentReport(this.state.report2genList[0].reportId, this.state.report2genList[0].reportName)
                     }
                 )
             }
         )
     }
 
-    deleteCollectionAndReload(collectionId){
+    deleteCollection(collectionId){
         deleteCollectionById(collectionId).then(
             res => {
                 this.initCollectionList()
@@ -184,7 +186,7 @@ class AnalysisCollectionBox extends Component {
         )
         deleteCollectionItemsByIds(ids).then(
             res => {
-                this.setCurrentCollection(this.state.currentcollectionId, this.state.currentCollectionName)
+                this.setCurrentReport(this.state.currentcollectionId, this.state.currentCollectionName)
             }
         )
         
@@ -218,15 +220,21 @@ class AnalysisCollectionBox extends Component {
 
     render() {
 
-        const collections = this.state.collectionList.map((collection, index) => (
+        const reports2gen = this.state.report2genList.map((report, index) => (
             <EuiListGroupItem
                 key={index}
-                onClick={() => {this.setCurrentCollection(collection.collection_id, collection.name)}}
-                label={collection.name}
+                // onClick={() => {this.setCurrentReport(collection.collection_id, collection.name)}}
+                label={report.reportName}
                 size="m"
                 extraAction={{
                     color: 'text',
-                    onClick: () => {this.deleteCollectionAndReload(collection.collection_id)},
+                    onClick: () => {
+                        deleteReport2genById(report.reportId).then(
+                            res => {
+                                this.initReport2genList()
+                            }
+                        )
+                    },
                     iconType: 'trash',
                     iconSize: 's',
                     alwaysShow: false
@@ -236,13 +244,8 @@ class AnalysisCollectionBox extends Component {
 
         const columns = [
             {
-                field: 'patentName',
-                name: '专利名称',
-                truncateText: false
-            },
-            {
-                field: 'inventor',
-                name: '发明人',
+                field: 'itemType',
+                name: '内容类型',
                 truncateText: false
             }
         ]
@@ -250,7 +253,7 @@ class AnalysisCollectionBox extends Component {
         const pagination = {
             pageIndex : this.state.pageIndex,
             pageSize : this.state.pageSize,
-            totalItemCount : this.state.currentCollectionItemCount,
+            totalItemCount : this.state.currentReportContentItemCount,
             pageSizeOptions: [this.state.pageSize],
         };  
 
@@ -394,7 +397,7 @@ class AnalysisCollectionBox extends Component {
                         type="submit" 
                         onClick={
                             () => {
-                                let ids = this.state.currentCollectionItemList.map(
+                                let ids = this.state.currentReportContentItemList.map(
                                     (item, index) => {return item.itemId}
                                 )
                                 doAnalysis(this.state.selectedAnaType, this.state.selectedFigType, ids).then(
@@ -448,6 +451,7 @@ class AnalysisCollectionBox extends Component {
             );
         }
       
+
         return (
             <div style={{display: 'flex', flexDirection: 'column', width : '90%', height : '55%', margin: '0 auto'}}>
                 <EuiPanel>
@@ -461,13 +465,13 @@ class AnalysisCollectionBox extends Component {
                                 >
                                     <EuiPanel style={{ minHeight: '100%' }}> 
                                         <EuiTitle size="s">
-                                            <p>待分析专利集</p>
+                                            <p>待生成报告条目</p>
                                         </EuiTitle>
                                         <EuiSpacer/>
-                                        <EuiListGroup flush> {collections}</EuiListGroup>
+                                        <EuiListGroup flush> {reports2gen}</EuiListGroup>
                                         <EuiSpacer/>
                                         <EuiButton onClick={() => {this.openCreateModal()}}>
-                                            + 新建待分析集合
+                                            + 新建待生成报告条目
                                         </EuiButton>
                                     </EuiPanel>
                                 </EuiResizablePanel>
@@ -481,9 +485,9 @@ class AnalysisCollectionBox extends Component {
                                         {controlArea}
                                         <EuiBasicTable
                                             tableCaption="Demo of EuiBasicTable"
-                                            items={this.state.currentCollectionItemList}
-                                            rowHeader="patentName"
-                                            itemId="itemId"
+                                            items={this.state.currentReportContentItemList}
+                                            rowHeader="itemType"
+                                            itemId="reportItemId"
                                             columns={columns}
                                             pagination={pagination}
                                             onChange={this.onTableChange}
@@ -505,4 +509,4 @@ class AnalysisCollectionBox extends Component {
 
 }
 
-export default withRouter(AnalysisCollectionBox)
+export default withRouter(ReportCollectionBox)

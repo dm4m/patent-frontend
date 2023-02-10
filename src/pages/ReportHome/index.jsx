@@ -10,19 +10,18 @@ import {
             EuiText,
             EuiListGroupItem
         } from '@elastic/eui'
-import AnalysisCollectionBox from '../../components/AnalysisCollectionBox'
+import ReportCollectionBox from '../../components/ReportCollectionBox'
 
 
-export default class AnalysisHome extends Component {
+export default class ReportHome extends Component {
 
     render() {
-        
         return (
             <div style={{
                 height: '100%'
             }}>
-                <Title title='统计分析' describe='在下方管理待分析专利集，并对专利集进行统计分析'/>
-                <AnalysisCollectionBox/>
+                <Title title='报告生成' describe='在下方管理待生成报告并进行报告生成'/>
+                <ReportCollectionBox/>
             </div>
         )
     }

@@ -15,6 +15,7 @@ import HomePage from './pages/HomePage';
 import NoveltyHome from './pages/NoveltyHome';
 import NoveltyResults from './pages/NoveltyResults';
 import AnalysisHome from './pages/AnalysisHome';
+import ReportHome from './pages/ReportHome';
 
 export default class App extends Component {
     render() {
@@ -33,7 +34,8 @@ export default class App extends Component {
                         <Route path='/detailPage' component={DetailPage}/>
                         <Route path='/noveltyHome' component={NoveltyHome}/>            
                         <Route path='/noveltyResults' component={NoveltyResults}/>           
-                        <Route path='/analysisHome' component={AnalysisHome}/>       
+                        <Route path='/analysisHome' component={AnalysisHome}/> 
+                        <Route path='/reportHome' component={ReportHome}/>      
                         <Redirect to='/homePage'/>
                     </Switch>
                 </div>
