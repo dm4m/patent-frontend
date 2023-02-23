@@ -7,7 +7,10 @@ export default class BasicSearch extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <Title title='简单检索'/>
+                <Title 
+                    title='简单检索'
+                    height='40%'
+                />
                 <BasicSearchBox/>     
             </div>
         )

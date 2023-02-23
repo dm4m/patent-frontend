@@ -71,7 +71,11 @@ export default class NoveltyHome extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <Title title='新颖性分析' describe = '您可以在下方上传专利文件，文件需要为 PDF 格式'/>
+                <Title 
+                    title='新颖性分析' 
+                    describe = '您可以在下方上传专利文件，文件需要为 PDF 格式'
+                    height='40%'
+                />
                 <div
                     style={{
                         display: 'flex',

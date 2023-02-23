@@ -19,7 +19,10 @@ export default class ProSearch extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <Title title='专业检索'/>
+                <Title 
+                    title='专业检索'
+                    height='40%'
+                />
                 <div className='neural-search-box'>
                     <EuiTextArea maxLength={500}
                         inputRef={this.inputRef}

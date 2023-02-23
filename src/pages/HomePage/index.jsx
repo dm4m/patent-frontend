@@ -8,7 +8,10 @@ class HomePage extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <Title title='专利预评估系统'/>
+                <Title 
+                    title='专利预评估系统'
+                    height='40%'
+                />
                 <Menu/>
             </div>
         )

@@ -28,7 +28,8 @@ import {
     EuiFlyoutHeader,
     EuiHorizontalRule,
     EuiImage,
-    EuiSelect
+    EuiSelect,
+    useEuiTheme 
 } from '@elastic/eui';
 import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection} from '../../utils/DataSource';
 import { doAnalysis } from '../../utils/AnalysisUtils';
@@ -218,6 +219,8 @@ class AnalysisCollectionBox extends Component {
 
     render() {
 
+        const {theme} = this.props
+
         const collections = this.state.collectionList.map((collection, index) => (
             <EuiListGroupItem
                 key={index}
@@ -265,7 +268,7 @@ class AnalysisCollectionBox extends Component {
             onSelectionChange: onSelectionChange,
             initialSelected: []
         };
-
+        
         const renderControllArea = () => {
             return (
                 <div>
@@ -301,7 +304,6 @@ class AnalysisCollectionBox extends Component {
                             </EuiFlexItem>
                         }
                     </EuiFlexGroup>
-                    <EuiSpacer/>
                 </div>
             );
         };
@@ -422,6 +424,8 @@ class AnalysisCollectionBox extends Component {
             flyout = (
               <EuiFlyout
                 type="push"
+                ownFocus={false}
+                size
                 onClose={() => this.setIsFlyoutVisible(false)}
               >
                 <EuiFlyoutHeader hasBorder>
@@ -433,13 +437,16 @@ class AnalysisCollectionBox extends Component {
                     {
                         this.state.analysisResult.map((fig)=>{
                             return (
-                                <EuiImage
-                                    size="l"
-                                    hasShadow
-                                    allowFullScreen
-                                    alt="统计分析结果"
-                                    src= {"data:image/png;base64," + fig}
-                                />
+                                <div>
+                                    <EuiImage
+                                        size="l"
+                                        hasShadow
+                                        allowFullScreen
+                                        alt="统计分析结果"
+                                        src= {"data:image/png;base64," + fig}
+                                    />
+                                    <EuiSpacer />
+                                </div>
                             )
                         })
                     }
@@ -447,11 +454,21 @@ class AnalysisCollectionBox extends Component {
               </EuiFlyout>
             );
         }
+
+
       
         return (
             <div style={{display: 'flex', flexDirection: 'column', width : '90%', height : '55%', margin: '0 auto'}}>
-                <EuiPanel>
-                        <EuiResizableContainer style={{ height: '100%' }}>
+                <EuiPanel
+                    style={{
+                        backgroundColor: theme.colors.lightestShade
+                    }}
+                >
+                        <EuiResizableContainer 
+                            style={{
+                                height: '100%'
+                            }}
+                        >
                             {(EuiResizablePanel, EuiResizableButton) => (
                                 <>
                                 <EuiResizablePanel
@@ -459,11 +476,13 @@ class AnalysisCollectionBox extends Component {
                                     initialSize={20}
                                     minSize="10%"
                                 >
-                                    <EuiPanel style={{ minHeight: '100%' }}> 
+                                    <EuiPanel paddingSize="l" style={{ minHeight: '100%' }}> 
                                         <EuiTitle size="s">
                                             <p>待分析专利集</p>
                                         </EuiTitle>
-                                        <EuiSpacer/>
+                                        <EuiHorizontalRule
+                                            margin='m'
+                                        />    
                                         <EuiListGroup flush> {collections}</EuiListGroup>
                                         <EuiSpacer/>
                                         <EuiButton onClick={() => {this.openCreateModal()}}>
@@ -474,11 +493,13 @@ class AnalysisCollectionBox extends Component {
                                 <EuiResizableButton />
                                 <EuiResizablePanel mode="main" initialSize={80} minSize="50px">
                                     <EuiPanel paddingSize="l" style={{ minHeight: '100%' }}>
-                                        <EuiTitle size="s">
+                                        {/* <EuiTitle size="s">
                                             <p>{this.state.currentCollectionName}</p>
-                                        </EuiTitle>
-                                        <EuiSpacer />
+                                        </EuiTitle> */}
                                         {controlArea}
+                                        <EuiHorizontalRule
+                                            margin='m'
+                                        />
                                         <EuiBasicTable
                                             tableCaption="Demo of EuiBasicTable"
                                             items={this.state.currentCollectionItemList}
@@ -505,4 +526,7 @@ class AnalysisCollectionBox extends Component {
 
 }
 
-export default withRouter(AnalysisCollectionBox)
+export default function(props){
+    const { euiTheme } = useEuiTheme()
+    return <AnalysisCollectionBox theme={euiTheme}/>
+}

@@ -22,7 +22,7 @@ import {
 import BasicSearchBox from '../../components/BasicSearchBox';
 import { Link } from 'react-router-dom'
 import { basicSearch, neuralSearch, proSearch, advancedSearch, uploadSearch} from '../../utils/SearchUtils';
-import { getAnalysisCollection, insertCollectionItems } from '../../utils/DataSource';
+import { getAnalysisCollection, getReport2gen, insertCollectionItems, insertSearchResults } from '../../utils/DataSource';
 import './index.css'
 import { Button } from 'antd';
 
@@ -41,9 +41,12 @@ export default class SearchResults extends Component {
         conditionMap : null,
         expression : "",
         selectedItems : [],
-        isModalVisible : false,
+        isAnaModalVisible : false,
+        isReportModalVisible : false,
         selectedAnaCollection : null,
-        collectionList : []
+        selectedReport : null,
+        collectionList : [],
+        reportList : []
     }
 
     constructor(props){
@@ -166,25 +169,45 @@ export default class SearchResults extends Component {
     setSelectedItems(items){
         this.setState({
             selectedItems : items
-        }, () => {console.log(this.state.selectedItems)})
+        }, () => {})
     }
 
-    closeModal(){
+    closeAnaModal(){
         this.setState({
-            isModalVisible : false
+            isAnaModalVisible : false
         })
     }
 
-    openModal(){
+    openAnaModal(){
         this.setState({
-            isModalVisible : true
+            isAnaModalVisible : true
         })
         this.initCollectionList()
     }
 
+    closeReportModal(){
+        this.setState({
+            isReportModalVisible : false
+        })
+    }
+
+    openReportModal(){
+        this.setState({
+            isReportModalVisible : true
+        })
+        this.initReportList()
+    }
+
+
     setSelectedAnaCollection = (value) => {
         this.setState({
             selectedAnaCollection : value
+        })
+    };
+
+    setSelectedReport = (value) => {
+        this.setState({
+            selectedReport : value
         })
     };
 
@@ -193,13 +216,27 @@ export default class SearchResults extends Component {
             res => { 
                 this.setState(
                     {
-                        collectionList : res
+                        reportList : res
                     }
                 )
             }
         )
     }
 
+    initReportList(){
+        getReport2gen().then(
+            res => { 
+                this.setState(
+                    {
+                        reportList : res
+                    },
+                    () => {
+                        console.log(this.state.reportList)
+                    }
+                )
+            }
+        )
+    }
 
     render() {
 
@@ -297,12 +334,12 @@ export default class SearchResults extends Component {
                 <div>
                     <EuiFlexGroup>
                         <EuiFlexItem grow={false}>
-                            <EuiButton fill onClick={() => {this.openModal()}}>
+                            <EuiButton fill onClick={() => {this.openAnaModal()}}>
                                 加入分析集合
                             </EuiButton>
                         </EuiFlexItem>
                         <EuiFlexItem grow={false}>
-                            <EuiButton fill>
+                            <EuiButton fill onClick={() => {this.openReportModal()}}>
                                 加入报告集合
                             </EuiButton>
                         </EuiFlexItem>
@@ -314,7 +351,6 @@ export default class SearchResults extends Component {
 
         const buttons = renderButtons()
 
-        let modal;
 
         let  anaCollections = this.state.collectionList.map(
             (collection) => {
@@ -327,9 +363,11 @@ export default class SearchResults extends Component {
             }
         )
 
-        if (this.state.isModalVisible) {
-            modal = (
-                <EuiModal onClose={() => {this.closeModal()}}>
+        let anaModal;
+
+        if (this.state.isAnaModalVisible) {
+            anaModal = (
+                <EuiModal onClose={() => {this.closeAnaModal()}}>
                 <EuiModalHeader>
                     <EuiModalHeaderTitle>
                         <h1>添加至待分析集</h1>
@@ -349,7 +387,7 @@ export default class SearchResults extends Component {
                 </EuiModalBody>
         
                 <EuiModalFooter>
-                    <EuiButtonEmpty onClick={() => {this.closeModal()}}>Cancel</EuiButtonEmpty>
+                    <EuiButtonEmpty onClick={() => {this.closeAnaModal()}}>Cancel</EuiButtonEmpty>
         
                     <EuiButton 
                         type="submit" 
@@ -359,7 +397,7 @@ export default class SearchResults extends Component {
                                     return patent.id
                                 })
                                 insertCollectionItems(patentIds ,this.state.selectedAnaCollection)
-                                this.closeModal()
+                                this.closeAnaModal()
                             }
                         } 
                         fill>
@@ -369,6 +407,62 @@ export default class SearchResults extends Component {
                 </EuiModal>
             );
         }
+
+        let reportModal;
+
+        let reports = this.state.reportList.map(
+            (report) => {
+                let option = 
+                {
+                    value : report.reportId,
+                    inputDisplay : report.reportName
+                }
+                return option
+            }
+        )
+
+        if (this.state.isReportModalVisible) {
+            reportModal = (
+                <EuiModal onClose={() => {this.closeReportModal()}}>
+                <EuiModalHeader>
+                    <EuiModalHeaderTitle>
+                        <h1>添加至待生成报告</h1>
+                    </EuiModalHeaderTitle>
+                </EuiModalHeader>
+        
+                <EuiModalBody>
+                    <EuiFormRow label="请选择要添加至的待生成报告">
+                        <EuiSuperSelect
+                            options={reports}
+                            valueOfSelected={this.state.selectedReport}
+                            onChange={(value) => this.setSelectedReport(value)}
+                            itemLayoutAlign="top"
+                            hasDividers
+                        />
+                    </EuiFormRow>
+                </EuiModalBody>
+        
+                <EuiModalFooter>
+                    <EuiButtonEmpty onClick={() => {this.closeReportModal()}}>Cancel</EuiButtonEmpty>
+                    <EuiButton 
+                        type="submit" 
+                        onClick={
+                            () => {
+                                let patentIds = this.state.selectedItems.map((patent) => {
+                                    return patent.id
+                                })
+                                insertSearchResults(patentIds, this.state.selectedReport)
+                                this.closeReportModal()
+                            }
+                        } 
+                        fill>
+                     Save
+                    </EuiButton>
+                </EuiModalFooter>
+                </EuiModal>
+            );
+        }
+
         return (
             <div>
                 {/* <div className='search-area'>
@@ -399,8 +493,10 @@ export default class SearchResults extends Component {
                         </EuiPageSection>
                     </EuiPageBody>
                 </EuiPage>
-                {modal}
+                {anaModal}
+                {reportModal}
             </div>
+
         )
     }
 }

@@ -1,3 +1,4 @@
+import { EuiPanel, EuiTitle } from '@elastic/eui'
 import React, { Component } from 'react'
 
 export default class Title extends Component {
@@ -12,20 +13,27 @@ export default class Title extends Component {
         }
 
         return (
-            <div 
+            <EuiPanel
+                hasShadow={false}
+                color="transparent"
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    height: '40%'
+                    height: this.props.height,
                 }}
             >
-                <h1 style={{fontSize: 'xx-large'}}>
-                    {this.props.title}
-                </h1>
+                <EuiTitle
+                    size='l'
+                >
+                    <h1>
+                        {this.props.title}
+                    </h1>
+                </EuiTitle>
+                
                 {descBlock}
-            </div>
+            </EuiPanel>
         )
     }
 }

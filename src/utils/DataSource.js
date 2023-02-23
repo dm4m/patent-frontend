@@ -73,3 +73,34 @@ export async function getRCItemsByReportId(reportId, pageIndex, pageSize){
     })
     return response.data
 }
+
+export async function deleteRCItemsByIds(itemIds){
+    let response =  await axios.delete(ipList.BACKEND_SOCKET + `/report/reportContentItem`, 
+                                        {data :{itemIds}}
+                                        )
+}
+
+export async function insertReport2gen(reportName){
+    let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/report2gen`, {
+        'reportName' : reportName
+    })
+}
+
+export async function insertSearchResults(patentIds, reportId){
+    let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/searchResults`, 
+                                        { 
+                                            'patentIds': patentIds,
+                                            'reportId': reportId
+                                        }
+                                    )
+}
+
+export async function insertNoveltyResults(reportId, focusSigory, noveltyAnalysisResult){
+    let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/noveltyResults`, 
+                                        { 
+                                            'reportId': reportId,
+                                            'focusSigory': focusSigory,
+                                            'noveltyAnalysisResult': noveltyAnalysisResult
+                                        }
+                                    )
+}

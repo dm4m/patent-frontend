@@ -6,6 +6,8 @@ import {
   EuiHeaderSectionItem,
   EuiHeaderLogo,
   EuiButtonEmpty,
+  EuiThemeProvider,
+  EuiText
 } from '@elastic/eui';
 import EuiCustomLink from '../../router/EuiCustomLink';
 import HeaderMenu from './HeaderMenu'
@@ -56,24 +58,31 @@ class Header extends Component {
 
     return (
       <>
-        <EuiHeader>
-        <EuiHeaderSection side='left'>
-          <EuiHeaderSectionItem border="right">
-            <EuiCustomLink to='/homePage'>
-              <EuiHeaderLogo iconType='searchProfilerApp' >
-                专利预评估系统
-              </EuiHeaderLogo>
-            </EuiCustomLink>
-          </EuiHeaderSectionItem>
-          {menuList.map((menu)=>{
-              return (
-                  <EuiHeaderSectionItem border="right">
-                      <HeaderMenu menuValue = {menu}/>
-                  </EuiHeaderSectionItem>
-              )
-          })}
-        </EuiHeaderSection>
-      </EuiHeader>
+      <EuiThemeProvider colorMode='dark'>
+        <EuiHeader 
+          theme="dark"
+        >
+          <EuiHeaderSection side='left'>
+            <EuiHeaderSectionItem border="right">
+              <EuiCustomLink to='/homePage'>
+                <EuiHeaderLogo iconType='searchProfilerApp' 
+                >
+                  <EuiText>
+                    专利预评估系统
+                  </EuiText>
+                </EuiHeaderLogo>
+              </EuiCustomLink>
+            </EuiHeaderSectionItem>
+            {menuList.map((menu)=>{
+                return (
+                    <EuiHeaderSectionItem border="right">
+                        <HeaderMenu menuValue = {menu}/>
+                    </EuiHeaderSectionItem>
+                )
+            })}
+          </EuiHeaderSection>
+        </EuiHeader>
+      </EuiThemeProvider>
       </>
     );
   }

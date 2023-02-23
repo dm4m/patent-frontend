@@ -20,7 +20,11 @@ export default class ReportHome extends Component {
             <div style={{
                 height: '100%'
             }}>
-                <Title title='报告生成' describe='在下方管理待生成报告并进行报告生成'/>
+                <Title 
+                    title='报告生成' 
+                    describe='在下方管理待生成报告并进行报告生成'
+                    height='25%'
+                />
                 <ReportCollectionBox/>
             </div>
         )

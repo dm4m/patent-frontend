@@ -59,7 +59,7 @@ export default class UploadSearch extends Component {
         }else{
             let formData = new FormData()
             formData.append("file", this.state.files[0])
-            axios.post(ipList.BACKEND_SOCKET + `/patent/uploadSearch`, 
+            axios.post(ipList.BACKEND_SOCKET + `/search/uploadSearch`, 
                 formData, 
                 {
                     headers: {
@@ -80,7 +80,11 @@ export default class UploadSearch extends Component {
     render() {
         return (
             <div className='basic_search'>
-                <Title title='整篇检索' describe = '您可以在下方上传 PDF 格式的专利文件，系统依照整篇专利检索相似专利'/>
+                <Title 
+                    title='整篇检索' 
+                    describe = '您可以在下方上传 PDF 格式的专利文件，系统依照整篇专利检索相似专利'
+                    height='40%'
+                />
                 <div
                     style={{
                         display: 'flex',

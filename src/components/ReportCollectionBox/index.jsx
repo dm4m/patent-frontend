@@ -28,11 +28,12 @@ import {
     EuiFlyoutHeader,
     EuiHorizontalRule,
     EuiImage,
-    EuiSelect
+    EuiSelect,
+    useEuiTheme
 } from '@elastic/eui';
 import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection} from '../../utils/DataSource';
 import { doAnalysis } from '../../utils/AnalysisUtils';
-import { getReport2gen, deleteReport2genById, getRCItemsByReportId } from '../../utils/DataSource'; 
+import { getReport2gen, deleteReport2genById, getRCItemsByReportId, deleteRCItemsByIds, insertReport2gen} from '../../utils/DataSource'; 
 
 class ReportCollectionBox extends Component {
 
@@ -53,7 +54,7 @@ class ReportCollectionBox extends Component {
         isCreateModalVisible : false,
         isAnalysisModalVisible : false,
         isFlyoutVisible : false,
-        newCollectionName : "",
+        newReportName : "",
         selectedAnaType : '',
         selectedFigType : '',
         analysisResult : [],
@@ -86,7 +87,6 @@ class ReportCollectionBox extends Component {
             { value: 'bar', text: '柱状图' },
         ],
     }
-
 
     setSelectedAnaType(anaType){
         this.setState({
@@ -154,7 +154,7 @@ class ReportCollectionBox extends Component {
     setSelectedItems(items){
         this.setState({
             selectedItems : items
-        }, () => {})
+        }, () => {console.log(this.state.selectedItems)})
     }
 
     initReport2genList(){
@@ -182,11 +182,11 @@ class ReportCollectionBox extends Component {
 
     deleteSelectedItems(){
         let ids = this.state.selectedItems.map(
-            (item, index) => {return item.itemId}
+            (item, index) => {return item.reportItemId}
         )
-        deleteCollectionItemsByIds(ids).then(
+        deleteRCItemsByIds(ids).then(
             res => {
-                this.setCurrentReport(this.state.currentcollectionId, this.state.currentCollectionName)
+                this.setCurrentReport(this.state.currentReportId, this.state.currentReportName)
             }
         )
         
@@ -220,10 +220,12 @@ class ReportCollectionBox extends Component {
 
     render() {
 
+        const {theme} = this.props
+
         const reports2gen = this.state.report2genList.map((report, index) => (
             <EuiListGroupItem
                 key={index}
-                // onClick={() => {this.setCurrentReport(collection.collection_id, collection.name)}}
+                onClick={() => {this.setCurrentReport(report.reportId, report.reportName)}}
                 label={report.reportName}
                 size="m"
                 extraAction={{
@@ -283,15 +285,6 @@ class ReportCollectionBox extends Component {
                                 分析集合
                             </EuiButton>
                         </EuiFlexItem>
-                        {/* {this.state.selectedItems.length === 0 ? null :
-                            <EuiFlexItem grow={false}>
-                                <EuiButton
-                                    iconType='visLine'
-                                >
-                                    分析选中专利
-                                </EuiButton>
-                            </EuiFlexItem>
-                        }      */}
                         {this.state.selectedItems.length === 0 ? null :
                             <EuiFlexItem grow={false}>
                                 <EuiButton
@@ -304,7 +297,7 @@ class ReportCollectionBox extends Component {
                             </EuiFlexItem>
                         }
                     </EuiFlexGroup>
-                    <EuiSpacer/>
+                    
                 </div>
             );
         };
@@ -318,18 +311,18 @@ class ReportCollectionBox extends Component {
                 <EuiModal onClose={() => {this.closeCreateModal()}}>
                 <EuiModalHeader>
                     <EuiModalHeaderTitle>
-                        <h1>新建待分析集</h1>
+                        <h1>新建待生成报告</h1>
                     </EuiModalHeaderTitle>
                 </EuiModalHeader>
         
                 <EuiModalBody>
-                    <EuiFormRow label="请输入新建待分析集合名">
+                    <EuiFormRow label="请输入新建待生成报告名">
                         <EuiFieldText
                             placeholder="Placeholder text"
-                            value={this.state.newCollectionName}
+                            value={this.state.newReportName}
                             onChange={(e) => {
                                     this.setState({
-                                        newCollectionName : e.target.value
+                                        newReportName : e.target.value
                                     }, () => {})
                             }}
                             aria-label="Use aria labels when no actual label is in use"
@@ -343,9 +336,9 @@ class ReportCollectionBox extends Component {
                         type="submit" 
                         onClick={
                             () => {
-                                insertAnalysisCollection(this.state.newCollectionName).then(
+                                insertReport2gen(this.state.newReportName).then(
                                     (res) => {
-                                        this.initCollectionList()
+                                        this.initReport2genList()
                                         this.closeCreateModal()
                                     }
                                 )
@@ -450,11 +443,14 @@ class ReportCollectionBox extends Component {
               </EuiFlyout>
             );
         }
-      
 
         return (
             <div style={{display: 'flex', flexDirection: 'column', width : '90%', height : '55%', margin: '0 auto'}}>
-                <EuiPanel>
+                <EuiPanel 
+                     style={{
+                        backgroundColor: theme.colors.lightestShade
+                    }}
+                >
                         <EuiResizableContainer style={{ height: '100%' }}>
                             {(EuiResizablePanel, EuiResizableButton) => (
                                 <>
@@ -463,11 +459,13 @@ class ReportCollectionBox extends Component {
                                     initialSize={20}
                                     minSize="10%"
                                 >
-                                    <EuiPanel style={{ minHeight: '100%' }}> 
+                                    <EuiPanel paddingSize="l" style={{ minHeight: '100%' }}> 
                                         <EuiTitle size="s">
                                             <p>待生成报告条目</p>
                                         </EuiTitle>
-                                        <EuiSpacer/>
+                                        <EuiHorizontalRule
+                                            margin='m'
+                                        />  
                                         <EuiListGroup flush> {reports2gen}</EuiListGroup>
                                         <EuiSpacer/>
                                         <EuiButton onClick={() => {this.openCreateModal()}}>
@@ -481,8 +479,10 @@ class ReportCollectionBox extends Component {
                                         <EuiTitle size="s">
                                             <p>{this.state.currentCollectionName}</p>
                                         </EuiTitle>
-                                        <EuiSpacer />
                                         {controlArea}
+                                        <EuiHorizontalRule
+                                            margin='m'
+                                        />
                                         <EuiBasicTable
                                             tableCaption="Demo of EuiBasicTable"
                                             items={this.state.currentReportContentItemList}
@@ -506,7 +506,9 @@ class ReportCollectionBox extends Component {
             </div>
         )
     }
-
 }
 
-export default withRouter(ReportCollectionBox)
+export default function(props){
+    const { euiTheme } = useEuiTheme()
+    return <ReportCollectionBox theme={euiTheme}/>
+}

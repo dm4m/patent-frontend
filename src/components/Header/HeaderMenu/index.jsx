@@ -5,7 +5,8 @@ import {
     EuiButtonEmpty,
     EuiListGroupItem,
     EuiListGroup,
-    EuiTitle
+    EuiTitle,
+    EuiText
   } from '@elastic/eui';
 
 
@@ -83,7 +84,9 @@ class HeaderMenu extends Component{
               onMouseOver={() => this.buttonOnMouseOver()}
               onMouseOut={() => this.buttonOnMouseOut()}
             >
+              <EuiText>
                 {title}
+              </EuiText> 
             </EuiButtonEmpty>
           );
 
