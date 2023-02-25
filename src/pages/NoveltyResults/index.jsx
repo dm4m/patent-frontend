@@ -23,14 +23,18 @@ import {
   EuiFormRow,
   EuiSuperSelect,
   EuiModalFooter,
-  EuiButtonEmpty
+  EuiButtonEmpty,
+  EuiPanel, 
+  useEuiTheme,
+  useEuiBackgroundColor,
+  EuiLink
 } from '@elastic/eui';
 import axios from "axios"
 import { ipList } from '../../configs/ipConfig';
 import { insertNoveltyResults, getReport2gen } from '../../utils/DataSource';
+import { useLocation } from 'react-router-dom';
 
-
-export default class NoveltyResults extends Component {
+class NoveltyResults extends Component {
 
   state = {
     isFlyoutVisible : false,
@@ -293,30 +297,45 @@ export default class NoveltyResults extends Component {
 
     return(
       <>
-        <EuiPageHeader
-          paddingSize="l"
-          pageTitle="新颖性分析结果"
-          bottomBorder={true}
-          description={"专利"  + this.state.focusSigory + "共提取出 " + signoryList.length + " 条主权项片段如下，点击其中一条可对其进行新颖性分析"}
-        />
-        <EuiPageSection
-          bottomBorder={true}
-          color="subdued">
-          <EuiListGroup maxWidth={false}>
-            {signoryList.map((signory)=>{
-              return (
-                <EuiListGroupItem
-                  // onClick={() => {this.setIsFlyoutVisible(!this.state.isFlyoutVisible)}}\
-                  onClick={() => {this.noveltyAnalysis(signory)}}
-                  wrapText
-                  label={signory}
-                />
-            )})}
-          </EuiListGroup>
-          {flyout}
-          {reportModal}
-        </EuiPageSection>
+        {/* <EuiPanel> */}
+          <EuiPageHeader
+            paddingSize="l"
+            pageTitle="新颖性分析结果"
+            bottomBorder={true}
+            description={"专利"  + this.state.focusSigory + "共提取出 " + signoryList.length + " 条主权项片段如下，点击其中一条可对其进行新颖性分析"}
+          />
+          <EuiPageSection
+            bottomBorder={true}
+            color="subdued">
+            <EuiPanel>
+            <EuiFlexGroup direction="column">
+              {signoryList.map((signory)=>{
+                return (
+                  <EuiFlexItem grow={false} 
+                  >
+                    <EuiText 
+                      style={{ padding: '10px', backgroundColor: this.props.bgColor}}
+                    > 
+                      <EuiLink onClick={() => {this.noveltyAnalysis(signory)}} color='text'>
+                       {signory}
+                      </EuiLink>
+                    </EuiText>
+                  </EuiFlexItem>
+              )})}
+            </EuiFlexGroup>
+            </EuiPanel>
+            {flyout}
+            {reportModal}
+          </EuiPageSection>
+          {/* </EuiPanel> */}
       </>
     )
   }
+}
+
+export default function(props){
+  const { euiTheme } = useEuiTheme()
+  const location = useLocation() 
+  const bgColor = useEuiBackgroundColor('primary')
+  return <NoveltyResults theme={euiTheme} location={location} bgColor={bgColor}/>
 }

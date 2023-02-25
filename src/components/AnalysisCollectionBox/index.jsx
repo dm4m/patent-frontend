@@ -29,7 +29,8 @@ import {
     EuiHorizontalRule,
     EuiImage,
     EuiSelect,
-    useEuiTheme 
+    useEuiTheme, 
+    useEuiBackgroundColor
 } from '@elastic/eui';
 import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection} from '../../utils/DataSource';
 import { doAnalysis } from '../../utils/AnalysisUtils';
@@ -461,7 +462,7 @@ class AnalysisCollectionBox extends Component {
             <div style={{display: 'flex', flexDirection: 'column', width : '90%', height : '55%', margin: '0 auto'}}>
                 <EuiPanel
                     style={{
-                        backgroundColor: theme.colors.lightestShade
+                        backgroundColor: theme.colors.lightestShade,
                     }}
                 >
                         <EuiResizableContainer 
@@ -528,5 +529,6 @@ class AnalysisCollectionBox extends Component {
 
 export default function(props){
     const { euiTheme } = useEuiTheme()
+
     return <AnalysisCollectionBox theme={euiTheme}/>
 }
