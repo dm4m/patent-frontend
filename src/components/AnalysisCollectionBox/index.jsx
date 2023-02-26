@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {withRouter} from 'react-router-dom';
+import ReactECharts from 'echarts-for-react';
 import { 
     EuiListGroupItem,
     EuiPage,
@@ -402,6 +403,7 @@ class AnalysisCollectionBox extends Component {
                                 )
                                 doAnalysis(this.state.selectedAnaType, this.state.selectedFigType, ids).then(
                                     (res) => {
+                                        console.log(res)
                                         this.setState({
                                             analysisResult : res,
                                             isAnalysisModalVisible : false,
@@ -436,15 +438,16 @@ class AnalysisCollectionBox extends Component {
                 </EuiFlyoutHeader>
                 <EuiFlyoutBody>
                     {
-                        this.state.analysisResult.map((fig)=>{
+                        this.state.analysisResult.map((optionStr)=>{
+                            var option = JSON.parse(optionStr)
                             return (
                                 <div>
-                                    <EuiImage
-                                        size="l"
-                                        hasShadow
-                                        allowFullScreen
-                                        alt="统计分析结果"
-                                        src= {"data:image/png;base64," + fig}
+                                    <ReactECharts
+                                        option={option}
+                                        style={{
+                                            width : `500px`,
+                                            height : `500px`
+                                        }}
                                     />
                                     <EuiSpacer />
                                 </div>
@@ -455,7 +458,6 @@ class AnalysisCollectionBox extends Component {
               </EuiFlyout>
             );
         }
-
 
       
         return (
