@@ -104,7 +104,7 @@ export default class UploadSearch extends Component {
                 <br/>
                 <div
                     style={{
-                        display: 'flex',
+                        display: 'flex', 
                         justifyContent: 'center',
                         height: 'auto',
                         margin: '0 auto'

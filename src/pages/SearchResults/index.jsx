@@ -17,17 +17,26 @@ import {
     EuiModalHeaderTitle,
     EuiButtonEmpty,
     EuiFormRow,
-    EuiSuperSelect
+    EuiSuperSelect,
+    EuiFlyout,
+    EuiFlyoutHeader,
+    EuiHorizontalRule,
+    EuiText,
+    EuiFlyoutBody,
+    EuiResizableContainer,
+    EuiLink,
+    useEuiTheme,
+    useEuiBackgroundColor
 } from '@elastic/eui';
 import BasicSearchBox from '../../components/BasicSearchBox';
-import { Link } from 'react-router-dom'
+import { Link, useLocation} from 'react-router-dom'
 import { basicSearch, neuralSearch, proSearch, advancedSearch, uploadSearch} from '../../utils/SearchUtils';
-import { getAnalysisCollection, getReport2gen, insertCollectionItems, insertSearchResults } from '../../utils/DataSource';
+import { getAnalysisCollection, getReport2gen, getSignorysByPatentId, insertCollectionItems, insertSearchResults } from '../../utils/DataSource';
 import './index.css'
 import { Button } from 'antd';
 
 
-export default class SearchResults extends Component {
+class SearchResults extends Component {
 
     state = {
         pageIndex : 0,
@@ -43,10 +52,13 @@ export default class SearchResults extends Component {
         selectedItems : [],
         isAnaModalVisible : false,
         isReportModalVisible : false,
+        isFlyoutVisible: false,
         selectedAnaCollection : null,
         selectedReport : null,
         collectionList : [],
-        reportList : []
+        reportList : [],
+        signoryList : [],
+        compareSignoryList : []
     }
 
     constructor(props){
@@ -112,11 +124,12 @@ export default class SearchResults extends Component {
                 }
             )
         }else if(searchType == "upload"){
-            const {curPage, pageNum, perPage, results,} = uploadres
+            const {curPage, pageNum, perPage, results, signoryList} = uploadres
             this.setState({
                 searchType : searchType,
                 results : results,
                 resultsCount : pageNum * perPage,
+                signoryList : signoryList
             })
         }
     }
@@ -198,7 +211,6 @@ export default class SearchResults extends Component {
         this.initReportList()
     }
 
-
     setSelectedAnaCollection = (value) => {
         this.setState({
             selectedAnaCollection : value
@@ -210,6 +222,10 @@ export default class SearchResults extends Component {
             selectedReport : value
         })
     };
+
+    setIsFlyoutVisible = (isVisible) =>{
+        this.setState({isFlyoutVisible : isVisible})
+    }
 
     initCollectionList(){
         getAnalysisCollection().then(
@@ -238,6 +254,7 @@ export default class SearchResults extends Component {
         )
     }
 
+    
     render() {
 
         let columns = [
@@ -300,7 +317,18 @@ export default class SearchResults extends Component {
                         description: '进行新颖性对比',
                         type: 'icon',
                         icon: 'inspect',
-                        onClick: () => '',
+                        onClick: (item) => {
+                            getSignorysByPatentId(item.id).then(
+                                res => { 
+                                    this.setState(
+                                        {
+                                            compareSignoryList : res,
+                                            isFlyoutVisible : true
+                                        }
+                                    )
+                                }
+                            )
+                        },
                         },
                     ]
                 }
@@ -351,8 +379,7 @@ export default class SearchResults extends Component {
 
         const buttons = renderButtons()
 
-
-        let  anaCollections = this.state.collectionList.map(
+        let anaCollections = this.state.collectionList.map(
             (collection) => {
                 let option = 
                 {
@@ -463,6 +490,74 @@ export default class SearchResults extends Component {
             );
         }
 
+        let flyout
+
+        if (this.state.isFlyoutVisible) {
+          flyout = (
+            <EuiFlyout
+              onClose={() => this.setIsFlyoutVisible(false)}
+              size = 'l'
+            >
+              <EuiFlyoutHeader hasBorder>
+                <EuiTitle size="m">
+                  <h2>专利主权项对比</h2>
+                </EuiTitle>
+              </EuiFlyoutHeader>
+              <EuiFlyoutBody>
+                <EuiResizableContainer>
+                    {(EuiResizablePanel, EuiResizableButton) => (
+                    <>
+                    <EuiResizablePanel initialSize={50} minSize="30%" paddingSize='s'> 
+                        <EuiTitle size="m">
+                            <h3>输入专利</h3>
+                        </EuiTitle>
+                        <EuiHorizontalRule/>
+                        <EuiFlexGroup direction="column">
+                            {this.state.signoryList.map((signory)=>{
+                                return (
+                                <EuiFlexItem grow={false} 
+                                >
+                                    <EuiText 
+                                        style={{ padding: '10px', backgroundColor: this.props.bgColor1}}
+                                    > 
+                                    <EuiLink onClick={() => {this.noveltyAnalysis(signory)}} color='text'>
+                                        {signory}
+                                    </EuiLink>
+                                    </EuiText>
+                                </EuiFlexItem>
+                            )})}
+                        </EuiFlexGroup>
+                    </EuiResizablePanel>
+
+                    <EuiResizableButton />
+
+                    <EuiResizablePanel initialSize={50} minSize="200px" paddingSize='s'>
+                    <EuiTitle size="m">
+                        <h3>对比专利</h3>
+                    </EuiTitle>
+                    <EuiHorizontalRule/>
+                    <EuiFlexGroup direction="column">
+                            {this.state.compareSignoryList.map((signory)=>{
+                                return (
+                                <EuiFlexItem grow={false} 
+                                >
+                                    <EuiText 
+                                        style={{ padding: '10px', backgroundColor: this.props.bgColor2}}
+                                    > 
+                                        {signory}
+                                    </EuiText>
+                                </EuiFlexItem>
+                            )})}
+                        </EuiFlexGroup>
+                    </EuiResizablePanel>
+                    </>
+                )}
+                </EuiResizableContainer>
+              </EuiFlyoutBody>
+            </EuiFlyout>
+          );
+        }
+
         return (
             <div>
                 {/* <div className='search-area'>
@@ -495,8 +590,16 @@ export default class SearchResults extends Component {
                 </EuiPage>
                 {anaModal}
                 {reportModal}
+                {flyout}
             </div>
-
         )
     }
 }
+
+export default function(props){
+    const { euiTheme } = useEuiTheme()
+    const location = useLocation() 
+    const bgColor1 = useEuiBackgroundColor('primary')
+    const bgColor2 = useEuiBackgroundColor('warning')
+    return <SearchResults theme={euiTheme} location={location} bgColor1={bgColor1} bgColor2={bgColor2}/>
+  }

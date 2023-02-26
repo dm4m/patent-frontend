@@ -104,3 +104,12 @@ export async function insertNoveltyResults(reportId, focusSigory, noveltyAnalysi
                                         }
                                     )
 }
+
+export async function getSignorysByPatentId(patentId){
+    let response =  await axios.get(ipList.BACKEND_SOCKET + `/report/signory`, {
+        params: {
+            'patentId': patentId,
+        }
+    })
+    return response.data
+}
