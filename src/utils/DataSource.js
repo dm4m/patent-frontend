@@ -105,11 +105,32 @@ export async function insertNoveltyResults(reportId, focusSigory, noveltyAnalysi
                                     )
 }
 
+export async function insertStatsResults(reportId, options){
+    let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/statsResults`, 
+                                        { 
+                                            'reportId': reportId,
+                                            'options': options
+                                        }
+                                    )
+}
+
 export async function getSignorysByPatentId(patentId){
     let response =  await axios.get(ipList.BACKEND_SOCKET + `/report/signory`, {
         params: {
             'patentId': patentId,
         }
     })
+    // [{signoryId, signory }, ...]
     return response.data
 }
+
+export async function noveltyCompare(oriSig, compareSigs){
+    let response =  await axios.post(ipList.FLASK_SOCKET + `/noveltyCompare`, 
+        { 
+            'oriSig': oriSig,
+            'compareSigs': compareSigs
+        }
+    )
+    return response.data
+}
+

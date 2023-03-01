@@ -279,10 +279,10 @@ class ReportCollectionBox extends Component {
                             <EuiButton
                                  iconType='visLine'
                                  onClick={() => {
-                                    this.openAnalysisModal()
+                                    
                                 }}
                             >
-                                分析集合
+                                生成报告
                             </EuiButton>
                         </EuiFlexItem>
                         {this.state.selectedItems.length === 0 ? null :
@@ -292,7 +292,7 @@ class ReportCollectionBox extends Component {
                                     iconType="trash"
                                     onClick={() => {this.deleteSelectedItems()}}
                                 >
-                                    删除选中专利
+                                    删除选中报告内容
                                 </EuiButton>
                             </EuiFlexItem>
                         }

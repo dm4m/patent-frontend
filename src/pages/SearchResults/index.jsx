@@ -26,12 +26,14 @@ import {
     EuiResizableContainer,
     EuiLink,
     useEuiTheme,
-    useEuiBackgroundColor
+    useEuiBackgroundColor,
+    EuiScreenReaderOnly,
+    EuiButtonIcon
 } from '@elastic/eui';
 import BasicSearchBox from '../../components/BasicSearchBox';
 import { Link, useLocation} from 'react-router-dom'
 import { basicSearch, neuralSearch, proSearch, advancedSearch, uploadSearch} from '../../utils/SearchUtils';
-import { getAnalysisCollection, getReport2gen, getSignorysByPatentId, insertCollectionItems, insertSearchResults } from '../../utils/DataSource';
+import { getAnalysisCollection, getReport2gen, getSignorysByPatentId, insertCollectionItems, insertSearchResults, noveltyCompare } from '../../utils/DataSource';
 import './index.css'
 import { Button } from 'antd';
 
@@ -39,26 +41,38 @@ import { Button } from 'antd';
 class SearchResults extends Component {
 
     state = {
+        // 检索返回结果
         pageIndex : 0,
         pageSize : 20,
-        selectedItems : [20],
         searchType: "",
         query: "",
         field: "",
         resultsCount : 0,
-        results : [],
+        searchResults : [],
         conditionMap : null,
         expression : "",
-        selectedItems : [],
+        // 检索结果列表相关
+        selectedSearchResults : [],
+        // 加入统计分析集
         isAnaModalVisible : false,
-        isReportModalVisible : false,
-        isFlyoutVisible: false,
-        selectedAnaCollection : null,
-        selectedReport : null,
         collectionList : [],
+        selectedAnaCollection : null,
+        // 加入分析报告集
+        isReportModalVisible : false,
         reportList : [],
+        selectedReport : null,
+        // 专利一对一比对
+        isFlyoutVisible: false,
+        // 原主权项列表 [string...]
         signoryList : [],
-        compareSignoryList : []
+        //[{signoryId, signory }, ...]
+        compareSignoryList : [],
+        // 专利一对一比对结果
+        isFlyoutRightResult : false,
+        noveltyResults : [],
+        selectedNoveltyResults : [],
+        focusSigory : "",
+        itemIdToExpandedRowMap : {},
     }
 
     constructor(props){
@@ -81,7 +95,7 @@ class SearchResults extends Component {
                         searchType: searchType,
                         query: query,
                         field: field,
-                        results : results,
+                        searchResults : results,
                         resultsCount: pageNum * perPage,
                     })
                 }
@@ -93,7 +107,7 @@ class SearchResults extends Component {
                     this.setState({
                         searchType: searchType,
                         conditionMap: conditionMap,
-                        results : results,
+                        searchResults : results,
                         resultsCount: pageNum * perPage,
                     })
                 }
@@ -104,7 +118,7 @@ class SearchResults extends Component {
                     const {curPage, pageNum, perPage, results, query, field, searchType, conditionMap} = res
                     this.setState({
                         searchType: searchType,
-                        results : results,
+                        searchResults : results,
                         resultsCount : pageNum * perPage,
                         expression : expression
                     })
@@ -118,7 +132,7 @@ class SearchResults extends Component {
                         searchType: searchType,
                         query: query,
                         field: field,   
-                        results : results,
+                        searchResults : results,
                         resultsCount : pageNum * perPage,
                     })
                 }
@@ -127,14 +141,14 @@ class SearchResults extends Component {
             const {curPage, pageNum, perPage, results, signoryList} = uploadres
             this.setState({
                 searchType : searchType,
-                results : results,
+                searchResults : results,
                 resultsCount : pageNum * perPage,
                 signoryList : signoryList
             })
         }
     }
 
-    onTableChange = ({ page = {} }) => {
+    onSearchTableChange = ({ page = {} }) => {
         const {query, field, searchType, conditionMap, expression} = this.state
         const { index: pageIndex, size: pageSize } = page;
         if(searchType == "basic"){
@@ -142,7 +156,7 @@ class SearchResults extends Component {
                 (res) => {
                     const {curPage, pageNum, perPage, results, query, field, searchType, conditionMap} = res
                     this.setState({
-                        results : results,
+                        searchResults : results,
                         resultsCount : pageNum * perPage,
                         pageIndex : curPage,
                         pageSize : perPage
@@ -154,7 +168,7 @@ class SearchResults extends Component {
                 (res) => {
                     const {curPage, pageNum, perPage, results, query, field, searchType, conditionMap} = res
                     this.setState({
-                        results : results,
+                        searchResults : results,
                         resultsCount: pageNum * perPage,
                         pageIndex : curPage,
                         pageSize : perPage
@@ -167,7 +181,7 @@ class SearchResults extends Component {
                     const {pageNum, perPage, results, searchType, conditionMap} = res
                     this.setState({
                         searchType: searchType,
-                        results : results,
+                        searchResults : results,
                         resultsCount : pageNum * perPage,
                         expression : expression
                     })
@@ -179,9 +193,19 @@ class SearchResults extends Component {
         }
     };
 
-    setSelectedItems(items){
+    setSelectedSearchResults(searchResults){
         this.setState({
-            selectedItems : items
+            selectedSearchResults : searchResults
+        }, () => {})
+    }
+
+    onNoveltyReChange = (selectedItems) => {
+        this.setSelectedNoveltyResults(selectedItems);
+    }; 
+
+    setSelectedNoveltyResults(noveltyResults){
+        this.setState({
+            selectedNoveltyResults : noveltyResults
         }, () => {})
     }
 
@@ -232,8 +256,9 @@ class SearchResults extends Component {
             res => { 
                 this.setState(
                     {
-                        reportList : res
-                    }
+                        collectionList : res
+                    },
+                    () => {}
                 )
             }
         )
@@ -247,17 +272,37 @@ class SearchResults extends Component {
                         reportList : res
                     },
                     () => {
-                        console.log(this.state.reportList)
                     }
                 )
             }
         )
     }
 
+    setItemIdToExpandedRowMap(map){
+        this.setState({
+            itemIdToExpandedRowMap : map
+        })
+    }
+
+    toggleDetails = (result) => {
+        const itemIdToExpandedRowMapValues = { ...this.state.itemIdToExpandedRowMap };
+        if (itemIdToExpandedRowMapValues[result.relevant_sig_id]) {
+          delete itemIdToExpandedRowMapValues[result.relevant_sig_id];
+        } else {
+          itemIdToExpandedRowMapValues[result.relevant_sig_id] = (
+            <EuiText style={{whiteSpace: 'pre-wrap'}}>
+                {result.compare_result}
+            </EuiText>
+          );
+        }
+        this.setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues);
+      };
     
     render() {
 
-        let columns = [
+        // 检索结果表格相关
+        
+        let searchReColumns = [
             {
                 field: 'index',
                 name: '序号',
@@ -308,7 +353,7 @@ class SearchResults extends Component {
         ]
 
         if(this.state.searchType == "upload"){
-            columns.push(
+            searchReColumns.push(
                 {
                     name: 'Actions',
                     actions: [
@@ -335,27 +380,27 @@ class SearchResults extends Component {
             )
         }
 
-        const pagination = (this.state.searchType === "neural" || this.state.searchType === "upload") ? null : {
+        const searchRePagination = (this.state.searchType === "neural" || this.state.searchType === "upload") ? null : {
             pageIndex : this.state.pageIndex,
             pageSize : this.state.pageSize,
             totalItemCount : this.state.resultsCount,
             pageSizeOptions: [this.state.pageSize]
         }
 
-        const onSelectionChange = (selectedItems) => {
-            this.setSelectedItems(selectedItems);
+        const onSelectedSearchReChange = (selectedItems) => {
+            this.setSelectedSearchResults(selectedItems);
         };        
 
-        const selection = {
+        const searchReSelection = {
             selectable: (item) => true,
             selectableMessage: (selectable) =>
                 !selectable ? 'User is currently offline' : undefined,
-            onSelectionChange: onSelectionChange,
+            onSelectionChange: onSelectedSearchReChange,
             initialSelected: []
         };
 
         const renderButtons = () => {
-            if (this.state.selectedItems.length === 0) {
+            if (this.state.selectedSearchResults.length === 0) {
                 return;
             }
             return (
@@ -379,6 +424,7 @@ class SearchResults extends Component {
 
         const buttons = renderButtons()
 
+
         let anaCollections = this.state.collectionList.map(
             (collection) => {
                 let option = 
@@ -386,6 +432,7 @@ class SearchResults extends Component {
                     value : collection.collection_id,
                     inputDisplay : collection.name
                 }
+                
                 return option
             }
         )
@@ -420,7 +467,7 @@ class SearchResults extends Component {
                         type="submit" 
                         onClick={
                             () => {
-                                let patentIds = this.state.selectedItems.map((patent) => {
+                                let patentIds = this.state.selectedSearchResults.map((patent) => {
                                     return patent.id
                                 })
                                 insertCollectionItems(patentIds ,this.state.selectedAnaCollection)
@@ -475,7 +522,7 @@ class SearchResults extends Component {
                         type="submit" 
                         onClick={
                             () => {
-                                let patentIds = this.state.selectedItems.map((patent) => {
+                                let patentIds = this.state.selectedSearchResults.map((patent) => {
                                     return patent.id
                                 })
                                 insertSearchResults(patentIds, this.state.selectedReport)
@@ -488,6 +535,99 @@ class SearchResults extends Component {
                 </EuiModalFooter>
                 </EuiModal>
             );
+        }
+
+        let noveltyResColumns = [
+            {
+                field: 'relevant_sig',
+                name: '相关主权项',
+                truncateText: false
+            },
+            // {
+            //   field: 'ori_patent_title',
+            //   name: '来自于专利',
+            //   truncateText: false
+            // },
+            {
+              align: 'right',
+              width: '40px',
+              isExpander: true,
+              name: (
+                <EuiScreenReaderOnly>
+                  <span>Expand rows</span>
+                </EuiScreenReaderOnly>
+              ),
+              render: (result) => {
+                const itemIdToExpandedRowMapValues = { ...this.state.itemIdToExpandedRowMap }; 
+                return (
+                  <EuiButtonIcon
+                    onClick={() => this.toggleDetails(result)}
+                    aria-label={
+                      itemIdToExpandedRowMapValues[result.relevant_sig_id] ? 'Collapse' : 'Expand'
+                    }
+                    iconType={
+                      itemIdToExpandedRowMapValues[result.relevant_sig_id] ? 'arrowDown' : 'arrowRight'
+                    }
+                  />
+                );
+              },
+            }
+        ]
+ 
+        const noveltyReSelection = {
+            selectable: (item) => true,
+            selectableMessage: (selectable) =>
+                !selectable ? 'User is currently offline' : undefined,
+            onSelectionChange: this.onNoveltyReChange,
+            initialSelected: []
+        };
+
+        let flyoutRightSide
+
+        if(this.state.isFlyoutRightResult){
+            flyoutRightSide = <>
+                <EuiTitle size="m">
+                    <h3>主权项对比结果</h3>
+                </EuiTitle>
+                <EuiHorizontalRule/>
+                <EuiText>
+                    {"当前被分析主权项：" + this.state.focusSigory}
+                </EuiText>
+                <EuiHorizontalRule/>
+                <EuiBasicTable
+                    tableCaption="Demo of EuiBasicTable"
+                    items={this.state.noveltyResults}
+                    rowHeader="relevant_sig"
+                    itemId="relevant_sig_id"
+                    columns={noveltyResColumns}
+                    onChange={this.onNoveltyReChange}
+                    isSelectable={true}
+                    selection={noveltyReSelection}
+                    hasActions={true}
+                    itemIdToExpandedRowMap={this.state.itemIdToExpandedRowMap}
+                    isExpandable={true}
+                />
+            </>
+        }else{
+            flyoutRightSide = <>
+                <EuiTitle size="m">
+                    <h3>对比专利</h3>
+                </EuiTitle>
+                <EuiHorizontalRule/>
+                <EuiFlexGroup direction="column">
+                    {this.state.compareSignoryList.map((signory)=>{
+                        return (
+                        <EuiFlexItem grow={false} 
+                        >
+                            <EuiText 
+                                style={{ padding: '10px', backgroundColor: this.props.bgColor2}}
+                            > 
+                                {signory.signory_item}
+                            </EuiText>
+                        </EuiFlexItem>
+                    )})}
+                </EuiFlexGroup>
+            </>
         }
 
         let flyout
@@ -520,7 +660,24 @@ class SearchResults extends Component {
                                     <EuiText 
                                         style={{ padding: '10px', backgroundColor: this.props.bgColor1}}
                                     > 
-                                    <EuiLink onClick={() => {this.noveltyAnalysis(signory)}} color='text'>
+                                    <EuiLink onClick={
+                                        () => {
+                                            noveltyCompare(signory, this.state.compareSignoryList)
+                                            .then(
+                                                response => {
+                                                    console.log(response)
+                                                    this.setState({
+                                                      focusSigory : signory,
+                                                      noveltyResults : response,
+                                                      isFlyoutRightResult : true
+                                                    }, () => {})
+                                                },
+                                                error => { 
+                                                }
+                                            )
+                                        }} 
+                                        color='text'
+                                    >
                                         {signory}
                                     </EuiLink>
                                     </EuiText>
@@ -532,23 +689,7 @@ class SearchResults extends Component {
                     <EuiResizableButton />
 
                     <EuiResizablePanel initialSize={50} minSize="200px" paddingSize='s'>
-                    <EuiTitle size="m">
-                        <h3>对比专利</h3>
-                    </EuiTitle>
-                    <EuiHorizontalRule/>
-                    <EuiFlexGroup direction="column">
-                            {this.state.compareSignoryList.map((signory)=>{
-                                return (
-                                <EuiFlexItem grow={false} 
-                                >
-                                    <EuiText 
-                                        style={{ padding: '10px', backgroundColor: this.props.bgColor2}}
-                                    > 
-                                        {signory}
-                                    </EuiText>
-                                </EuiFlexItem>
-                            )})}
-                        </EuiFlexGroup>
+                        {flyoutRightSide}
                     </EuiResizablePanel>
                     </>
                 )}
@@ -574,14 +715,14 @@ class SearchResults extends Component {
                                 {buttons}
                                 <EuiBasicTable
                                     tableCaption="Demo of EuiBasicTable"
-                                    items={this.state.results}
+                                    items={this.state.searchResults}
                                     rowHeader="patentName"
                                     itemId="index"
-                                    columns={columns}
-                                    pagination={pagination}
-                                    onChange={this.onTableChange}
+                                    columns={searchReColumns}
+                                    pagination={searchRePagination}
+                                    onChange={this.onSearchTableChange}
                                     isSelectable={true}
-                                    selection={selection}
+                                    selection={searchReSelection}
                                     hasActions={true}
                                 />
                             </EuiPanel>
@@ -602,4 +743,4 @@ export default function(props){
     const bgColor1 = useEuiBackgroundColor('primary')
     const bgColor2 = useEuiBackgroundColor('warning')
     return <SearchResults theme={euiTheme} location={location} bgColor1={bgColor1} bgColor2={bgColor2}/>
-  }
+}

@@ -121,7 +121,6 @@ class NoveltyResults extends Component {
                     reportList : res
                 },
                 () => {
-                    console.log(this.state.reportList)
                 }
             )
         }
@@ -216,11 +215,11 @@ class NoveltyResults extends Component {
               </EuiFlexItem>
             </EuiFlexGroup>
             <EuiHorizontalRule />
-              <EuiText>
-                <p>
-                  原主权项文本：{this.state.focusSigory}
-                </p>
-              </EuiText>
+            <EuiText>
+              <p>
+                原主权项文本：{this.state.focusSigory}
+              </p>
+            </EuiText>
           </EuiFlyoutHeader>
           <EuiFlyoutBody>
           <EuiBasicTable
@@ -231,7 +230,6 @@ class NoveltyResults extends Component {
             rowHeader="relevant_sig"
             itemId='relevant_sig_id'
             columns={columns}
-            onChange={this.onTableChange}
             isSelectable={true}
             selection={selection}
           />
@@ -280,9 +278,6 @@ class NoveltyResults extends Component {
                     type="submit" 
                     onClick={
                         () => {
-                            let patentIds = this.state.selectedNovelResults.map((patent) => {
-                                return patent.id
-                            })
                             insertNoveltyResults(this.state.selectedReport, this.state.focusSigory, this.state.selectedNovelResults)
                             this.closeReportModal()
                         }

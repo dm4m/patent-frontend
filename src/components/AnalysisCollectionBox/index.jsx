@@ -31,9 +31,10 @@ import {
     EuiImage,
     EuiSelect,
     useEuiTheme, 
-    useEuiBackgroundColor
+    useEuiBackgroundColor,
+    EuiSuperSelect
 } from '@elastic/eui';
-import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection} from '../../utils/DataSource';
+import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection, insertStatsResults, getReport2gen} from '../../utils/DataSource';
 import { doAnalysis } from '../../utils/AnalysisUtils';
 
 class AnalysisCollectionBox extends Component {
@@ -54,11 +55,14 @@ class AnalysisCollectionBox extends Component {
         selectedItems : [],
         isCreateModalVisible : false,
         isAnalysisModalVisible : false,
+        isReportModalVisible : false,
         isFlyoutVisible : false,
         newCollectionName : "",
         selectedAnaType : '',
         selectedFigType : '',
         analysisResult : [],
+        reportList : [],
+        selectedReport : null
     }
 
     anaTypeOption = [
@@ -137,6 +141,12 @@ class AnalysisCollectionBox extends Component {
             selectedItems : items
         }, () => {})
     }
+
+    setSelectedReport = (value) => {
+        this.setState({
+            selectedReport : value
+        })
+      };
 
     onTableChange = ({ page = {} }) => {
         const { index: pageIndex, size: pageSize } = page;
@@ -217,6 +227,33 @@ class AnalysisCollectionBox extends Component {
             selectedFigType : '',
             isAnalysisModalVisible : true
         })
+    }
+
+    closeReportModal(){
+        this.setState({
+            isReportModalVisible : false
+        })
+    }
+
+    openReportModal(){
+        this.setState({
+            isReportModalVisible : true
+        })
+        this.initReportList()
+    }
+
+    initReportList(){
+        getReport2gen().then(
+            res => { 
+                this.setState(
+                    {
+                        reportList : res
+                    },
+                    () => {
+                    }
+                )
+            }
+        )
     }
 
     render() {
@@ -421,6 +458,59 @@ class AnalysisCollectionBox extends Component {
             );
         }
 
+
+        let reportModal;
+
+        let reports = this.state.reportList.map(
+            (report) => {
+                let option = 
+                {
+                    value : report.reportId,
+                    inputDisplay : report.reportName
+                }
+                return option
+            }
+        )
+    
+        if (this.state.isReportModalVisible) {
+            reportModal = (
+                <EuiModal onClose={() => {this.closeReportModal()}}>
+                <EuiModalHeader>
+                    <EuiModalHeaderTitle>
+                        <h1>添加至待生成报告</h1>
+                    </EuiModalHeaderTitle>
+                </EuiModalHeader>
+        
+                <EuiModalBody>
+                    <EuiFormRow label="请选择要添加至的待生成报告">
+                        <EuiSuperSelect
+                            options={reports}
+                            valueOfSelected={this.state.selectedReport}
+                            onChange={(value) => this.setSelectedReport(value)}
+                            itemLayoutAlign="top"
+                            hasDividers
+                        />
+                    </EuiFormRow>
+                </EuiModalBody>
+        
+                <EuiModalFooter>
+                    <EuiButtonEmpty onClick={() => {this.closeReportModal()}}>Cancel</EuiButtonEmpty>
+                    <EuiButton 
+                        type="submit" 
+                        onClick={
+                            () => {
+                                insertStatsResults(this.state.selectedReport, this.state.analysisResult)
+                                this.closeReportModal()
+                            }
+                        } 
+                        fill>
+                     Save
+                    </EuiButton>
+                </EuiModalFooter>
+                </EuiModal>
+            );
+        }
+
         let flyout
 
         if (this.state.isFlyoutVisible) {
@@ -432,9 +522,23 @@ class AnalysisCollectionBox extends Component {
                 onClose={() => this.setIsFlyoutVisible(false)}
               >
                 <EuiFlyoutHeader hasBorder>
-                  <EuiTitle size="m">
-                    <h2>分析结果</h2>
-                  </EuiTitle>
+                    <EuiFlexGroup responsive={false} gutterSize="s" justifyContent='spaceBetween'>
+                    <EuiFlexItem grow={false}>
+                        <EuiTitle size="m">
+                            <h2>分析结果</h2>
+                        </EuiTitle>
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false} style={{marginRight: '2em'}}>
+                        <EuiButton
+                            iconType='visBarVertical'
+                            onClick={() => {
+                                this.openReportModal()
+                            }}
+                        >
+                            保存统计分析结果
+                        </EuiButton>
+                    </EuiFlexItem>
+                    </EuiFlexGroup>
                 </EuiFlyoutHeader>
                 <EuiFlyoutBody>
                     {
@@ -523,6 +627,7 @@ class AnalysisCollectionBox extends Component {
                 {createModal}
                 {analysisModal}
                 {flyout}
+                {reportModal}
             </div>
         )
     }
