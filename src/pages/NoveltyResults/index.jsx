@@ -95,6 +95,7 @@ class NoveltyResults extends Component {
         <EuiText style={{whiteSpace: 'pre-wrap'}}>
             {result.compare_result}
         </EuiText>
+        
       );
     }
     this.setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues);
@@ -302,22 +303,22 @@ class NoveltyResults extends Component {
           <EuiPageSection
             bottomBorder={true}
             color="subdued">
-            <EuiPanel>
-            <EuiFlexGroup direction="column">
-              {signoryList.map((signory)=>{
-                return (
-                  <EuiFlexItem grow={false} 
-                  >
-                    <EuiText 
-                      style={{ padding: '10px', backgroundColor: this.props.bgColor}}
-                    > 
-                      <EuiLink onClick={() => {this.noveltyAnalysis(signory)}} color='text'>
-                       {signory}
-                      </EuiLink>
-                    </EuiText>
-                  </EuiFlexItem>
-              )})}
-            </EuiFlexGroup>
+            <EuiPanel style={{width: '90%'}}>
+              <EuiFlexGroup direction="column">
+                {signoryList.map((signory)=>{
+                  return (
+                    <EuiFlexItem grow={false} 
+                    >
+                      <EuiText 
+                        style={{ padding: '10px', backgroundColor: this.props.bgColor}}
+                      > 
+                        <EuiLink onClick={() => {this.noveltyAnalysis(signory)}} color='text'>
+                        {signory}
+                        </EuiLink>
+                      </EuiText>
+                    </EuiFlexItem>
+                )})}
+              </EuiFlexGroup>
             </EuiPanel>
             {flyout}
             {reportModal}

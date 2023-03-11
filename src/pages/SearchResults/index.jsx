@@ -66,6 +66,7 @@ class SearchResults extends Component {
         // 原主权项列表 [string...]
         signoryList : [],
         //[{signoryId, signory }, ...]
+        comparePatent : {},
         compareSignoryList : [],
         // 专利一对一比对结果
         isFlyoutRightResult : false,
@@ -247,8 +248,11 @@ class SearchResults extends Component {
         })
     };
 
-    setIsFlyoutVisible = (isVisible) =>{
-        this.setState({isFlyoutVisible : isVisible})
+    onFlyoutClose = () =>{
+        this.setState({
+            isFlyoutVisible : false,
+            isFlyoutRightResult : false
+        })
     }
 
     initCollectionList(){
@@ -367,6 +371,7 @@ class SearchResults extends Component {
                                 res => { 
                                     this.setState(
                                         {
+                                            comparePatent : item,
                                             compareSignoryList : res,
                                             isFlyoutVisible : true
                                         }
@@ -423,7 +428,6 @@ class SearchResults extends Component {
         };
 
         const buttons = renderButtons()
-
 
         let anaCollections = this.state.collectionList.map(
             (collection) => {
@@ -611,8 +615,22 @@ class SearchResults extends Component {
         }else{
             flyoutRightSide = <>
                 <EuiTitle size="m">
-                    <h3>对比专利</h3>
+                    <h3>
+                        对比专利：
+                        <Link 
+                            to={{
+                                pathname:'detailPage',
+                                state:{patent: this.state.comparePatent}
+                            }}
+                        >
+                            {this.state.comparePatent.title}
+                        </Link>
+                    </h3>
                 </EuiTitle>
+                {/* <EuiSpacer size="xs"/> */}
+                {/* <EuiText>
+                    {this.state.comparePatentTitle}
+                </EuiText> */}
                 <EuiHorizontalRule/>
                 <EuiFlexGroup direction="column">
                     {this.state.compareSignoryList.map((signory)=>{
@@ -635,7 +653,7 @@ class SearchResults extends Component {
         if (this.state.isFlyoutVisible) {
           flyout = (
             <EuiFlyout
-              onClose={() => this.setIsFlyoutVisible(false)}
+              onClose={() => this.onFlyoutClose()}
               size = 'l'
             >
               <EuiFlyoutHeader hasBorder>

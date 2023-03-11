@@ -29,9 +29,10 @@ import {
     EuiHorizontalRule,
     EuiImage,
     EuiSelect,
-    useEuiTheme
+    useEuiTheme,
+    EuiHealth
 } from '@elastic/eui';
-import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection} from '../../utils/DataSource';
+import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection, generateReport} from '../../utils/DataSource';
 import { doAnalysis } from '../../utils/AnalysisUtils';
 import { getReport2gen, deleteReport2genById, getRCItemsByReportId, deleteRCItemsByIds, insertReport2gen} from '../../utils/DataSource'; 
 
@@ -44,8 +45,7 @@ class ReportCollectionBox extends Component {
 
     state = {
         report2genList : [],
-        currentReportId: 1,
-        currentReportName: 'First Report',
+        currentReport : {},
         currentReportContentItemList : [],
         currentReportContentItemCount : 0,
         pageIndex : 0,
@@ -100,12 +100,12 @@ class ReportCollectionBox extends Component {
         }, () => {console.log(this.state.selectedFigType)})
     }
 
-    setCurrentReport(reportId, reportName){
-        getRCItemsByReportId(reportId, this.state.pageIndex, this.state.pageSize).then(
+    setCurrentReport(report){
+        getRCItemsByReportId(report.reportId, this.state.pageIndex, this.state.pageSize).then(
             res => {
                 this.setState(
                     {   
-                        currentReportName : reportName,
+                        currentReport : report, 
                         currentReportContentItemList : res.itemList,
                         currentReportContentItemCount : res.totalItemCount
                     },
@@ -135,7 +135,7 @@ class ReportCollectionBox extends Component {
         const { index: pageIndex, size: pageSize } = page;
         this.setPageIndex(pageIndex);
         this.setPageSize(pageSize);
-        getRCItemsByReportId(this.state.currentReportId, pageIndex, pageSize).then(
+        getRCItemsByReportId(this.state.currentReport.reportId, pageIndex, pageSize).then(
             res => {
                 this.setState(
                     { 
@@ -165,7 +165,7 @@ class ReportCollectionBox extends Component {
                         report2genList : res
                     },
                     () => {
-                        this.setCurrentReport(this.state.report2genList[0].reportId, this.state.report2genList[0].reportName)
+                        this.setCurrentReport(this.state.report2genList[0])
                     }
                 )
             }
@@ -186,7 +186,7 @@ class ReportCollectionBox extends Component {
         )
         deleteRCItemsByIds(ids).then(
             res => {
-                this.setCurrentReport(this.state.currentReportId, this.state.currentReportName)
+                this.setCurrentReport(this.state.currentReport)
             }
         )
         
@@ -225,7 +225,7 @@ class ReportCollectionBox extends Component {
         const reports2gen = this.state.report2genList.map((report, index) => (
             <EuiListGroupItem
                 key={index}
-                onClick={() => {this.setCurrentReport(report.reportId, report.reportName)}}
+                onClick={() => {this.setCurrentReport(report)}}
                 label={report.reportName}
                 size="m"
                 extraAction={{
@@ -271,31 +271,75 @@ class ReportCollectionBox extends Component {
             initialSelected: []
         };
 
+        let reportStatsColor = 'subdued'
+        if(this.state.currentReport.status == '生成中'){
+            reportStatsColor = 'primary'
+        }else if(this.state.currentReport.status == '已生成'){
+            reportStatsColor = 'success'
+        }
         const renderControllArea = () => {
             return (
                 <div>
-                    <EuiFlexGroup responsive={false} gutterSize="s" alignItems="center">
-                        <EuiFlexItem grow={false}>
-                            <EuiButton
-                                 iconType='visLine'
-                                 onClick={() => {
-                                    
-                                }}
-                            >
-                                生成报告
-                            </EuiButton>
+                    <EuiFlexGroup responsive={false} gutterSize="s" alignItems="center" justifyContent='spaceBetween'>
+                        <EuiFlexItem>
+                            <EuiFlexGroup>
+                                <EuiFlexItem grow={false}>
+                                    <EuiButton
+                                        iconType='visLine'
+                                        onClick={() => {
+                                            generateReport(this.state.currentReport.reportId)
+                                        }}
+                                    >
+                                        {this.state.currentReport.status === '已生成' ? '重新生成报告' : '生成报告'}
+                                    </EuiButton>
+                                </EuiFlexItem>
+                                {
+                                    this.state.currentReport.status == '已生成' ? 
+                                    <EuiFlexItem grow={false}>
+                                        <EuiButton
+                                            iconType='search'
+                                            onClick={() => {
+                                                
+                                            }}
+                                        >
+                                            查看报告
+                                        </EuiButton> 
+                                    </EuiFlexItem>
+                                    : null 
+                                }
+                                {
+                                    this.state.selectedItems.length === 0 ? null :
+                                    <EuiFlexItem grow={false}>
+                                        <EuiButton
+                                            color='danger'
+                                            iconType="trash"
+                                            onClick={() => {this.deleteSelectedItems()}}
+                                        >
+                                            删除选中报告内容
+                                        </EuiButton>
+                                    </EuiFlexItem>
+                                }
+                            </EuiFlexGroup>
                         </EuiFlexItem>
-                        {this.state.selectedItems.length === 0 ? null :
-                            <EuiFlexItem grow={false}>
-                                <EuiButton
-                                    color='danger'
-                                    iconType="trash"
-                                    onClick={() => {this.deleteSelectedItems()}}
-                                >
-                                    删除选中报告内容
-                                </EuiButton>
-                            </EuiFlexItem>
-                        }
+                        <EuiFlexItem>
+                            <EuiFlexGroup justifyContent='flexEnd' gutterSize="s" alignItems='center'>
+
+                                <EuiFlexItem grow={false}>
+                                    <EuiText>报告生成状态：</EuiText>
+                                </EuiFlexItem>
+                                
+                                <EuiFlexItem grow={false}>
+                                    <EuiIcon type='stop'></EuiIcon>
+                                </EuiFlexItem>
+                                
+                                <EuiFlexItem grow={false}>
+                                    <EuiText>{this.state.currentReport.status}</EuiText>
+                                </EuiFlexItem>
+                            </EuiFlexGroup>
+                        </EuiFlexItem>
+
+
+                        
                     </EuiFlexGroup>
                     
                 </div>
@@ -473,7 +517,9 @@ class ReportCollectionBox extends Component {
                                         </EuiButton>
                                     </EuiPanel>
                                 </EuiResizablePanel>
+                                
                                 <EuiResizableButton />
+
                                 <EuiResizablePanel mode="main" initialSize={80} minSize="50px">
                                     <EuiPanel paddingSize="l" style={{ minHeight: '100%' }}>
                                         <EuiTitle size="s">

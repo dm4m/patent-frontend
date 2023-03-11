@@ -134,3 +134,8 @@ export async function noveltyCompare(oriSig, compareSigs){
     return response.data
 }
 
+export async function generateReport(reportId){
+    axios.post(ipList.FLASK_SOCKET + `/reportGen`, {
+        'reportId': reportId,
+    })
+}

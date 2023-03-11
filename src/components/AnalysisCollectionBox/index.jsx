@@ -42,6 +42,7 @@ class AnalysisCollectionBox extends Component {
     constructor(props){
         super()
         this.initCollectionList()
+        this.figRefs = []
     }
 
     state = {
@@ -458,7 +459,6 @@ class AnalysisCollectionBox extends Component {
             );
         }
 
-
         let reportModal;
 
         let reports = this.state.reportList.map(
@@ -533,6 +533,11 @@ class AnalysisCollectionBox extends Component {
                             iconType='visBarVertical'
                             onClick={() => {
                                 this.openReportModal()
+                                // let chart =  this.figRefs[0].getEchartsInstance()
+                                // let fig64 = chart.getDataURL({
+                                //     type: 'svg'
+                                // })
+                                // console.log(fig64)
                             }}
                         >
                             保存统计分析结果
@@ -542,7 +547,7 @@ class AnalysisCollectionBox extends Component {
                 </EuiFlyoutHeader>
                 <EuiFlyoutBody>
                     {
-                        this.state.analysisResult.map((optionStr)=>{
+                        this.state.analysisResult.map((optionStr, index)=>{
                             var option = JSON.parse(optionStr)
                             return (
                                 <div>
@@ -552,6 +557,8 @@ class AnalysisCollectionBox extends Component {
                                             width : `500px`,
                                             height : `500px`
                                         }}
+                                        opts={{renderer: 'svg'}}
+                                        ref={(e) => { this.figRefs[index] = e; }}
                                     />
                                     <EuiSpacer />
                                 </div>
@@ -631,7 +638,6 @@ class AnalysisCollectionBox extends Component {
             </div>
         )
     }
-
 }
 
 export default function(props){
