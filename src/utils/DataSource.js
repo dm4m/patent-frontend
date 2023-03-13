@@ -139,3 +139,22 @@ export async function generateReport(reportId){
         'reportId': reportId,
     })
 }
+
+export async function getReportFile(pdfFilePath){
+    let response =  await axios.get(ipList.FLASK_SOCKET + `/reportFile`, {
+        params: {
+            'pdfFilePath': pdfFilePath
+        }
+    })
+    return response.data
+}
+
+export async function getReportContentDetail(itemType, corrId){
+    let response =  await axios.get(ipList.BACKEND_SOCKET + `/report/RCDetail`, {
+        params: {
+            'itemType': itemType,
+            'corrId': corrId,
+        }
+    })
+    return response.data
+}

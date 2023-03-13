@@ -439,6 +439,7 @@ class AnalysisCollectionBox extends Component {
                                 let ids = this.state.currentCollectionItemList.map(
                                     (item, index) => {return item.itemId}
                                 )
+                                console.log(ids)
                                 doAnalysis(this.state.selectedAnaType, this.state.selectedFigType, ids).then(
                                     (res) => {
                                         console.log(res)

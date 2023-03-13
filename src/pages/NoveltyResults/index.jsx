@@ -140,7 +140,7 @@ class NoveltyResults extends Component {
     const {signory_list} = response 
     let signoryList = signory_list
 
-    const columns = [
+    const noveltyResultsColumns = [
       {
           field: 'relevant_sig',
           name: '相关主权项',
@@ -177,15 +177,15 @@ class NoveltyResults extends Component {
       }
     ]
 
-    const onSelectionChange = (selectedNovelResults) => {
+    const onNCSelectionChange = (selectedNovelResults) => {
         this.setSelectedNovelResults(selectedNovelResults);
     };        
 
-    const selection = {
+    const noveltyResultSelection = {
         selectable: (item) => true,
         selectableMessage: (selectable) =>
             !selectable ? 'User is currently offline' : undefined,
-        onSelectionChange: onSelectionChange,
+        onSelectionChange: onNCSelectionChange,
         initialSelected: []
     };
 
@@ -230,9 +230,9 @@ class NoveltyResults extends Component {
             isExpandable={true}
             rowHeader="relevant_sig"
             itemId='relevant_sig_id'
-            columns={columns}
+            columns={noveltyResultsColumns}
             isSelectable={true}
-            selection={selection}
+            selection={noveltyResultSelection}
           />
           </EuiFlyoutBody>
         </EuiFlyout>

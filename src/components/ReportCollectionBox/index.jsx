@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import {withRouter} from 'react-router-dom';
+import {withRouter, Link} from 'react-router-dom';
+import ReactECharts from 'echarts-for-react';
 import { 
     EuiListGroupItem,
     EuiPage,
@@ -30,9 +31,11 @@ import {
     EuiImage,
     EuiSelect,
     useEuiTheme,
-    EuiHealth
+    EuiHealth,
+    EuiLink,
+    EuiScreenReaderOnly
 } from '@elastic/eui';
-import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection, generateReport} from '../../utils/DataSource';
+import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection, generateReport, getReportFile, getReportContentDetail} from '../../utils/DataSource';
 import { doAnalysis } from '../../utils/AnalysisUtils';
 import { getReport2gen, deleteReport2genById, getRCItemsByReportId, deleteRCItemsByIds, insertReport2gen} from '../../utils/DataSource'; 
 
@@ -53,11 +56,19 @@ class ReportCollectionBox extends Component {
         selectedItems : [],
         isCreateModalVisible : false,
         isAnalysisModalVisible : false,
-        isFlyoutVisible : false,
         newReportName : "",
         selectedAnaType : '',
         selectedFigType : '',
         analysisResult : [],
+        isFlyoutVisible : false,
+        // 检索/统计分析/新颖性比对
+        flyoutContentType : '',
+        flyoutSearchResultItems : [],
+        selectedSearchResults : [],
+        flyoutStatsAnaItems : [],
+        flyoutNoveltyAnaItems : {},
+        selectedNovelResults : [],
+        itemIdToExpandedRowMap : {},
     }
 
     anaTypeOption = [
@@ -218,6 +229,106 @@ class ReportCollectionBox extends Component {
         })
     }
 
+    openBase64NewTab(base64Pdf){
+        var blob = this.base64toBlob(base64Pdf);
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(blob, "pdfBase64.pdf");
+        } else {
+            const blobUrl = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            a.href = blobUrl;
+            a.target = "_blank"
+            a.download = "test";
+            a.click();
+            // window.open(exportUrl);
+            // window.location.assign(exportUrl);
+            // URL.revokeObjectURL(blobUrl);
+        }
+    }
+      
+    base64toBlob(base64Data) {
+        const sliceSize = 1024;
+        const byteCharacters = atob(base64Data);
+        const bytesLength = byteCharacters.length;
+        const slicesCount = Math.ceil(bytesLength / sliceSize);
+        const byteArrays = new Array(slicesCount);
+        
+        for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+            const begin = sliceIndex * sliceSize;
+            const end = Math.min(begin + sliceSize, bytesLength);
+        
+            const bytes = new Array(end - begin);
+            for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
+            bytes[i] = byteCharacters[offset].charCodeAt(0);
+            }
+            byteArrays[sliceIndex] = new Uint8Array(bytes);
+        }
+        return new Blob(byteArrays, { type: "application/pdf" });
+    }
+
+    showReportContentDetail(contentItem){
+        getReportContentDetail(contentItem.itemType, contentItem.corrId).then(
+            res => {
+                if(contentItem.itemType == '检索结果'){
+                    this.setState({
+                        isFlyoutVisible : true, 
+                        flyoutContentType : '检索',
+                        flyoutSearchResultItems : res.searchResults
+                    }, () => {})
+                }else if(contentItem.itemType == '新颖性比对结果'){
+                    this.setState({
+                        isFlyoutVisible : true, 
+                        flyoutContentType : '新颖性比对',
+                        flyoutNoveltyAnaItems : res.noveltyAnaResult
+                    }, () => {})
+                }else if(contentItem.itemType == '统计分析结果'){
+                    this.setState({
+                        isFlyoutVisible : true, 
+                        flyoutContentType : '统计分析',
+                        flyoutStatsAnaItems : res.statsResults
+                    }, () => {})
+                }
+            }
+        )
+    }
+
+    setSelectedSearchResults(searchResults){
+        this.setState({
+            selectedSearchResults : searchResults
+        }, () => {})
+    }
+
+    setSelectedNovelResults(items){
+        this.setState({
+            selectedNovelResults : items
+        }, () => {console.log(this.state.selectedNovelResults)})
+    }
+
+    setItemIdToExpandedRowMap(map){
+        this.setState({
+            itemIdToExpandedRowMap : map
+        })
+    }
+
+    toggleDetails = (result) => {
+        const itemIdToExpandedRowMapValues = { ...this.state.itemIdToExpandedRowMap };
+        console.log(result)
+        console.log(result.novelty_ana_item_id)
+        if (itemIdToExpandedRowMapValues[result.novelty_ana_item_id]) {
+          delete itemIdToExpandedRowMapValues[result.novelty_ana_item_id];
+        } else {
+          itemIdToExpandedRowMapValues[result.novelty_ana_item_id] = (
+            <EuiText style={{whiteSpace: 'pre-wrap'}}>
+                {result.compare_result}
+            </EuiText>
+            
+          );
+        }
+        this.setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues);
+    };
+
     render() {
 
         const {theme} = this.props
@@ -245,11 +356,23 @@ class ReportCollectionBox extends Component {
         ));
 
         const columns = [
+            
             {
-                field: 'itemType',
-                name: '内容类型',
-                truncateText: false
-            }
+                field: 'name',
+                name: '内容名称',
+                // truncateText: false,
+                render: (name, item) => (
+                    <EuiLink onClick={() => {this.showReportContentDetail(item)}} >
+                        {name}
+                    </EuiLink>
+                ),  
+                textOnly: false
+            },
+            // {
+            //     field: 'itemType',
+            //     name: '内容类型',
+            //     truncateText: false
+            // }
         ]
 
         const pagination = {
@@ -272,11 +395,13 @@ class ReportCollectionBox extends Component {
         };
 
         let reportStatsColor = 'subdued'
+
         if(this.state.currentReport.status == '生成中'){
             reportStatsColor = 'primary'
         }else if(this.state.currentReport.status == '已生成'){
             reportStatsColor = 'success'
         }
+        
         const renderControllArea = () => {
             return (
                 <div>
@@ -299,10 +424,21 @@ class ReportCollectionBox extends Component {
                                         <EuiButton
                                             iconType='search'
                                             onClick={() => {
-                                                
+                                                getReportFile(this.state.currentReport.pdfFilePath).then(
+                                                    res => {
+                                                        console.log(res) 
+                                                        this.openBase64NewTab(res)
+                                                        // this.setState(
+                                                        //     {
+                                                                
+                                                        //     },
+                                                        //     () => {}
+                                                        // )
+                                                    }
+                                                )
                                             }}
                                         >
-                                            查看报告
+                                            下载报告
                                         </EuiButton> 
                                     </EuiFlexItem>
                                     : null 
@@ -337,8 +473,6 @@ class ReportCollectionBox extends Component {
                                 </EuiFlexItem>
                             </EuiFlexGroup>
                         </EuiFlexItem>
-
-
                         
                     </EuiFlexGroup>
                     
@@ -456,37 +590,191 @@ class ReportCollectionBox extends Component {
             );
         }
 
+        // 检索结果表格 
+        let searchReColumns = [
+            {
+                field: 'title',
+                name: '题目',
+                truncateText: false,
+                render: (title, item) => (
+                    <Link to={{
+                        pathname:'detailPage',
+                        state:{patent: item}
+                        }}>
+                        {title}
+                    </Link>
+                ),
+                textOnly: true
+            },
+            // {
+            //     field: 'abstract',
+            //     name: '摘要',
+            //     truncateText: true,
+            //     width: '35em'
+            // },
+            // {
+            //     field: 'patent_type',
+            //     name: '专利类型',
+            //     truncateText: false,
+            //     width: '6em'
+            // },
+            {
+                field: 'patent_code',
+                name: '专利号',
+                truncateText: false
+            },
+            {
+                field: 'applicant_list',
+                name: '发明人',
+                truncateText: false
+            },
+            {
+                field: 'publication_date',
+                name: '公开（公告）日',
+                truncateText: false
+            }
+        ]
+
+        const onSelectedSearchReChange = (selectedItems) => {
+            this.setSelectedSearchResults(selectedItems);
+        };        
+
+        const searchReSelection = {
+            selectable: (item) => true,
+            selectableMessage: (selectable) =>
+                !selectable ? 'User is currently offline' : undefined,
+            onSelectionChange: onSelectedSearchReChange,
+            initialSelected: []
+        };
+
+        //新颖性分析结果表格 
+        const noveltyResultsColumns = [
+            {
+                field: 'relevant_sig',
+                name: '相关主权项',
+                truncateText: false
+            },
+            {
+                field: 'ori_patent_title',
+                name: '来自于专利',
+                truncateText: false
+            },
+            {
+                align: 'right',
+                width: '40px',
+                isExpander: true,
+                name: (
+                <EuiScreenReaderOnly>
+                    <span>Expand rows</span>
+                </EuiScreenReaderOnly>
+                ),
+                render: (result) => {
+                const itemIdToExpandedRowMapValues = { ...this.state.itemIdToExpandedRowMap }; 
+                return (
+                    <EuiButtonIcon
+                    onClick={() => this.toggleDetails(result)}
+                    aria-label={
+                        itemIdToExpandedRowMapValues[result.relevant_sig_id] ? 'Collapse' : 'Expand'
+                    }
+                    iconType={
+                        itemIdToExpandedRowMapValues[result.relevant_sig_id] ? 'arrowDown' : 'arrowRight'
+                    }
+                    />
+                );
+                },
+            }
+        ]
+      
+        const onNCSelectionChange = (selectedNovelResults) => {
+            this.setSelectedNovelResults(selectedNovelResults);
+        };        
+    
+        const noveltyResultSelection = {
+            selectable: (item) => true,
+            selectableMessage: (selectable) =>
+                !selectable ? 'User is currently offline' : undefined,
+            onSelectionChange: onNCSelectionChange,
+            initialSelected: []
+        };
+
+        let flyoutContent
+
+        if(this.state.flyoutContentType == '检索'){
+            flyoutContent = 
+            <EuiBasicTable
+                tableCaption="Demo of EuiBasicTable"
+                items={this.state.flyoutSearchResultItems}
+                rowHeader="patentName"
+                itemId="search_result_item_id"
+                columns={searchReColumns}
+                onChange={this.onSearchTableChange}
+                // isSelectable={true}
+                // selection={searchReSelection}
+            />
+        }else if(this.state.flyoutContentType == '统计分析'){
+            flyoutContent = 
+            <div>
+                {
+                    this.state.flyoutStatsAnaItems.map((item, index)=>{
+                        var option = JSON.parse(item.option_json)
+                        return (
+                            <div>
+                                <ReactECharts
+                                    option={option}
+                                    style={{
+                                        width : `500px`,
+                                        height : `500px`
+                                    }}
+                                    notMerge={true}
+                                    opts={{renderer: 'svg'}}
+                                />
+                                <EuiSpacer />
+                            </div>
+                        )
+                    })
+                }
+            </div>
+        }else if(this.state.flyoutContentType == '新颖性比对'){
+            flyoutContent =
+            <div>
+                <EuiBasicTable
+                    tableCaption="Demo of EuiBasicTable"
+                    items={this.state.flyoutNoveltyAnaItems.anaItems}
+                    itemIdToExpandedRowMap={this.state.itemIdToExpandedRowMap}
+                    isExpandable={true}
+                    rowHeader="relevant_sig"
+                    itemId='novelty_ana_item_id'
+                    columns={noveltyResultsColumns}
+                    // isSelectable={true}
+                    // selection={noveltyResultSelection}
+                />
+            </div>
+        }
+
         let flyout
 
         if (this.state.isFlyoutVisible) {
             flyout = (
               <EuiFlyout
                 type="push"
+                size='s'
                 onClose={() => this.setIsFlyoutVisible(false)}
               >
                 <EuiFlyoutHeader hasBorder>
                   <EuiTitle size="m">
-                    <h2>分析结果</h2>
+                    <h2>{this.state.flyoutContentType}结果</h2>
                   </EuiTitle>
                 </EuiFlyoutHeader>
                 <EuiFlyoutBody>
-                    {
-                        this.state.analysisResult.map((fig)=>{
-                            return (
-                                <EuiImage
-                                    size="l"
-                                    hasShadow
-                                    allowFullScreen
-                                    alt="统计分析结果"
-                                    src= {"data:image/png;base64," + fig}
-                                />
-                            )
-                        })
-                    }
+                    <>
+                        {flyoutContent}
+                    </>
                 </EuiFlyoutBody>
               </EuiFlyout>
             );
         }
+
+        
 
         return (
             <div style={{display: 'flex', flexDirection: 'column', width : '90%', height : '55%', margin: '0 auto'}}>
@@ -532,13 +820,14 @@ class ReportCollectionBox extends Component {
                                         <EuiBasicTable
                                             tableCaption="Demo of EuiBasicTable"
                                             items={this.state.currentReportContentItemList}
-                                            rowHeader="itemType"
+                                            rowHeader="name"
                                             itemId="reportItemId"
                                             columns={columns}
                                             pagination={pagination}
                                             onChange={this.onTableChange}
                                             isSelectable={true}
                                             selection={selection}
+                                            hasActions={true}
                                         />
                                     </EuiPanel>
                                 </EuiResizablePanel>
