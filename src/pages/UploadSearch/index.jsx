@@ -1,6 +1,15 @@
 import React, { Component } from 'react'
 import axios from "axios"
-import { EuiFilePicker, EuiButton } from '@elastic/eui'
+import { 
+    EuiFilePicker, 
+    EuiButton, 
+    EuiModal, 
+    EuiModalBody, 
+    EuiLoadingSpinner, 
+    EuiText, 
+    EuiModalHeader,
+    EuiModalHeaderTitle
+} from '@elastic/eui'
 import Title from '../../components/Title'
 import './index.css'
 import { ipList } from '../../configs/ipConfig'
@@ -16,7 +25,8 @@ export default class UploadSearch extends Component {
 
     state = {
         files : [],
-        filePickerIsInvalid : false
+        filePickerIsInvalid : false,
+        isLoadingModalVisable : false
     }
 
     checkFileType = (file) => {
@@ -59,6 +69,7 @@ export default class UploadSearch extends Component {
         }else{
             let formData = new FormData()
             formData.append("file", this.state.files[0])
+            this.openLoadingModal()
             axios.post(ipList.BACKEND_SOCKET + `/search/uploadSearch`, 
                 formData, 
                 {
@@ -77,7 +88,39 @@ export default class UploadSearch extends Component {
         };
     }
 
+    closeLoadingModal = () => {
+        this.setState(
+            {
+                isLoadingModalVisable : false
+            }
+        )
+    }
+
+    openLoadingModal = () => {
+        this.setState(
+            {
+                isLoadingModalVisable : true
+            }
+        )
+    }
+    
     render() {
+
+        let loadingModal
+        if(this.state.isLoadingModalVisable){
+            loadingModal = 
+            <EuiModal maxWidth='false' onClose={this.closeLoadingModal}>
+                <EuiModalHeader>
+                    <EuiModalHeaderTitle>请稍候</EuiModalHeaderTitle>
+                </EuiModalHeader>
+                <EuiModalBody >
+                    <div style={{display:'flex', justifyContent:'center'}}>
+                        <EuiLoadingSpinner size='xxl'/>
+                    </div>
+                </EuiModalBody> 
+            </EuiModal>
+        }
+
         return (
             <div className='basic_search'>
                 <Title 
@@ -119,6 +162,7 @@ export default class UploadSearch extends Component {
                         整篇检索
                     </EuiButton>
                 </div>
+                {loadingModal}
             </div>
         )
     }

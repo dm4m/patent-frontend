@@ -27,7 +27,8 @@ import {
   EuiPanel, 
   useEuiTheme,
   useEuiBackgroundColor,
-  EuiLink
+  EuiLink,
+  EuiLoadingSpinner
 } from '@elastic/eui';
 import axios from "axios"
 import { ipList } from '../../configs/ipConfig';
@@ -44,11 +45,12 @@ class NoveltyResults extends Component {
     itemIdToExpandedRowMap : {},
     isReportModalVisible : false,
     selectedReport : null,
-    reportList : []
+    reportList : [],
+    isLoadingModalVisable : false
   }
 
   noveltyAnalysis(signory){
-    console.log(signory)
+    this.openLoadingModal()
     axios.get(ipList.FLASK_SOCKET + `/noveltyAnalysis`, {
         params: {
                     'signory': signory,
@@ -56,7 +58,7 @@ class NoveltyResults extends Component {
     })
     .then(
         response => {
-            console.log(response.data)
+            this.closeLoadingModal()
             this.setState({
               focusSigory : signory,
               noveltyAnalysisResult : response.data,
@@ -133,6 +135,22 @@ class NoveltyResults extends Component {
         selectedReport : value
     })
   };
+
+  closeLoadingModal = () => {
+    this.setState(
+        {
+            isLoadingModalVisable : false
+        }
+    )
+  }
+
+  openLoadingModal = () => {
+      this.setState(
+          {
+              isLoadingModalVisable : true
+          }
+      )
+  }
 
   render() {
 
@@ -291,6 +309,22 @@ class NoveltyResults extends Component {
         );
     }
 
+    let loadingModal
+
+    if(this.state.isLoadingModalVisable){
+        loadingModal = 
+        <EuiModal maxWidth='false' onClose={this.closeLoadingModal}>
+            <EuiModalHeader>
+                <EuiModalHeaderTitle>请稍候</EuiModalHeaderTitle>
+            </EuiModalHeader>
+            <EuiModalBody >
+                <div style={{display:'flex', justifyContent:'center'}}>
+                    <EuiLoadingSpinner size='xxl'/>
+                </div>
+            </EuiModalBody> 
+        </EuiModal>
+    }
+
     return(
       <>
         {/* <EuiPanel> */}
@@ -322,6 +356,7 @@ class NoveltyResults extends Component {
             </EuiPanel>
             {flyout}
             {reportModal}
+            {loadingModal}
           </EuiPageSection>
           {/* </EuiPanel> */}
       </>
