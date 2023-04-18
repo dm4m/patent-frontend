@@ -11,12 +11,22 @@ import {
             EuiListGroupItem
         } from '@elastic/eui'
 import AnalysisCollectionBox from '../../components/AnalysisCollectionBox'
-
+import NoveltyCollectionBox from '../../components/NoveltyCollectionBox'
 
 export default class AnalysisHome extends Component {
 
+    state = {
+        // '检索'，'新颖性'
+        anaType : '新颖性', 
+    }
+
     render() {
         
+        let collectionBox = <AnalysisCollectionBox/>
+        if(this.state.anaType == '新颖性'){
+            collectionBox = <NoveltyCollectionBox/>
+        }
+
         return (
             <div style={{
                 height: '100%'
@@ -26,7 +36,7 @@ export default class AnalysisHome extends Component {
                     describe='在下方管理待分析专利集，并对专利集进行统计分析'
                     height='25%'
                 />
-                <AnalysisCollectionBox/>
+                {collectionBox}
             </div>
         )
     }

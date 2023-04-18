@@ -40,7 +40,7 @@ class Header extends Component {
         ]
       }, 
       {
-        title : '新颖性分析',
+        title : '新颖性创造性分析',
         titlePath : '/noveltyHome',
         items : []
       },

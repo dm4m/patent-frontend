@@ -117,9 +117,9 @@ export default class PatentInfo extends Component {
                                         </div>
                                     </div> */}
                                 </div>
-                                <div className="operate operate2" id="DownLoadParts">
+                                {/* <div className="operate operate2" id="DownLoadParts">
                                     <EuiButton fill>下载 PDF</EuiButton>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

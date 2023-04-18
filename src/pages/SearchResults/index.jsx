@@ -300,7 +300,7 @@ class SearchResults extends Component {
           );
         }
         this.setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues);
-      };
+    };
     
     render() {
 
@@ -633,14 +633,15 @@ class SearchResults extends Component {
                 </EuiText> */}
                 <EuiHorizontalRule/>
                 <EuiFlexGroup direction="column">
-                    {this.state.compareSignoryList.map((signory)=>{
+                    {this.state.compareSignoryList.map((signory, index)=>{
+                        let order = index + 1
                         return (
                         <EuiFlexItem grow={false} 
                         >
                             <EuiText 
                                 style={{ padding: '10px', backgroundColor: this.props.bgColor2}}
                             > 
-                                {signory.signory_item}
+                                {order + "、" + signory.signory_item}
                             </EuiText>
                         </EuiFlexItem>
                     )})}
@@ -671,7 +672,8 @@ class SearchResults extends Component {
                         </EuiTitle>
                         <EuiHorizontalRule/>
                         <EuiFlexGroup direction="column">
-                            {this.state.signoryList.map((signory)=>{
+                            {this.state.signoryList.map((signory, index)=>{
+                                let order = index + 1
                                 return (
                                 <EuiFlexItem grow={false} 
                                 >
@@ -696,7 +698,7 @@ class SearchResults extends Component {
                                         }} 
                                         color='text'
                                     >
-                                        {signory}
+                                        {order + "、" + signory}
                                     </EuiLink>
                                     </EuiText>
                                 </EuiFlexItem>

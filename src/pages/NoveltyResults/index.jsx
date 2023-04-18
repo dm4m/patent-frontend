@@ -28,7 +28,8 @@ import {
   useEuiTheme,
   useEuiBackgroundColor,
   EuiLink,
-  EuiLoadingSpinner
+  EuiLoadingSpinner,
+  EuiSpacer
 } from '@elastic/eui';
 import axios from "axios"
 import { ipList } from '../../configs/ipConfig';
@@ -318,6 +319,10 @@ class NoveltyResults extends Component {
                 <EuiModalHeaderTitle>请稍候</EuiModalHeaderTitle>
             </EuiModalHeader>
             <EuiModalBody >
+                <EuiText>
+                  新颖性分析可能需要一些时间
+                </EuiText>
+                <EuiSpacer />
                 <div style={{display:'flex', justifyContent:'center'}}>
                     <EuiLoadingSpinner size='xxl'/>
                 </div>
@@ -339,7 +344,8 @@ class NoveltyResults extends Component {
             color="subdued">
             <EuiPanel style={{width: '90%'}}>
               <EuiFlexGroup direction="column">
-                {signoryList.map((signory)=>{
+                {signoryList.map((signory, index)=>{
+                  let order = index + 1
                   return (
                     <EuiFlexItem grow={false} 
                     >
@@ -347,7 +353,7 @@ class NoveltyResults extends Component {
                         style={{ padding: '10px', backgroundColor: this.props.bgColor}}
                       > 
                         <EuiLink onClick={() => {this.noveltyAnalysis(signory)}} color='text'>
-                        {signory}
+                          { order  + '、' + signory}
                         </EuiLink>
                       </EuiText>
                     </EuiFlexItem>

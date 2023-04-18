@@ -8,7 +8,8 @@ import {
     EuiLoadingSpinner, 
     EuiText, 
     EuiModalHeader,
-    EuiModalHeaderTitle
+    EuiModalHeaderTitle,
+    EuiSpacer
 } from '@elastic/eui'
 import Title from '../../components/Title'
 import './index.css'
@@ -114,6 +115,10 @@ export default class UploadSearch extends Component {
                     <EuiModalHeaderTitle>请稍候</EuiModalHeaderTitle>
                 </EuiModalHeader>
                 <EuiModalBody >
+                    <EuiText>
+                        整篇检索可能需要一些时间
+                    </EuiText>
+                    <EuiSpacer />
                     <div style={{display:'flex', justifyContent:'center'}}>
                         <EuiLoadingSpinner size='xxl'/>
                     </div>

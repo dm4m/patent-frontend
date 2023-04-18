@@ -28,7 +28,7 @@ class Menu extends Component {
                             margin: '0 10px'
                         }}
                     >
-                        <EuiCard title={"新颖性分析"}
+                        <EuiCard title={"新颖性创造性分析"}
                             icon={<EuiIcon size="xxl" type={`inspect`} color="primary"/>}
                             description="对专利的权利要求进行抽取、比较"
                             onClick={()=>{this.props.history.push({pathname:'/noveltyHome'})}}

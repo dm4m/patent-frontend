@@ -176,7 +176,9 @@ class ReportCollectionBox extends Component {
                         report2genList : res
                     },
                     () => {
-                        this.setCurrentReport(this.state.report2genList[0])
+                        if(res.length > 0){
+                            this.setCurrentReport(this.state.report2genList[0])
+                        }    
                     }
                 )
             }
@@ -240,7 +242,7 @@ class ReportCollectionBox extends Component {
             a.style = "display: none";
             a.href = blobUrl;
             a.target = "_blank"
-            a.download = "test";
+            a.download = this.state.currentReport.reportName;
             a.click();
             // window.open(exportUrl);
             // window.location.assign(exportUrl);
