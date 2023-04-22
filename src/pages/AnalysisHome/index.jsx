@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
 import Title from '../../components/Title'
-import {    
-            EuiPage,
-            EuiResizableContainer,
-            EuiListGroup,
-            EuiPanel,
-            EuiTitle,
-            EuiSpacer,
-            EuiText,
-            EuiListGroupItem
+import { 
+    EuiFlexGroup,
+            EuiFlexItem,
+            EuiSuperSelect,
+            EuiText
         } from '@elastic/eui'
 import AnalysisCollectionBox from '../../components/AnalysisCollectionBox'
 import NoveltyCollectionBox from '../../components/NoveltyCollectionBox'
@@ -16,27 +12,69 @@ import NoveltyCollectionBox from '../../components/NoveltyCollectionBox'
 export default class AnalysisHome extends Component {
 
     state = {
-        // '检索'，'新颖性'
-        anaType : '新颖性', 
+        // anaObjectType : '新颖性创造性分析结果', 
+        anaObjectType : '检索结果'
     }
 
-    render() {
+    render() {  
         
+        let anaObejctTypes = [
+            '检索结果',
+            '新颖性创造性分析结果'
+        ]
+
+        let anaObejctTypesOption = anaObejctTypes.map(
+            (type) => {
+                let option = 
+                {
+                    value : type,
+                    inputDisplay : type
+                }
+                return option
+            }
+        )
+
         let collectionBox = <AnalysisCollectionBox/>
-        if(this.state.anaType == '新颖性'){
+        if(this.state.anaObjectType == '新颖性创造性分析结果'){
             collectionBox = <NoveltyCollectionBox/>
+        }else if(this.state.anaObjectType == '检索结果'){
+            collectionBox = <AnalysisCollectionBox/>
         }
 
         return (
             <div style={{
-                height: '100%'
+                height: '100%',
+                // width: '100%'
             }}>
                 <Title 
                     title='统计分析' 
                     describe='在下方管理待分析专利集，并对专利集进行统计分析'
                     height='25%'
                 />
-                {collectionBox}
+                <EuiFlexGroup direction='column' alignItems='flexStart' style={{width : '90%', margin: '0 auto'}}> 
+                    <EuiFlexItem>
+                        <EuiFlexGroup  alignItems='center'>
+                            <EuiFlexItem>
+                                <EuiText> <b>请选择分析对象：</b></EuiText>
+                            </EuiFlexItem>
+                            <EuiFlexItem>
+                                <EuiSuperSelect
+                                    style={{width: '15em'}}
+                                    options={anaObejctTypesOption}
+                                    valueOfSelected={this.state.anaObjectType}
+                                    onChange={(value) => {this.setState({anaObjectType : value})}}
+                                    itemLayoutAlign="top"
+                                    hasDividers
+                                />
+                            </EuiFlexItem>
+                        </EuiFlexGroup>
+                        
+                    </EuiFlexItem>
+                    <EuiFlexItem>
+                        {collectionBox}
+                    </EuiFlexItem>
+                </EuiFlexGroup>
+                
             </div>
         )
     }

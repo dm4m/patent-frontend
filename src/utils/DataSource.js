@@ -95,21 +95,34 @@ export async function insertSearchResults(patentIds, reportId){
                                     )
 }
 
-export async function insertNoveltyResults(reportId, focusSigory, noveltyAnalysisResult){
+// 把新颖性分析结果保存至待分析报告，附带插入新颖性结果数据（老）
+// 保存新颖性结果，不再直接加入待生成报告
+export async function insertNoveltyResults(resultName, focusSigory, noveltyAnalysisResult){
     let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/noveltyResults`, 
                                         { 
-                                            'reportId': reportId,
+                                            'resultName': resultName,
                                             'focusSigory': focusSigory,
                                             'noveltyAnalysisResult': noveltyAnalysisResult
                                         }
                                     )
 }
 
-export async function insertStatsResults(reportId, options){
+export async function addNoveltyResult2Report(reportId, noveltyAnaId, noveltyAnaName){
+    let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/addNoveltyResult2Report`, 
+                                        { 
+                                            'noveltyAnaId': noveltyAnaId,
+                                            'reportId': reportId,
+                                            'noveltyAnaName': noveltyAnaName,
+                                        }
+                                    )
+}
+
+export async function insertStatsResults(reportId, options, collectionId){
     let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/statsResults`, 
                                         { 
                                             'reportId': reportId,
-                                            'options': options
+                                            'options': options,
+                                            'collectionId' : collectionId
                                         }
                                     )
 }
@@ -158,3 +171,40 @@ export async function getReportContentDetail(itemType, corrId){
     })
     return response.data
 }
+
+export async function getNoveltyAnaResult(){
+    let response =  await axios.get(ipList.BACKEND_SOCKET + `/stats/noveltyAnaResult`, {
+    })
+    return response.data
+}
+
+export async function getNAItemByNAId(noveltyAnaId, pageIndex, pageSize){
+    let response =  await axios.get(ipList.BACKEND_SOCKET + `/stats/noveltyAnaResultItem`, {
+        params: {
+            'noveltyAnaId': noveltyAnaId,
+            'pageIndex' : pageIndex,
+            'pageSize' : pageSize,
+        }
+    })
+    return response.data
+}
+
+export async function deleteNoveltyResAndItems(noveltyResId){
+    let response =  await axios.delete(ipList.BACKEND_SOCKET + `/stats/NoveltyRes`, 
+                                        {
+                                            params: {
+                                                'noveltyResId': noveltyResId,
+                                            }
+                                        })
+}
+
+export async function addSearchResults2Report(reportId, collectionId, collectionName){
+    let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/addSearchResults2Report`, 
+                                        { 
+                                            'collectionId': collectionId,
+                                            'reportId': reportId,
+                                            'collectionName': collectionName,
+                                        }
+                                    )
+}
+

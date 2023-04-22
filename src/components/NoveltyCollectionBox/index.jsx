@@ -4,6 +4,7 @@ import ReactECharts from 'echarts-for-react';
 import { 
     EuiListGroupItem,
     EuiPage,
+    EuiScreenReaderOnly,
     EuiResizableContainer,
     EuiListGroup,
     EuiPanel,
@@ -34,88 +35,50 @@ import {
     useEuiBackgroundColor,
     EuiSuperSelect
 } from '@elastic/eui';
-import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection, insertStatsResults, getReport2gen} from '../../utils/DataSource';
-import { doAnalysis } from '../../utils/AnalysisUtils';
+import { deleteNoveltyResAndItems,getNoveltyAnaResult,getNAItemByNAId, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection, insertStatsResults, getReport2gen, addNoveltyResult2Report} from '../../utils/DataSource';
+import { doAnalysis, noveltyReStats } from '../../utils/AnalysisUtils';
 
 class NoveltyCollectionBox extends Component {
 
     constructor(props){
         super()
-        this.initCollectionList()
-        this.figRefs = []
+        this.initNoveltyAnaResults()
     }
 
     state = {
-        collectionList : [],
-        currentCollectionName: 'First item',
-        currentcollectionId: 1,
-        currentCollectionItemList : [],
-        currentCollectionItemCount : 0,
+        noveltyAnaResults : [],
+        currentNoveltyResult : {},
+        currentAnaResultItemList : [],
+        currentAnaResultItemCount : 0,
+
+        selectedNovelResults : [],
+        itemIdToExpandedRowMap : {},
+
         pageIndex : 0,
         pageSize : 10,
         selectedItems : [],
-        isCreateModalVisible : false,
-        isAnalysisModalVisible : false,
         isReportModalVisible : false,
         isFlyoutVisible : false,
-        newCollectionName : "",
-        selectedAnaType : '',
-        selectedFigType : '',
-        analysisResult : [],
+        // novelty/noveltyStats
+        reportAddContent : "",
+
+        noveltyStatsResult : {},
         reportList : [],
-        selectedReport : null
+        selectedReportId : null
     }
 
-    anaTypeOption = [
-        { value: 'area', text: '地域分析' },
-        { value: 'trend', text: '趋势分析' },
-        { value: 'author', text: '发明人分析' }
-    ];
-
-    figTypeOption = [
-        { value: 'pie', text: '饼状图' },
-        { value: 'bar', text: '柱状图' },
-        { value: 'line', text: '折线图' }
-    ];
-
-    figTypeOptionMap = {
-        'trend' : [
-            { value: 'bar', text: '柱状图' },
-            { value: 'line', text: '折线图' },
-            { value: 'pie', text: '饼状图' }
-        ],
-        'author' : [
-            { value: 'bar', text: '柱状图' },
-            { value: 'pie', text: '饼状图' }
-        ],
-        'area' : [
-            { value: 'pie', text: '饼状图' },
-            { value: 'bar', text: '柱状图' },
-        ],
-    }
-
-    setSelectedAnaType(anaType){
-        this.setState({
-            selectedAnaType : anaType
-        })
-    }
-
-    setSelectedFigType(figType){
-        this.setState({
-            selectedFigType : figType
-        }, () => {console.log(this.state.selectedFigType)})
-    }
-
-    setCurrentCollection(collectionId, collectionName){
-        getACItemByCollectionId(collectionId, this.state.pageIndex, this.state.pageSize).then(
+    setCurrentNoveltyAnaResult(noveltyAnaId, noveltyAnaRes){
+        getNAItemByNAId(noveltyAnaId, this.state.pageIndex, this.state.pageSize).then(
             res => {
                 this.setState(
                     {   
-                        currentCollectionName : collectionName,
-                        currentCollectionItemList : res.itemList,
-                        currentCollectionItemCount : res.totalItemCount
+                        currentNoveltyResult : noveltyAnaRes,
+                        currentAnaResultItemList : res.itemList,
+                        currentAnaResultItemCount : res.totalItemCount,
                     },
-                    () => {}
+                    () => {
+                           
+                    }
                 )
             }
         ) 
@@ -143,11 +106,11 @@ class NoveltyCollectionBox extends Component {
         }, () => {})
     }
 
-    setSelectedReport = (value) => {
+    setSelectedReportId = (value) => {
         this.setState({
-            selectedReport : value
+            selectedReportId : value
         })
-      };
+    };
 
     onTableChange = ({ page = {} }) => {
         const { index: pageIndex, size: pageSize } = page;
@@ -169,15 +132,17 @@ class NoveltyCollectionBox extends Component {
         
     };
 
-    initCollectionList(){
-        getAnalysisCollection().then(
+    initNoveltyAnaResults(){
+        getNoveltyAnaResult().then(
             res => {
                 this.setState(
                     {
-                        collectionList : res
+                        noveltyAnaResults : res
                     },
                     () => {
-                        this.setCurrentCollection(this.state.collectionList[0].collection_id, this.state.collectionList[0].name)
+                        if(res.length > 0){
+                            this.setCurrentNoveltyAnaResult(this.state.noveltyAnaResults[0].novelty_ana_id, this.state.noveltyAnaResults[0])
+                        }
                     }
                 )
             }
@@ -187,7 +152,15 @@ class NoveltyCollectionBox extends Component {
     deleteCollectionAndReload(collectionId){
         deleteCollectionById(collectionId).then(
             res => {
-                this.initCollectionList()
+                this.initNoveltyAnaResults()
+            }
+        )
+    }
+
+    deleteNoveltyResAndReload(noveltyResId){
+        deleteNoveltyResAndItems(noveltyResId).then(
+            res => {
+                this.initNoveltyAnaResults()
             }
         )
     }
@@ -198,37 +171,12 @@ class NoveltyCollectionBox extends Component {
         )
         deleteCollectionItemsByIds(ids).then(
             res => {
-                this.setCurrentCollection(this.state.currentcollectionId, this.state.currentCollectionName)
+                this.setCurrentCollection(this.state.currentcollectionId, this.state.currentNoveltyResultName)
             }
         )
         
     }
 
-    closeCreateModal(){
-        this.setState({
-            isCreateModalVisible : false
-        })
-    }
-
-    openCreateModal(){
-        this.setState({
-            isCreateModalVisible : true
-        })
-    }
-
-    closeAnalysisModal(){
-        this.setState({
-            isAnalysisModalVisible : false
-        })
-    }
-
-    openAnalysisModal(){
-        this.setState({
-            selectedAnaType : '',
-            selectedFigType : '',
-            isAnalysisModalVisible : true
-        })
-    }
 
     closeReportModal(){
         this.setState({
@@ -236,9 +184,10 @@ class NoveltyCollectionBox extends Component {
         })
     }
 
-    openReportModal(){
+    openReportModal(contentType){
         this.setState({
-            isReportModalVisible : true
+            isReportModalVisible : true,
+            reportAddContent: contentType
         })
         this.initReportList()
     }
@@ -257,19 +206,40 @@ class NoveltyCollectionBox extends Component {
         )
     }
 
+    setItemIdToExpandedRowMap(map){
+        this.setState({
+            itemIdToExpandedRowMap : map
+        })
+    }
+
+    toggleDetails = (result) => {
+        const itemIdToExpandedRowMapValues = { ...this.state.itemIdToExpandedRowMap };
+        if (itemIdToExpandedRowMapValues[result.novelty_ana_item_id]) {
+            delete itemIdToExpandedRowMapValues[result.novelty_ana_item_id];
+        } else {
+            itemIdToExpandedRowMapValues[result.novelty_ana_item_id] = (
+            <EuiText style={{whiteSpace: 'pre-wrap'}}>
+                {result.compare_result}
+            </EuiText>
+
+            );
+        }
+        this.setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues);
+    };
+
     render() {
 
         const {theme} = this.props
 
-        const collections = this.state.collectionList.map((collection, index) => (
+        const noveltyAnaResults = this.state.noveltyAnaResults.map((noveltyAnaResult, index) => (
             <EuiListGroupItem
                 key={index}
-                onClick={() => {this.setCurrentCollection(collection.collection_id, collection.name)}}
-                label={collection.name}
+                onClick={() => {this.setCurrentNoveltyAnaResult(noveltyAnaResult.novelty_ana_id, noveltyAnaResult)}}
+                label={noveltyAnaResult.name}
                 size="m"
                 extraAction={{
                     color: 'text',
-                    onClick: () => {this.deleteCollectionAndReload(collection.collection_id)},
+                    onClick: () => {this.deleteNoveltyResAndReload(noveltyAnaResult.novelty_ana_id)},
                     iconType: 'trash',
                     iconSize: 's',
                     alwaysShow: false
@@ -277,16 +247,68 @@ class NoveltyCollectionBox extends Component {
             />
         ));
 
-        const columns = [
+        // const columns = [
+        //     // {
+        //     //     field: 'novelty_ana_item_id',
+        //     //     name: '专利名称',
+        //     //     truncateText: false
+        //     // },
+        //     // {
+        //     //     field: 'novelty_ana_id',
+        //     //     name: '发明人',
+        //     //     truncateText: false
+        //     // },
+        //     {
+        //         field: 'relevant_sig',
+        //         name: '相关主权项',
+        //         truncateText: false
+        //     },
+        //     {
+        //         field: 'compare_result',
+        //         name: '对比分析结果',
+        //         truncateText: false
+        //     },
+        //     {
+        //         field: 'ori_patent_title',
+        //         name: '发明人',
+        //         truncateText: false
+        //     }
+        // ]
+
+        const noveltyResultsColumns = [
             {
-                field: 'patentName',
-                name: '专利名称',
+                field: 'relevant_sig',
+                name: '相关权利要求',
                 truncateText: false
             },
             {
-                field: 'inventor',
-                name: '发明人',
+                field: 'ori_patent_title',
+                name: '来自专利',
                 truncateText: false
+            },
+            {
+              align: 'right',
+              width: '40px',
+              isExpander: true,
+              name: (
+                <EuiScreenReaderOnly>
+                  <span>Expand rows</span>
+                </EuiScreenReaderOnly>
+              ),
+              render: (result) => {
+                const itemIdToExpandedRowMapValues = { ...this.state.itemIdToExpandedRowMap }; 
+                return (
+                  <EuiButtonIcon
+                    onClick={() => this.toggleDetails(result)}
+                    aria-label={
+                      itemIdToExpandedRowMapValues[result.novelty_ana_item_id] ? 'Collapse' : 'Expand'
+                    }
+                    iconType={
+                      itemIdToExpandedRowMapValues[result.novelty_ana_item_id] ? 'arrowDown' : 'arrowRight'
+                    }
+                  />
+                );
+              },
             }
         ]
 
@@ -301,164 +323,86 @@ class NoveltyCollectionBox extends Component {
             this.setSelectedItems(selectedItems);
         };        
 
-        const selection = {
-            selectable: (item) => true,
-            selectableMessage: (selectable) =>
-                !selectable ? 'User is currently offline' : undefined,
-            onSelectionChange: onSelectionChange,
-            initialSelected: []
-        };
         
+        // const noveltyResultSelection = {
+        //     selectable: (item) => true,
+        //     selectableMessage: (selectable) =>
+        //         !selectable ? 'User is currently offline' : undefined,
+        //     onSelectionChange: onNCSelectionChange,
+        //     initialSelected: []
+        // };
+
         const renderControllArea = () => {
             return (
                 <div>
-                    <EuiFlexGroup responsive={false} gutterSize="s" alignItems="center">
-                        <EuiFlexItem grow={false}>
-                            <EuiButton
-                                 iconType='visLine'
-                                 onClick={() => {
-                                    this.openAnalysisModal()
-                                }}
-                            >
-                                分析集合
-                            </EuiButton>
+                    <EuiFlexGroup responsive={false} gutterSize="s" alignItems="center" justifyContent='spaceBetween'>
+                        <EuiFlexItem>
+                            <EuiFlexGroup responsive={false} gutterSize="s" alignItems="center">
+                                <EuiFlexItem grow={false}>
+                                    <EuiButton
+                                        iconType='visLine'
+                                        onClick={
+                                            () => {
+                                                noveltyReStats(this.state.currentNoveltyResult.novelty_ana_id).then(
+                                                    (res) => {
+                                                        console.log(res)
+                                                        this.setState({
+                                                            noveltyStatsResult : res,
+                                                            // isAnalysisModalVisible : false,
+                                                            isFlyoutVisible : true
+                                                        })
+                                                    }
+                                                )
+                                            }
+                                            }
+                                    >
+                                        对结果进行统计
+                                    </EuiButton>
+                                </EuiFlexItem>
+                                <EuiFlexItem grow={false}>
+                                    <EuiButton
+                                        iconType='visLine'
+                                        onClick={() => {
+                                            this.openReportModal('novelty')
+                                        }}
+                                    >
+                                        添加至待生成报告
+                                    </EuiButton>
+                                </EuiFlexItem>            
+                            {/* {this.state.selectedItems.length === 0 ? null :
+                                <EuiFlexItem grow={false}>
+                                    <EuiButton
+                                        iconType='visLine'
+                                    >
+                                        分析选中专利
+                                    </EuiButton>
+                                </EuiFlexItem>
+                            }      */}
+                            {this.state.selectedItems.length === 0 ? null :
+                                <EuiFlexItem grow={false}>
+                                    <EuiButton
+                                        color='danger'
+                                        iconType="trash"
+                                        onClick={() => {this.deleteSelectedItems()}}
+                                    >
+                                        删除选中专利
+                                    </EuiButton>
+                                </EuiFlexItem>
+                            }
+                            </EuiFlexGroup>
                         </EuiFlexItem>
-                        {/* {this.state.selectedItems.length === 0 ? null :
-                            <EuiFlexItem grow={false}>
-                                <EuiButton
-                                    iconType='visLine'
-                                >
-                                    分析选中专利
-                                </EuiButton>
-                            </EuiFlexItem>
-                        }      */}
-                        {this.state.selectedItems.length === 0 ? null :
-                            <EuiFlexItem grow={false}>
-                                <EuiButton
-                                    color='danger'
-                                    iconType="trash"
-                                    onClick={() => {this.deleteSelectedItems()}}
-                                >
-                                    删除选中专利
-                                </EuiButton>
-                            </EuiFlexItem>
-                        }
+                        <EuiFlexItem>
+                            <EuiFlexGroup justifyContent='flexEnd' gutterSize="s" alignItems='center'>
+                            </EuiFlexGroup>
+                        </EuiFlexItem>
+                        
                     </EuiFlexGroup>
+                    
                 </div>
             );
         };
 
         const controlArea = renderControllArea();
-
-        let createModal
-
-        if (this.state.isCreateModalVisible) {
-            createModal = (
-                <EuiModal onClose={() => {this.closeCreateModal()}}>
-                <EuiModalHeader>
-                    <EuiModalHeaderTitle>
-                        <h1>新建待分析集</h1>
-                    </EuiModalHeaderTitle>
-                </EuiModalHeader>
-        
-                <EuiModalBody>
-                    <EuiFormRow label="请输入新建待分析集合名">
-                        <EuiFieldText
-                            placeholder="Placeholder text"
-                            value={this.state.newCollectionName}
-                            onChange={(e) => {
-                                    this.setState({
-                                        newCollectionName : e.target.value
-                                    }, () => {})
-                            }}
-                            aria-label="Use aria labels when no actual label is in use"
-                        />
-                    </EuiFormRow>
-                </EuiModalBody>
-
-                <EuiModalFooter>
-                    <EuiButtonEmpty onClick={() => {this.closeCreateModal()}}>Cancel</EuiButtonEmpty>
-                    <EuiButton 
-                        type="submit" 
-                        onClick={
-                            () => {
-                                insertAnalysisCollection(this.state.newCollectionName).then(
-                                    (res) => {
-                                        this.initCollectionList()
-                                        this.closeCreateModal()
-                                    }
-                                )
-                            }
-                        } 
-                        fill>
-                     Save
-                    </EuiButton>
-                </EuiModalFooter>
-                </EuiModal>
-            );
-        }
-
-        let analysisModal
-
-        if (this.state.isAnalysisModalVisible) {
-            analysisModal = (
-                <EuiModal onClose={() => {this.closeAnalysisModal()}}>
-                <EuiModalHeader>
-                    <EuiModalHeaderTitle>
-                        <h1>请选择分析类型</h1>
-                    </EuiModalHeaderTitle>
-                </EuiModalHeader>
-        
-                <EuiModalBody>
-                    <EuiFormRow label="选择分析类型">
-                        <EuiSelect
-                            options={this.anaTypeOption}
-                            value={this.state.selectedAnaType}
-                            hasNoInitialSelection = {true}
-                            onChange={(e) => {this.setSelectedAnaType(e.target.value)}}
-                            aria-label="Use aria labels when no actual label is in use"
-                        />
-                    </EuiFormRow>
-                    <EuiFormRow label="选择展现形式">
-                        <EuiSelect
-                            options={this.figTypeOptionMap[this.state.selectedAnaType]}
-                            hasNoInitialSelection = {true}
-                            value={this.state.selectedFigType}
-                            onChange={(e) => {this.setSelectedFigType(e.target.value)}}
-                            aria-label="Use aria labels when no actual label is in use"
-                        />
-                    </EuiFormRow>
-                </EuiModalBody> 
-
-                <EuiModalFooter>
-                    <EuiButtonEmpty onClick={() => {this.closeAnalysisModal()}}>Cancel</EuiButtonEmpty>
-                    <EuiButton 
-                        type="submit" 
-                        onClick={
-                            () => {
-                                let ids = this.state.currentCollectionItemList.map(
-                                    (item, index) => {return item.itemId}
-                                )
-                                console.log(ids)
-                                doAnalysis(this.state.selectedAnaType, this.state.selectedFigType, ids).then(
-                                    (res) => {
-                                        console.log(res)
-                                        this.setState({
-                                            analysisResult : res,
-                                            isAnalysisModalVisible : false,
-                                            isFlyoutVisible : true
-                                        })
-                                    }
-                                )
-                            }
-                        } 
-                        fill>
-                     进行分析
-                    </EuiButton>
-                </EuiModalFooter>
-                </EuiModal>
-            );
-        }
 
         let reportModal;
 
@@ -486,8 +430,8 @@ class NoveltyCollectionBox extends Component {
                     <EuiFormRow label="请选择要添加至的待生成报告">
                         <EuiSuperSelect
                             options={reports}
-                            valueOfSelected={this.state.selectedReport}
-                            onChange={(value) => this.setSelectedReport(value)}
+                            valueOfSelected={this.state.selectedReportId}
+                            onChange={(value) => this.setSelectedReportId(value)}
                             itemLayoutAlign="top"
                             hasDividers
                         />
@@ -499,8 +443,14 @@ class NoveltyCollectionBox extends Component {
                     <EuiButton 
                         type="submit" 
                         onClick={
-                            () => {
-                                insertStatsResults(this.state.selectedReport, this.state.analysisResult)
+                            () => {      
+                                if(this.state.reportAddContent == 'novelty'){
+                                    addNoveltyResult2Report(this.state.selectedReportId, 
+                                        this.state.currentNoveltyResult.novelty_ana_id, 
+                                        this.state.currentNoveltyResult.name)
+                                }else if(this.state.reportAddContent == 'noveltyStats'){
+                                    insertStatsResults(this.state.selectedReportId, this.state.noveltyStatsResult)
+                                }
                                 this.closeReportModal()
                             }
                         } 
@@ -512,6 +462,7 @@ class NoveltyCollectionBox extends Component {
             );
         }
 
+        
         let flyout
 
         if (this.state.isFlyoutVisible) {
@@ -533,12 +484,8 @@ class NoveltyCollectionBox extends Component {
                         <EuiButton
                             iconType='visBarVertical'
                             onClick={() => {
-                                this.openReportModal()
-                                // let chart =  this.figRefs[0].getEchartsInstance()
-                                // let fig64 = chart.getDataURL({
-                                //     type: 'svg'
-                                // })
-                                // console.log(fig64)
+                                
+                                this.openReportModal("noveltyStats")
                             }}
                         >
                             保存统计分析结果
@@ -548,7 +495,7 @@ class NoveltyCollectionBox extends Component {
                 </EuiFlyoutHeader>
                 <EuiFlyoutBody>
                     {
-                        this.state.analysisResult.map((optionStr, index)=>{
+                        this.state.noveltyStatsResult.map((optionStr, index)=>{
                             var option = JSON.parse(optionStr)
                             return (
                                 <div>
@@ -572,7 +519,7 @@ class NoveltyCollectionBox extends Component {
         }
 
         return (
-            <div style={{display: 'flex', flexDirection: 'column', width : '90%', height : '55%', margin: '0 auto'}}>
+            <div style={{display: 'flex', flexDirection: 'column',  margin: '0 auto'}}>
                 <EuiPanel
                     style={{
                         backgroundColor: theme.colors.lightestShade,
@@ -592,16 +539,16 @@ class NoveltyCollectionBox extends Component {
                                 >
                                     <EuiPanel paddingSize="l" style={{ minHeight: '100%' }}> 
                                         <EuiTitle size="s">
-                                            <p>待分析新颖性分析结果</p>
+                                            <p>新颖性创造性分析结果</p>
                                         </EuiTitle>
                                         <EuiHorizontalRule
                                             margin='m'
                                         />    
-                                        <EuiListGroup flush> {collections}</EuiListGroup>
+                                        <EuiListGroup flush> {noveltyAnaResults}</EuiListGroup>
                                         <EuiSpacer/>
-                                        <EuiButton onClick={() => {this.openCreateModal()}}>
+                                        {/* <EuiButton onClick={() => {this.openCreateModal()}}>
                                             + 新建待分析集合
-                                        </EuiButton>
+                                        </EuiButton> */}
                                     </EuiPanel>
                                 </EuiResizablePanel>
                                 <EuiResizableButton />
@@ -614,16 +561,20 @@ class NoveltyCollectionBox extends Component {
                                         <EuiHorizontalRule
                                             margin='m'
                                         />
+                                        <EuiText>{"原权利要求:  " + this.state.currentNoveltyResult.ori_signory}</EuiText>
+                                        <EuiHorizontalRule
+                                            margin='m'
+                                        />
                                         <EuiBasicTable
                                             tableCaption="Demo of EuiBasicTable"
-                                            items={this.state.currentCollectionItemList}
-                                            rowHeader="patentName"
-                                            itemId="itemId"
-                                            columns={columns}
-                                            pagination={pagination}
-                                            onChange={this.onTableChange}
+                                            items={this.state.currentAnaResultItemList}
+                                            itemIdToExpandedRowMap={this.state.itemIdToExpandedRowMap}
+                                            isExpandable={true}
+                                            rowHeader="relevant_sig"
+                                            itemId='novelty_ana_item_id'
+                                            columns={noveltyResultsColumns}
                                             isSelectable={true}
-                                            selection={selection}
+                                            // selection={noveltyResultSelection}
                                         />
                                     </EuiPanel>
                                 </EuiResizablePanel>
@@ -631,8 +582,6 @@ class NoveltyCollectionBox extends Component {
                             )}
                         </EuiResizableContainer>
                 </EuiPanel>
-                {createModal}
-                {analysisModal}
                 {flyout}
                 {reportModal}
             </div>
@@ -641,6 +590,7 @@ class NoveltyCollectionBox extends Component {
 }
 
 export default function(props){
+
     const { euiTheme } = useEuiTheme()
 
     return <NoveltyCollectionBox theme={euiTheme}/>

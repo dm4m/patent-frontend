@@ -34,7 +34,7 @@ import {
     useEuiBackgroundColor,
     EuiSuperSelect
 } from '@elastic/eui';
-import { getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection, insertStatsResults, getReport2gen} from '../../utils/DataSource';
+import {addSearchResults2Report, getAnalysisCollection, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection, insertStatsResults, getReport2gen} from '../../utils/DataSource';
 import { doAnalysis } from '../../utils/AnalysisUtils';
 
 class AnalysisCollectionBox extends Component {
@@ -63,7 +63,9 @@ class AnalysisCollectionBox extends Component {
         selectedFigType : '',
         analysisResult : [],
         reportList : [],
-        selectedReport : null
+        selectedReportId : null,
+        // searchResults, searchStats
+        reportAddContent : ""
     }
 
     anaTypeOption = [
@@ -111,6 +113,7 @@ class AnalysisCollectionBox extends Component {
             res => {
                 this.setState(
                     {   
+                        currentcollectionId : collectionId,
                         currentCollectionName : collectionName,
                         currentCollectionItemList : res.itemList,
                         currentCollectionItemCount : res.totalItemCount
@@ -143,16 +146,16 @@ class AnalysisCollectionBox extends Component {
         }, () => {})
     }
 
-    setSelectedReport = (value) => {
+    setSelectedReportId = (value) => {
         this.setState({
-            selectedReport : value
+            selectedReportId : value
         })
       };
 
     onTableChange = ({ page = {} }) => {
         const { index: pageIndex, size: pageSize } = page;
-        this.setPageIndex(pageIndex);
-        this.setPageSize(pageSize);
+        // this.setPageIndex(pageIndex);
+        // this.setPageSize(pageSize);
         getACItemByCollectionId(this.state.currentcollectionId, pageIndex, pageSize).then(
             res => {
                 this.setState(
@@ -177,7 +180,9 @@ class AnalysisCollectionBox extends Component {
                         collectionList : res
                     },
                     () => {
-                        this.setCurrentCollection(this.state.collectionList[0].collection_id, this.state.collectionList[0].name)
+                        if(res.length > 0){
+                            this.setCurrentCollection(this.state.collectionList[0].collection_id, this.state.collectionList[0].name)
+                        }
                     }
                 )
             }
@@ -236,9 +241,10 @@ class AnalysisCollectionBox extends Component {
         })
     }
 
-    openReportModal(){
+    openReportModal(contentType){
         this.setState({
-            isReportModalVisible : true
+            isReportModalVisible : true,
+            reportAddContent : contentType
         })
         this.initReportList()
     }
@@ -323,6 +329,16 @@ class AnalysisCollectionBox extends Component {
                                 分析集合
                             </EuiButton>
                         </EuiFlexItem>
+                        <EuiFlexItem grow={false}>
+                            <EuiButton
+                                iconType='visLine'
+                                onClick={() => {
+                                    this.openReportModal("searchResults")
+                                }}
+                            >
+                                添加至待生成报告
+                            </EuiButton>
+                        </EuiFlexItem> 
                         {/* {this.state.selectedItems.length === 0 ? null :
                             <EuiFlexItem grow={false}>
                                 <EuiButton
@@ -486,8 +502,8 @@ class AnalysisCollectionBox extends Component {
                     <EuiFormRow label="请选择要添加至的待生成报告">
                         <EuiSuperSelect
                             options={reports}
-                            valueOfSelected={this.state.selectedReport}
-                            onChange={(value) => this.setSelectedReport(value)}
+                            valueOfSelected={this.state.selectedReportId}
+                            onChange={(value) => this.setSelectedReportId(value)}
                             itemLayoutAlign="top"
                             hasDividers
                         />
@@ -500,7 +516,15 @@ class AnalysisCollectionBox extends Component {
                         type="submit" 
                         onClick={
                             () => {
-                                insertStatsResults(this.state.selectedReport, this.state.analysisResult)
+                                if(this.state.reportAddContent == 'searchResults'){
+                                    addSearchResults2Report(this.state.selectedReportId, 
+                                        this.state.currentcollectionId, 
+                                        this.state.currentCollectionName)
+                                }else if(this.state.reportAddContent == 'searchStats'){
+                                    insertStatsResults(this.state.selectedReportId, this.state.analysisResult, this.state.currentcollectionId)
+
+                                }
+                                
                                 this.closeReportModal()
                             }
                         } 
@@ -533,7 +557,7 @@ class AnalysisCollectionBox extends Component {
                         <EuiButton
                             iconType='visBarVertical'
                             onClick={() => {
-                                this.openReportModal()
+                                this.openReportModal("searchStats")
                                 // let chart =  this.figRefs[0].getEchartsInstance()
                                 // let fig64 = chart.getDataURL({
                                 //     type: 'svg'
@@ -573,7 +597,7 @@ class AnalysisCollectionBox extends Component {
 
       
         return (
-            <div style={{display: 'flex', flexDirection: 'column', width : '90%', height : '55%', margin: '0 auto'}}>
+            <div style={{display: 'flex', flexDirection: 'column', margin: '0 auto'}}>
                 <EuiPanel
                     style={{
                         backgroundColor: theme.colors.lightestShade,

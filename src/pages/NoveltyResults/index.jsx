@@ -29,7 +29,8 @@ import {
   useEuiBackgroundColor,
   EuiLink,
   EuiLoadingSpinner,
-  EuiSpacer
+  EuiSpacer,
+  EuiFieldText
 } from '@elastic/eui';
 import axios from "axios"
 import { ipList } from '../../configs/ipConfig';
@@ -44,10 +45,11 @@ class NoveltyResults extends Component {
     noveltyAnalysisResult: [],
     selectedNovelResults : [],
     itemIdToExpandedRowMap : {},
-    isReportModalVisible : false,
+    isSaveModalVisible : false,
     selectedReport : null,
     reportList : [],
-    isLoadingModalVisable : false
+    isLoadingModalVisable : false,
+    newResultName : ""
   }
 
   noveltyAnalysis(signory){
@@ -104,17 +106,16 @@ class NoveltyResults extends Component {
     this.setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues);
   };
 
-  closeReportModal(){
+  closeSaveModal(){
     this.setState({
-        isReportModalVisible : false
+        isSaveModalVisible : false
     })
   }
 
-  openReportModal(){
+  openSaveModal(){
     this.setState({
-        isReportModalVisible : true
-    })
-    this.initReportList()
+        isSaveModalVisible : true
+    }, ()=>{})
   }
 
   initReportList(){
@@ -227,10 +228,10 @@ class NoveltyResults extends Component {
                 <EuiButton
                       iconType='inspect'
                       onClick={() => {
-                        this.openReportModal()
+                        this.openSaveModal()
                     }}
                 >
-                    保存分析结果
+                    保存选中分析结果
                 </EuiButton>
               </EuiFlexItem>
             </EuiFlexGroup>
@@ -258,7 +259,7 @@ class NoveltyResults extends Component {
       );
     }
 
-    let reportModal;
+    let saveModal;
 
     let reports = this.state.reportList.map(
         (report) => {
@@ -271,43 +272,45 @@ class NoveltyResults extends Component {
         }
     )
 
-    if (this.state.isReportModalVisible) {
-        reportModal = (
-            <EuiModal onClose={() => {this.closeReportModal()}}>
-            <EuiModalHeader>
-                <EuiModalHeaderTitle>
-                    <h1>添加至待生成报告</h1>
-                </EuiModalHeaderTitle>
-            </EuiModalHeader>
-    
-            <EuiModalBody>
-                <EuiFormRow label="请选择要添加至的待生成报告">
-                    <EuiSuperSelect
-                        options={reports}
-                        valueOfSelected={this.state.selectedReport}
-                        onChange={(value) => this.setSelectedReport(value)}
-                        itemLayoutAlign="top"
-                        hasDividers
-                    />
-                </EuiFormRow>
-            </EuiModalBody>
-    
-            <EuiModalFooter>
-                <EuiButtonEmpty onClick={() => {this.closeReportModal()}}>Cancel</EuiButtonEmpty>
-                <EuiButton 
-                    type="submit" 
-                    onClick={
-                        () => {
-                            insertNoveltyResults(this.state.selectedReport, this.state.focusSigory, this.state.selectedNovelResults)
-                            this.closeReportModal()
-                        }
-                    } 
-                    fill>
-                 Save
-                </EuiButton>
-            </EuiModalFooter>
-            </EuiModal>
-        );
+    if (this.state.isSaveModalVisible) {
+        saveModal = (
+          <EuiModal onClose={() => {this.closeSaveModal()}}>
+          <EuiModalHeader>
+              <EuiModalHeaderTitle>
+                  <h1>保存新颖性创造性分析结果</h1>
+              </EuiModalHeaderTitle>
+          </EuiModalHeader>
+  
+          <EuiModalBody>
+              <EuiFormRow label="请为分析结果命名">
+                  <EuiFieldText
+                      placeholder="Placeholder text"
+                      value={this.state.newResultName}
+                      onChange={(e) => {
+                              this.setState({
+                                  newResultName : e.target.value
+                              }, () => {})
+                      }}
+                      aria-label="Use aria labels when no actual label is in use"
+                  />
+              </EuiFormRow>
+          </EuiModalBody>
+
+          <EuiModalFooter>
+              <EuiButtonEmpty onClick={() => {this.closeSaveModal()}}>Cancel</EuiButtonEmpty>
+              <EuiButton 
+                  type="submit" 
+                  onClick={() => {
+                    insertNoveltyResults(this.state.newResultName, this.state.focusSigory, this.state.selectedNovelResults)
+                    this.closeSaveModal()
+                  } }
+                  fill
+              >
+               Save
+              </EuiButton>
+          </EuiModalFooter>
+          </EuiModal>
+      );
     }
 
     let loadingModal
@@ -361,7 +364,7 @@ class NoveltyResults extends Component {
               </EuiFlexGroup>
             </EuiPanel>
             {flyout}
-            {reportModal}
+            {saveModal}
             {loadingModal}
           </EuiPageSection>
           {/* </EuiPanel> */}

@@ -11,3 +11,12 @@ export async function doAnalysis(anaType, figType, patentIds){
                                     )
     return response.data
 }
+
+export async function noveltyReStats(noveltyAnaResId){
+    let response =  await axios.post(ipList.FLASK_SOCKET + `/noveltyReStats`, 
+                                        { 
+                                            'noveltyAnaResId': noveltyAnaResId
+                                        }
+                                    )
+    return response.data
+}

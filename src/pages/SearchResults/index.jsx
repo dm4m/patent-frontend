@@ -63,7 +63,7 @@ class SearchResults extends Component {
         selectedReport : null,
         // 专利一对一比对
         isFlyoutVisible: false,
-        // 原主权项列表 [string...]
+        // 原专利要求列表 [string...]
         signoryList : [],
         //[{signoryId, signory }, ...]
         comparePatent : {},
@@ -416,11 +416,11 @@ class SearchResults extends Component {
                                 加入分析集合
                             </EuiButton>
                         </EuiFlexItem>
-                        <EuiFlexItem grow={false}>
+                        {/* <EuiFlexItem grow={false}>
                             <EuiButton fill onClick={() => {this.openReportModal()}}>
                                 加入报告集合
                             </EuiButton>
-                        </EuiFlexItem>
+                        </EuiFlexItem> */}
                     </EuiFlexGroup>
                     <EuiSpacer/>
                 </div>
@@ -544,7 +544,7 @@ class SearchResults extends Component {
         let noveltyResColumns = [
             {
                 field: 'relevant_sig',
-                name: '相关主权项',
+                name: '相关专利要求',
                 truncateText: false
             },
             // {
@@ -591,11 +591,11 @@ class SearchResults extends Component {
         if(this.state.isFlyoutRightResult){
             flyoutRightSide = <>
                 <EuiTitle size="m">
-                    <h3>主权项对比结果</h3>
+                    <h3>专利要求对比结果</h3>
                 </EuiTitle>
                 <EuiHorizontalRule/>
                 <EuiText>
-                    {"当前被分析主权项：" + this.state.focusSigory}
+                    {"当前被分析专利要求：" + this.state.focusSigory}
                 </EuiText>
                 <EuiHorizontalRule/>
                 <EuiBasicTable
@@ -659,7 +659,7 @@ class SearchResults extends Component {
             >
               <EuiFlyoutHeader hasBorder>
                 <EuiTitle size="m">
-                  <h2>专利主权项对比</h2>
+                  <h2>专利专利要求对比</h2>
                 </EuiTitle>
               </EuiFlyoutHeader>
               <EuiFlyoutBody>
