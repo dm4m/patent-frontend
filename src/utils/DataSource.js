@@ -127,6 +127,16 @@ export async function insertStatsResults(reportId, options, collectionId){
                                     )
 }
 
+export async function saveAndAddNoveltyStats(reportId, options, noveltyResId){
+    let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/noveltyStatus`, 
+                                        { 
+                                            'reportId': reportId,
+                                            'options': options,
+                                            'noveltyResId' : noveltyResId
+                                        }
+                                    )
+}
+
 export async function getSignorysByPatentId(patentId){
     let response =  await axios.get(ipList.BACKEND_SOCKET + `/report/signory`, {
         params: {

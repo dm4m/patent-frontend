@@ -35,7 +35,7 @@ import {
     useEuiBackgroundColor,
     EuiSuperSelect
 } from '@elastic/eui';
-import { deleteNoveltyResAndItems,getNoveltyAnaResult,getNAItemByNAId, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection, insertStatsResults, getReport2gen, addNoveltyResult2Report} from '../../utils/DataSource';
+import { deleteNoveltyResAndItems,getNoveltyAnaResult,getNAItemByNAId, getACItemByCollectionId, deleteCollectionItemsByIds, deleteCollectionById, insertAnalysisCollection, insertStatsResults, getReport2gen, addNoveltyResult2Report, saveAndAddNoveltyStats} from '../../utils/DataSource';
 import { doAnalysis, noveltyReStats } from '../../utils/AnalysisUtils';
 
 class NoveltyCollectionBox extends Component {
@@ -444,12 +444,15 @@ class NoveltyCollectionBox extends Component {
                         type="submit" 
                         onClick={
                             () => {      
+                                console.log(this.state.reportAddContent)
                                 if(this.state.reportAddContent == 'novelty'){
                                     addNoveltyResult2Report(this.state.selectedReportId, 
                                         this.state.currentNoveltyResult.novelty_ana_id, 
                                         this.state.currentNoveltyResult.name)
                                 }else if(this.state.reportAddContent == 'noveltyStats'){
-                                    insertStatsResults(this.state.selectedReportId, this.state.noveltyStatsResult)
+                                    saveAndAddNoveltyStats(this.state.selectedReportId, 
+                                        this.state.noveltyStatsResult,
+                                        this.state.currentNoveltyResult.novelty_ana_id)
                                 }
                                 this.closeReportModal()
                             }
@@ -484,7 +487,6 @@ class NoveltyCollectionBox extends Component {
                         <EuiButton
                             iconType='visBarVertical'
                             onClick={() => {
-                                
                                 this.openReportModal("noveltyStats")
                             }}
                         >
@@ -506,7 +508,7 @@ class NoveltyCollectionBox extends Component {
                                             height : `500px`
                                         }}
                                         opts={{renderer: 'svg'}}
-                                        ref={(e) => { this.figRefs[index] = e; }}
+                                        // ref={(e) => { this.figRefs[index] = e; }}
                                     />
                                     <EuiSpacer />
                                 </div>

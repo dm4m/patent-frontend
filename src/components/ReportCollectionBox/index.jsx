@@ -67,6 +67,7 @@ class ReportCollectionBox extends Component {
         selectedSearchResults : [],
         flyoutStatsAnaItems : [],
         flyoutNoveltyAnaItems : {},
+        flyoutNoveltyStatsItems : [],
         selectedNovelResults : [],
         itemIdToExpandedRowMap : {},
     }
@@ -290,6 +291,12 @@ class ReportCollectionBox extends Component {
                         isFlyoutVisible : true, 
                         flyoutContentType : '统计分析',
                         flyoutStatsAnaItems : res.statsResults
+                    }, () => {})
+                }else if(contentItem.itemType == '新颖性统计结果'){
+                    this.setState({
+                        isFlyoutVisible : true, 
+                        flyoutContentType : '新颖性统计',
+                        flyoutNoveltyStatsItems : res.noveltyStatsResults
                     }, () => {})
                 }
             }
@@ -751,6 +758,29 @@ class ReportCollectionBox extends Component {
                     // selection={noveltyResultSelection}
                 />
             </div>
+        }else if(this.state.flyoutContentType == '新颖性统计'){
+            flyoutContent = 
+            <div>
+                {
+                    this.state.flyoutNoveltyStatsItems.map((item, index)=>{
+                        var option = JSON.parse(item.option_json)
+                        return (
+                            <div>
+                                <ReactECharts
+                                    option={option}
+                                    style={{
+                                        width : `500px`,
+                                        height : `500px`
+                                    }}
+                                    notMerge={true}
+                                    opts={{renderer: 'svg'}}
+                                />
+                                <EuiSpacer />
+                            </div>
+                        )
+                    })
+                }
+            </div>
         }
 
         let flyout
@@ -775,8 +805,6 @@ class ReportCollectionBox extends Component {
               </EuiFlyout>
             );
         }
-
-        
 
         return (
             <div style={{display: 'flex', flexDirection: 'column', width : '90%', height : '55%', margin: '0 auto'}}>
