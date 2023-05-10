@@ -48,7 +48,7 @@ export default class AnalysisHome extends Component {
             }}>
                 <Title 
                     title='统计分析' 
-                    describe='在下方管理待分析专利集，并对专利集进行统计分析'
+                    describe='在下方管理专利检索或分析结果，并对其进行统计'
                     height='25%'
                 />
                 <EuiFlexGroup direction='column' alignItems='flexStart' style={{width : '90%', margin: '0 auto'}}> 

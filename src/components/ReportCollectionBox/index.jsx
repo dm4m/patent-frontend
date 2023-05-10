@@ -659,8 +659,18 @@ class ReportCollectionBox extends Component {
         //新颖性分析结果表格 
         const noveltyResultsColumns = [
             {
+                field: 'index_num',
+                name: '序号',
+                truncateText: false
+            },
+            {
                 field: 'relevant_sig',
                 name: '相关主权项',
+                truncateText: false
+            },
+            {
+                field: 'score',
+                name: '相关性分数',
                 truncateText: false
             },
             {
@@ -754,6 +764,7 @@ class ReportCollectionBox extends Component {
                     rowHeader="relevant_sig"
                     itemId='novelty_ana_item_id'
                     columns={noveltyResultsColumns}
+                    tableLayout="auto"
                     // isSelectable={true}
                     // selection={noveltyResultSelection}
                 />

@@ -163,8 +163,13 @@ class NoveltyResults extends Component {
     const noveltyResultsColumns = [
       {
           field: 'relevant_sig',
-          name: '相关主权项',
+          name: '相关权利要求',
           truncateText: false
+      },
+      {
+        field: 'score',
+        name: '相关性分数',
+        truncateText: false
       },
       {
         field: 'ori_patent_title',
@@ -221,7 +226,7 @@ class NoveltyResults extends Component {
             <EuiFlexGroup responsive={false} gutterSize="s" justifyContent='spaceBetween'>
               <EuiFlexItem grow={false}>
                 <EuiTitle size="m">
-                  <h2>主权项新颖性分析结果</h2>
+                  <h2>权利要求新颖性分析结果</h2>
                 </EuiTitle>
               </EuiFlexItem>
               <EuiFlexItem grow={false} style={{marginRight: '2em'}}>
@@ -238,7 +243,7 @@ class NoveltyResults extends Component {
             <EuiHorizontalRule />
             <EuiText>
               <p>
-                原主权项文本：{this.state.focusSigory}
+                原权利要求文本：{this.state.focusSigory}
               </p>
             </EuiText>
           </EuiFlyoutHeader>
@@ -253,6 +258,7 @@ class NoveltyResults extends Component {
             columns={noveltyResultsColumns}
             isSelectable={true}
             selection={noveltyResultSelection}
+            tableLayout="auto"
           />
           </EuiFlyoutBody>
         </EuiFlyout>
@@ -340,7 +346,7 @@ class NoveltyResults extends Component {
             paddingSize="l"
             pageTitle="新颖性分析结果"
             bottomBorder={true}
-            description={"专利"  + this.state.focusSigory + "共提取出 " + signoryList.length + " 条主权项片段如下，点击其中一条可对其进行新颖性分析"}
+            description={"专利"  + this.state.focusSigory + "共提取出 " + signoryList.length + " 条权利要求片段如下，点击其中一条可对其进行新颖性分析"}
           />
           <EuiPageSection
             bottomBorder={true}

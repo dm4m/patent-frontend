@@ -20,6 +20,7 @@ export async function insertAnalysisCollection(collectionName){
     let response =  await axios.post(ipList.BACKEND_SOCKET + `/stats/analysisCollection`, {
         'collectionName' : collectionName
     })
+    return response.data
 }
 
 export async function getACItemByCollectionId(collectionId, pageIndex, pageSize){
@@ -95,7 +96,7 @@ export async function insertSearchResults(patentIds, reportId){
                                     )
 }
 
-// 把新颖性分析结果保存至待分析报告，附带插入新颖性结果数据（老）
+// （原逻辑，已废弃），把新颖性分析结果保存至待分析报告，附带插入新颖性结果数据
 // 保存新颖性结果，不再直接加入待生成报告
 export async function insertNoveltyResults(resultName, focusSigory, noveltyAnalysisResult){
     let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/noveltyResults`, 

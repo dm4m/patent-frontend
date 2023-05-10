@@ -277,10 +277,20 @@ class NoveltyCollectionBox extends Component {
 
         const noveltyResultsColumns = [
             {
+                field: 'index_num',
+                name: '序号',
+                truncateText: false
+            },
+            {
                 field: 'relevant_sig',
                 name: '相关权利要求',
                 truncateText: false
             },
+            {
+                field: 'score',
+                name: '相关性分数',
+                truncateText: false
+              },
             {
                 field: 'ori_patent_title',
                 name: '来自专利',
@@ -576,6 +586,7 @@ class NoveltyCollectionBox extends Component {
                                             itemId='novelty_ana_item_id'
                                             columns={noveltyResultsColumns}
                                             isSelectable={true}
+                                            tableLayout="auto"
                                             // selection={noveltyResultSelection}
                                         />
                                     </EuiPanel>

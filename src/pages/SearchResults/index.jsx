@@ -28,12 +28,13 @@ import {
     useEuiTheme,
     useEuiBackgroundColor,
     EuiScreenReaderOnly,
-    EuiButtonIcon
+    EuiButtonIcon,
+    EuiFieldText
 } from '@elastic/eui';
 import BasicSearchBox from '../../components/BasicSearchBox';
 import { Link, useLocation} from 'react-router-dom'
 import { basicSearch, neuralSearch, proSearch, advancedSearch, uploadSearch} from '../../utils/SearchUtils';
-import { getAnalysisCollection, getReport2gen, getSignorysByPatentId, insertCollectionItems, insertSearchResults, noveltyCompare } from '../../utils/DataSource';
+import { getAnalysisCollection, getReport2gen, getSignorysByPatentId, insertAnalysisCollection, insertCollectionItems, insertSearchResults, noveltyCompare } from '../../utils/DataSource';
 import './index.css'
 import { Button } from 'antd';
 
@@ -74,6 +75,7 @@ class SearchResults extends Component {
         selectedNoveltyResults : [],
         focusSigory : "",
         itemIdToExpandedRowMap : {},
+        newCollectionName : ""
     }
 
     constructor(props){
@@ -238,7 +240,8 @@ class SearchResults extends Component {
 
     setSelectedAnaCollection = (value) => {
         this.setState({
-            selectedAnaCollection : value
+            selectedAnaCollection : value,
+            newCollectionName : ""
         })
     };
 
@@ -462,6 +465,19 @@ class SearchResults extends Component {
                             hasDividers
                         />
                     </EuiFormRow>
+                    <EuiFormRow label="或新建集合，请输入名称">
+                        <EuiFieldText
+                            placeholder="Placeholder text"
+                            value={this.state.newCollectionName}
+                            onChange={(e) => {
+                                    this.setState({
+                                        newCollectionName : e.target.value,
+                                        selectedAnaCollection : ""
+                                    }, () => {})
+                            }}
+                            aria-label="Use aria labels when no actual label is in use"
+                        />
+                    </EuiFormRow>
                 </EuiModalBody>
         
                 <EuiModalFooter>
@@ -474,7 +490,15 @@ class SearchResults extends Component {
                                 let patentIds = this.state.selectedSearchResults.map((patent) => {
                                     return patent.id
                                 })
-                                insertCollectionItems(patentIds ,this.state.selectedAnaCollection)
+                                if(this.state.newCollectionName != ""){
+                                    insertAnalysisCollection(this.state.newCollectionName).then(
+                                        (res) => {
+                                            insertCollectionItems(patentIds, res)
+                                        } 
+                                    )
+                                }else{
+                                    insertCollectionItems(patentIds, this.state.selectedAnaCollection)
+                                }
                                 this.closeAnaModal()
                             }
                         } 
