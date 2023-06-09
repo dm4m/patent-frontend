@@ -70,6 +70,7 @@ export default class UploadSearch extends Component {
         }else{
             let formData = new FormData()
             formData.append("file", this.state.files[0])
+            formData.append('limit', 100)
             this.openLoadingModal()
             axios.post(ipList.BACKEND_SOCKET + `/search/uploadSearch`, 
                 formData, 

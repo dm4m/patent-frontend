@@ -150,7 +150,7 @@ class AnalysisCollectionBox extends Component {
         this.setState({
             selectedReportId : value
         })
-      };
+    };
 
     onTableChange = ({ page = {} }) => {
         const { index: pageIndex, size: pageSize } = page;
@@ -595,7 +595,6 @@ class AnalysisCollectionBox extends Component {
             );
         }
 
-      
         return (
             <div style={{display: 'flex', flexDirection: 'column', margin: '0 auto'}}>
                 <EuiPanel

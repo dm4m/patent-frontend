@@ -65,6 +65,7 @@ export async function neuralSearch(query, field, cur_page, per_page){
 }
 
 export async function uploadSearch(formData){
+    formData.append('limit', 10)
     let response = axios.post(ipList.BACKEND_SOCKET + `/search/uploadSearch`, 
         formData, 
         {

@@ -407,7 +407,7 @@ class SearchResults extends Component {
             initialSelected: []
         };
 
-        const renderButtons = () => {
+        const  renderButtons = () => {
             if (this.state.selectedSearchResults.length === 0) {
                 return;
             }
@@ -482,7 +482,6 @@ class SearchResults extends Component {
         
                 <EuiModalFooter>
                     <EuiButtonEmpty onClick={() => {this.closeAnaModal()}}>Cancel</EuiButtonEmpty>
-        
                     <EuiButton 
                         type="submit" 
                         onClick={

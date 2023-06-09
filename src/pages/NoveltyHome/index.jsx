@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import axios from "axios"
 import { EuiFilePicker, EuiButton } from '@elastic/eui'
 import Title from '../../components/Title'
+import { ipList } from '../../configs/ipConfig'
 import './index.css'
 
 export default class NoveltyHome extends Component {
@@ -49,10 +50,26 @@ export default class NoveltyHome extends Component {
         }else if(this.state.files.length == 0){
             alert("请先上传待分析文件")
         }else{
+            // let formData = new FormData()
+            // formData.append("file", this.state.files[0])
+            // axios.post(
+            //     'http://10.108.119.71:5000/upload', 
+            //     formData, 
+            //     {
+            //         headers: {
+            //             'Content-Type': 'multipart/form-data'
+            //         }
+            //     }
+            // )
+            //     .then(res => {
+            //         console.log(res.data);
+            //         this.props.history.push({pathname:'/noveltyResults',state:{response: res.data}})
+            //     }
+            // )
             let formData = new FormData()
             formData.append("file", this.state.files[0])
-            axios.post(
-                'http://10.108.119.71:5000/upload', 
+            formData.append('limit', 20)
+            axios.post(ipList.BACKEND_SOCKET + `/search/uploadSearch`, 
                 formData, 
                 {
                     headers: {
@@ -61,7 +78,6 @@ export default class NoveltyHome extends Component {
                 }
             )
                 .then(res => {
-                    console.log(res.data);
                     this.props.history.push({pathname:'/noveltyResults',state:{response: res.data}})
                 }
             )

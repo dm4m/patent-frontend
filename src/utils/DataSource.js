@@ -219,3 +219,11 @@ export async function addSearchResults2Report(reportId, collectionId, collection
                                     )
 }
 
+export async function addPatentInfo2Report(reportId, signorys){
+    let response =  await axios.post(ipList.BACKEND_SOCKET + `/report/addPatentInfo2Report`, 
+                                        { 
+                                            'signorys': signorys,
+                                            'reportId': reportId
+                                        }
+                                    )
+}
