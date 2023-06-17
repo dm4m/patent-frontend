@@ -68,6 +68,7 @@ class ReportCollectionBox extends Component {
         flyoutStatsAnaItems : [],
         flyoutNoveltyAnaItems : {},
         flyoutNoveltyStatsItems : [],
+        flyoutReportSignorys : [],
         selectedNovelResults : [],
         itemIdToExpandedRowMap : {},
     }
@@ -297,6 +298,12 @@ class ReportCollectionBox extends Component {
                         isFlyoutVisible : true, 
                         flyoutContentType : '新颖性统计',
                         flyoutNoveltyStatsItems : res.noveltyStatsResults
+                    }, () => {})
+                }else if(contentItem.itemType == '专利信息'){
+                    this.setState({
+                        isFlyoutVisible : true, 
+                        flyoutContentType : '专利信息',
+                        flyoutReportSignorys : res.reportSignorys
                     }, () => {})
                 }
             }
@@ -792,6 +799,27 @@ class ReportCollectionBox extends Component {
                     })
                 }
             </div>
+        }else if(this.state.flyoutContentType == '专利信息'){
+            flyoutContent = 
+            <div>
+                {
+                    this.state.flyoutReportSignorys.map((signory, index)=>{
+                    let order = index + 1
+                    return (
+                    <EuiFlexItem grow={false} 
+                    >
+                        <EuiText 
+                        style={{ padding: '10px', backgroundColor: this.props.bgColor}}
+                        > 
+                            { order  + '、' + signory}
+                        </EuiText>
+                        <EuiHorizontalRule/>
+                    </EuiFlexItem>
+                    
+                    )})}
+                    
+            </div>
+            
         }
 
         let flyout
